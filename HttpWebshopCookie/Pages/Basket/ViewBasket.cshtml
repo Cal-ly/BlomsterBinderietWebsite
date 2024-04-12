@@ -1,0 +1,35 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Basket.ViewBasketModel
+@{
+}
+
+<h1>ViewBasket</h1>
+
+<div style="text-align: center;">
+    <h2>Basket Items</h2>
+    <table style="width: auto;">
+        <thead>
+            <tr>
+                <th style="width: auto;">Item Name</th>
+                <th style="width: auto;">Quantity</th>
+                <th style="width: auto;">Price</th>
+                <th style="width: auto;">Line Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Basket.Items)
+            {
+                <tr>
+                    <td>@(item.ProductInBasket?.Name)</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.ProductInBasket?.Price)</td>
+                    <td>@item.LinePrice()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p>
+    <a asp-page="Index">Back to Index</a>
+</p>
