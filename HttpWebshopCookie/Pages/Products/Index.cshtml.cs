@@ -20,14 +20,14 @@ namespace HttpWebshopCookie.Pages.Products
             ProductList = await _context.Products.OrderBy(p => p.Name).ToListAsync();
         }
 
-        public IActionResult OnPostAddToBasket(string id)
+        public async Task<IActionResult> OnPostAddToBasket(string id)
         {
             if (!_context.Products.Any(p => p.Id == id))
             {
                 return NotFound();
             }
 
-            _basketService.AddToBasket(id);
+            await _basketService.AddToBasket(id);
 
             return RedirectToPage("./Index");
         }

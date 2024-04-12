@@ -68,12 +68,25 @@ public class ApplicationDbContext : IdentityDbContext
         {
             entity.HasKey(p => p.Id);
             entity.ToTable("BasketActivities");
-            entity.Property(p => p.SessionId);
+            entity.Property(p => p.BasketId);
             entity.Property(p => p.ProductId);
-            entity.Property(p => p.Quantity);
+            entity.Property(p => p.UserId);
+            entity.Property(p => p.SessionId);
             entity.Property(p => p.ActivityType);
-            entity.Property(p => p.Timestamp);
-            entity.
+            entity.Property(p => p.QuantityChanged);
+            entity.Property(p => p.Timestamp).HasColumnType("datetime");
+            entity.HasOne(p => p.Basket)
+                .WithMany()
+                .HasForeignKey(p => p.BasketId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.Product)
+                .WithMany()
+                .HasForeignKey(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
