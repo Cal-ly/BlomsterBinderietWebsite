@@ -6,38 +6,40 @@ public class BasketService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ApplicationDbContext _context;
+
     public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)
     {
         _httpContextAccessor = httpContextAccessor;
         _context = context;
     }
 
-    public Basket GetBasket()
+    public Basket GetOrCreateBasket()
     {
-        var basket = _httpContextAccessor.HttpContext?.Request.Cookies["basket"];
-        if (string.IsNullOrEmpty(basket))
+        string? basketId = _httpContextAccessor.HttpContext?.Session.GetString("BasketId");
+        Basket basket;
+
+        if (basketId == null)
         {
-            return new Basket();
+            basket = new Basket();
+            _context.Baskets.Add(basket);
+            _context.SaveChanges();
+            _httpContextAccessor.HttpContext?.Session.SetString("BasketId", basket.Id);
+        }
+        else
+        {
+            basket = _context.Baskets.Find(basketId) ?? new Basket();
         }
 
-        try
-        {
-            var deserializedBasket = JsonConvert.DeserializeObject<Basket>(basket);
-            return deserializedBasket ?? new Basket();
-        }
-        catch (JsonException)
-        {
-            return new Basket();
-        }
+        return basket;
     }
 
-    public void AddToBasket(string productId)
+    public async Task AddToBasket(string productId)
     {
-        var basket = GetBasket();
+        var basket = GetOrCreateBasket();
         var item = basket.Items.Find(i => i.ProductId == productId);
         if (item == null)
         {
-            Product? product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            Product? product = _context.Products.Find(productId);
             if (product != null)
             {
                 item = new BasketItem
@@ -54,11 +56,12 @@ public class BasketService
             item.Quantity++;
         }
         _httpContextAccessor.HttpContext?.Response.Cookies.Append("basket", JsonConvert.SerializeObject(basket));
+        await LogBasketActivity(basket.Id, productId, "Add", item?.Quantity);
     }
 
-    public void RemoveFromBasket(string productId)
+    public async Task RemoveFromBasket(string productId)
     {
-        var basket = GetBasket();
+        var basket = GetOrCreateBasket();
         var item = basket.Items.Find(i => i.ProductId == productId);
         if (item == null)
         {
@@ -73,5 +76,28 @@ public class BasketService
             basket.Items.Remove(item);
         }
         _httpContextAccessor.HttpContext?.Response.Cookies.Append("basket", JsonConvert.SerializeObject(basket));
+        await LogBasketActivity(basket.Id, productId, "Remove", item.Quantity);
+    }
+
+    private async Task LogBasketActivity(string basketId, string productId, string activityType, int? quantityChanged)
+    {
+        var activity = new BasketActivity
+        {
+            BasketId = basketId,
+            ProductId = productId,
+            ActivityType = activityType,
+            QuantityChanged = quantityChanged ?? 0,
+        };
+
+        var userId = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            activity.UserId = userId;
+        }
+
+        activity.SessionId = _httpContextAccessor.HttpContext?.Session.Id;
+
+        _context.BasketActivities.Add(activity);
+        await _context.SaveChangesAsync();
     }
 }

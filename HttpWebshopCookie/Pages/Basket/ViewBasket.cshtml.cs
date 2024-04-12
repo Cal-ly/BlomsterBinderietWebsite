@@ -21,7 +21,7 @@ namespace HttpWebshopCookie.Pages.Basket
 
         public void OnGet()
         {
-            Basket = _basketService.GetBasket();
+            Basket = _basketService.GetOrCreateBasket();
         }
     }
 }
