@@ -1,20 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
+﻿namespace HttpWebshopCookie.Services;
 
-public class BasketService
+public class BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager)
-    {
-        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    private readonly UserManager<IdentityUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     // Retrieve or create a new basket based on the basket ID stored in the cookie
     public Basket GetOrCreateBasket()
