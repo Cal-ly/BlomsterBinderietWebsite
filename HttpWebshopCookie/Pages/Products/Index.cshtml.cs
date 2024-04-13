@@ -1,15 +1,7 @@
 ﻿namespace HttpWebshopCookie.Pages.Products;
 
-public class IndexModel : PageModel
+public class IndexModel(ApplicationDbContext context, BasketService basketService) : PageModel
 {
-    private readonly ApplicationDbContext context;
-    private readonly BasketService basketService;
-
-    public IndexModel(ApplicationDbContext context, BasketService basketService)
-    {
-        this.context = context;
-        this.basketService = basketService;
-    }
     [BindProperty]
     public List<Product> ProductList { get; set; } = default!;
     [BindProperty]

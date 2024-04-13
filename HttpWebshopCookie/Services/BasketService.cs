@@ -13,7 +13,7 @@ namespace HttpWebshopCookie.Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager) //TODO: convert to primary constructor
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _context = context ?? throw new ArgumentNullException(nameof(context));
