@@ -31,8 +31,7 @@ public class IndexModel : PageModel
 
         await basketService.AddToBasket(id);
         ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
-
-        return Page();
+        return RedirectToPage();
     }
 
     public async Task<IActionResult> OnPostRemoveFromBasket(string id)
@@ -45,6 +44,6 @@ public class IndexModel : PageModel
         await basketService.RemoveFromBasket(id);
         ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
 
-        return Page();
+        return RedirectToPage();
     }
 }
