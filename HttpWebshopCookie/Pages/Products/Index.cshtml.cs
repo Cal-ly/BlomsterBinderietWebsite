@@ -1,35 +1,50 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace HttpWebshopCookie.Pages.Products;
 
-namespace HttpWebshopCookie.Pages.Products
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly ApplicationDbContext context;
+    private readonly BasketService basketService;
+
+    public IndexModel(ApplicationDbContext context, BasketService basketService)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly BasketService _basketService;
+        this.context = context;
+        this.basketService = basketService;
+    }
+    [BindProperty]
+    public List<Product> ProductList { get; set; } = default!;
+    [BindProperty]
+    public Dictionary<string, int> ProductQuantities { get; set; } = [];
 
-        public IndexModel(ApplicationDbContext context, BasketService basketService)
+    public async Task OnGetAsync()
+    {
+        ProductList = await context.Products.OrderBy(p => p.Name).ToListAsync();
+        var basket = basketService.GetOrCreateBasket();
+        ProductQuantities = await basketService.GetAllQuantitiesInBasket();
+    }
+
+    public async Task<IActionResult> OnPostAddToBasket(string id)
+    {
+        if (!await context.Products.AnyAsync(p => p.Id == id))
         {
-            _context = context;
-            _basketService = basketService;
+            return NotFound();
         }
 
-        public List<Product> ProductList { get; set; } = default!;
+        await basketService.AddToBasket(id);
+        ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
 
-        public async Task OnGetAsync()
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostRemoveFromBasket(string id)
+    {
+        if (!await context.Products.AnyAsync(p => p.Id == id))
         {
-            ProductList = await _context.Products.OrderBy(p => p.Name).ToListAsync();
+            return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAddToBasket(string id)
-        {
-            if (!_context.Products.Any(p => p.Id == id))
-            {
-                return NotFound();
-            }
+        await basketService.RemoveFromBasket(id);
+        ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
 
-            await _basketService.AddToBasket(id);
-
-            return RedirectToPage("./Index");
-        }
+        return Page();
     }
 }

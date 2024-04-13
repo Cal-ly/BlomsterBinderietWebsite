@@ -7,11 +7,18 @@ using System.Threading.Tasks;
 
 namespace HttpWebshopCookie.Services
 {
-    public class BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    public class BasketService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-        private readonly UserManager<IdentityUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        {
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        }
 
         public Basket GetOrCreateBasket()
         {
@@ -84,43 +91,28 @@ namespace HttpWebshopCookie.Services
             await LogBasketActivity(basket.Id, productId, "Add", item?.Quantity);
         }
 
-        public async Task RemoveFromBasket(string productId)
+        public async Task<int> GetQuantityInBasket(string productId)
         {
             var basket = GetOrCreateBasket();
             var item = basket.Items.Find(i => i.ProductId == productId);
-
-            if (item == null)
-            {
-                throw new InvalidOperationException("Product not in basket.");
-            }
-
-            if (item.Quantity > 1)
-            {
-                item.Quantity--;
-            }
-            else
-            {
-                basket.Items.Remove(item);
-            }
-
-            await _context.SaveChangesAsync();
-            await LogBasketActivity(basket.Id, productId, "Remove", item?.Quantity);
+            int itemQuantity = item?.Quantity ?? 0;
+            return await Task.FromResult(itemQuantity);
         }
 
-        private async Task LogBasketActivity(string basketId, string productId, string activityType, int? quantityChanged)
+        public async Task<Dictionary<string, int>> GetAllQuantitiesInBasket()
         {
-            var activity = new BasketActivity
-            {
-                BasketId = basketId,
-                ProductId = productId,
-                ActivityType = activityType,
-                QuantityChanged = quantityChanged ?? 0,
-                SessionId = _httpContextAccessor.HttpContext?.Session.Id,
-                UserId = _userManager.GetUserId(_httpContextAccessor.HttpContext?.User!),
-            };
+            var basket = GetOrCreateBasket();
 
-            _context.BasketActivities.Add(activity);
-            await _context.SaveChangesAsync();
+            if (basket.Id == null)
+            {
+                return new Dictionary<string, int>();
+            }
+
+            return await _context.BasketItems
+                .Where(item => item.BasketId == basket.Id && item.ProductId != null)
+                .Select(item => new { item.ProductId, item.Quantity })
+                .Where(item => item.ProductId != null)
+                .ToDictionaryAsync(item => item.ProductId!, item => item.Quantity ?? 0);
         }
 
         public async Task UpdateBasketItemQuantity(string productId, int newQuantity)
@@ -145,12 +137,51 @@ namespace HttpWebshopCookie.Services
             await LogBasketActivity(basket.Id, productId, "Update", newQuantity);
         }
 
+        public async Task RemoveFromBasket(string productId)
+        {
+            var basket = GetOrCreateBasket();
+            var item = basket.Items.Find(i => i.ProductId == productId);
+
+            if (item == null)
+            {
+                throw new InvalidOperationException("Product not in basket.");
+            }
+
+            if (item.Quantity > 1)
+            {
+                item.Quantity--;
+            }
+            else
+            {
+                basket.Items.Remove(item);
+            }
+
+            await _context.SaveChangesAsync();
+            await LogBasketActivity(basket.Id, productId, "Remove", item?.Quantity);
+        }
+
         public async Task ClearBasket()
         {
             var basket = GetOrCreateBasket();
             basket.Items.Clear();
             await _context.SaveChangesAsync();
             await LogBasketActivity(basket.Id, null!, "Clear", 0);
+        }
+
+        private async Task LogBasketActivity(string basketId, string? productId, string activityType, int? quantityChanged)
+        {
+            var activity = new BasketActivity
+            {
+                BasketId = basketId,
+                ProductId = productId,
+                ActivityType = activityType,
+                QuantityChanged = quantityChanged ?? 0,
+                SessionId = _httpContextAccessor.HttpContext?.Session.Id,
+                UserId = _userManager.GetUserId(_httpContextAccessor.HttpContext?.User!),
+            };
+
+            _context.BasketActivities.Add(activity);
+            await _context.SaveChangesAsync();
         }
 
         public decimal CalculateTotalPrice()
