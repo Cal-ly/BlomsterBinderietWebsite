@@ -8,8 +8,19 @@ public static class DbInitialize
         {
             return;
         }
-
-        context.Products.AddRange(MockProducts.ProductCatalog);
+        using (var transaction = context.Database.BeginTransaction())
+        {
+            try
+            {
+                context.Products.AddRange(MockProducts.ProductCatalog);
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+            }
+        }
         context.SaveChanges();
+
     }
 }
