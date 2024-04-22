@@ -6,39 +6,32 @@ namespace HttpWebshopCookie.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public DbSet<Product> Products { get; set; }
-    public DbSet<Basket> Baskets { get; set; }
-    public DbSet<BasketItem> BasketItems { get; set; }
-
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
+
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<GuestUser> GuestUsers { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Basket> Baskets { get; set; }
+    public DbSet<BasketItem> BasketItems { get; set; }
+    public DbSet<BasketActivity> BasketActivities { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<ProductTag> ProductTags { get; set; }
-    //public DbSet<Product> Products { get; set; }
-    //public DbSet<Basket> Baskets { get; set; }
-    //public DbSet<BasketItem> BasketItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
             entity.ToTable("Users");
-            entity.HasMany(e => e.Orders)
-                .WithOne()
-                .HasForeignKey(o => o.UserId);
             entity.HasOne(e => e.Address)
                 .WithOne()
                 .HasForeignKey<ApplicationUser>(e => e.AddressId);
@@ -56,7 +49,7 @@ public class ApplicationDbContext : IdentityDbContext
                 .HasForeignKey(e => e.CompanyId);
             entity.HasMany(e => e.Orders)
                 .WithOne()
-                .HasForeignKey(o => o.UserId);
+                .HasForeignKey(o => o.CustomerId);
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -72,32 +65,42 @@ public class ApplicationDbContext : IdentityDbContext
                 .HasForeignKey<Employee>(e => e.AddressId);
         });
 
-        // Setting up one-to-many relationship between Company and Customers
-        modelBuilder.Entity<Company>()
-            .HasMany(c => c.Customers)
-            .WithOne(e => e.Company)
-            .HasForeignKey(e => e.CompanyId)
-            .OnDelete(DeleteBehavior.Restrict);  // This prevents cascading deletes
+        modelBuilder.Entity<GuestUser>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("GuestUsers");
+            entity.Property(e => e.Email);
+            entity.Property(e => e.Phone);
+            entity.HasOne(e => e.Address)
+                .WithOne()
+                .HasForeignKey<GuestUser>(e => e.AddressId);
+            entity.HasMany(e => e.Orders)
+                .WithOne()
+                .HasForeignKey(o => o.GuestUserId);
+        });
 
+        modelBuilder.Entity<Address>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("Addresses");
+            entity.Property(e => e.Street);
+            entity.Property(e => e.PostalCode);
+            entity.Property(e => e.City);
+            entity.Property(e => e.Country);
+        });
 
-
-
-
-
-        //Define composite primary key
-        modelBuilder.Entity<ProductTag>()
-                .HasKey(pt => new { pt.ProductId, pt.TagId });
-
-        // Configure many-to-many relationship
-        modelBuilder.Entity<ProductTag>()
-            .HasOne(pt => pt.Product)
-            .WithMany(p => p.ProductTags)
-            .HasForeignKey(pt => pt.ProductId);
-
-        modelBuilder.Entity<ProductTag>()
-            .HasOne(pt => pt.Tag)
-            .WithMany(t => t.ProductTags)
-            .HasForeignKey(pt => pt.TagId);
+        modelBuilder.Entity<Company>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("Companies");
+            entity.HasMany(c => c.Customers)
+                .WithOne(e => e.Company)
+                .HasForeignKey(e => e.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(c => c.Address)
+                .WithOne()
+                .HasForeignKey<Company>(c => c.AddressId);
+        });
 
         /// <summary>
         /// Product configuration. Product has a name, description and price
@@ -109,6 +112,41 @@ public class ApplicationDbContext : IdentityDbContext
             entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
             entity.Property(p => p.Name);
             entity.Property(p => p.Description);
+            entity.HasMany(p => p.ProductTags)
+                .WithOne(pt => pt.Product)
+                .HasForeignKey(pt => pt.ProductId);
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("Orders");
+            entity.Property(e => e.OrderDate);
+            entity.Property(e => e.CompletionDate);
+            entity.Property(e => e.Status);
+            entity.HasMany(e => e.OrderItems)
+                .WithOne()
+                .HasForeignKey(oi => oi.OrderId);
+            entity.HasOne(e => e.Employee)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(e => e.EmployeeId);
+            entity.HasOne(e => e.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(e => e.CustomerId);
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("OrderItems");
+            entity.Property(e => e.Quantity);
+            entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId);
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(e => e.OrderId);
         });
 
         /// <summary>
@@ -117,8 +155,8 @@ public class ApplicationDbContext : IdentityDbContext
         /// </summary>
         modelBuilder.Entity<Basket>(entity =>
         {
-            entity.ToTable("Baskets");
             entity.HasKey(p => p.Id);
+            entity.ToTable("Baskets");
             entity.HasMany(p => p.Items)
                 .WithOne(p => p.Basket)
                 .HasForeignKey(p => p.BasketId)
@@ -142,6 +180,57 @@ public class ApplicationDbContext : IdentityDbContext
                 .HasForeignKey(p => p.BasketId)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.Property(p => p.Quantity).HasDefaultValue(1);
+        });
+
+        /// <summary>
+        /// BasketActivity configuration. BasketActivity has a session ID, product ID, quantity, activity type and timestamp
+        /// </summary>
+        modelBuilder.Entity<BasketActivity>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+            entity.ToTable("BasketActivities");
+            entity.Property(p => p.BasketId);
+            entity.Property(p => p.ProductId);
+            entity.Property(p => p.UserId);
+            entity.Property(p => p.SessionId);
+            entity.Property(p => p.ActivityType);
+            entity.Property(p => p.QuantityChanged);
+            entity.Property(p => p.Timestamp).HasColumnType("datetime");
+            entity.HasOne(p => p.Basket)
+                .WithMany()
+                .HasForeignKey(p => p.BasketId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.Product)
+                .WithMany()
+                .HasForeignKey(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.HasKey(t => t.Id);
+            entity.ToTable("Tags");
+            entity.Property(t => t.Catergory);
+            entity.Property(t => t.SubCategory);
+            entity.HasMany(t => t.ProductTags)
+                .WithOne(pt => pt.Tag)
+                .HasForeignKey(pt => pt.TagId);
+        });
+
+        modelBuilder.Entity<ProductTag>(entity =>
+        {
+            entity.HasKey(pt => new { pt.ProductId, pt.TagId });
+            entity.ToTable("ProductTags");
+            entity.HasOne(pt => pt.Product)
+                .WithMany(p => p.ProductTags)
+                .HasForeignKey(pt => pt.ProductId);
+            entity.HasOne(pt => pt.Tag)
+                .WithMany(t => t.ProductTags)
+                .HasForeignKey(pt => pt.TagId);
         });
     }
 }

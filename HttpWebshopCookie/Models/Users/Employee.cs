@@ -7,4 +7,5 @@ public class Employee : ApplicationUser
     public decimal? Salary { get; set; }
     public DateTime? HireDate { get; set; }
     public DateTime? TerminationDate { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = [];
 }

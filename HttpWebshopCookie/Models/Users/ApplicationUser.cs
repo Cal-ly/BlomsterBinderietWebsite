@@ -9,7 +9,6 @@ public class ApplicationUser : IdentityUser
     [ForeignKey("AddressId")]
     public virtual Address? Address { get; set; }
     public string? AddressId { get; set; }
-    public virtual ICollection<Order> Orders { get; set; } = [];
 }
 
 // IdentityUser is a class from the Microsoft.AspNetCore.Identity.EntityFrameworkCore namespace.

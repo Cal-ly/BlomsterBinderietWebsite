@@ -4,7 +4,20 @@ public class Order
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    public string? UserId { get; set; }  // Assuming there is a User class/model
     public DateTime OrderDate { get; set; } = DateTime.Now;
-    public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public DateTime? CompletionDate { get; set; }
+    public string? Status { get; set; }
+
+    [ForeignKey("EmployeeId")]
+    public Employee? Employee { get; set; }
+    public string? EmployeeId { get; set; }
+
+    [ForeignKey("CustomerId")]
+    public Customer? Customer { get; set; }
+    public string? CustomerId { get; set; }
+
+    [ForeignKey("GuestUserId")]
+    public GuestUser? GuestUser { get; set; }
+    public string? GuestUserId { get; set; }
+    public ICollection<OrderItem> OrderItems { get; set; } = [];
 }

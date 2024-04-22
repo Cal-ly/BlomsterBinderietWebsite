@@ -1,11 +1,14 @@
 global using HttpWebshopCookie.Data;
 global using HttpWebshopCookie.Models;
+global using HttpWebshopCookie.Models.IndexTables;
+global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Infrastructure;
