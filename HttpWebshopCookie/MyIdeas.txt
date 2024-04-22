@@ -1,0 +1,39 @@
+﻿For BasketService
+
+```charp
+    public async Task ApplyDiscount(string discountCode)
+    {
+        var basket = GetOrCreateBasket();
+        var discount = _context.Discounts.FirstOrDefault(d => d.Code == discountCode);
+        if (discount == null)
+        {
+            throw new InvalidOperationException("Invalid discount code.");
+        }
+
+        // Assume a simple percentage discount for demonstration
+        foreach (var item in basket.Items)
+        {
+            item.AppliedDiscount = discount.Percentage;
+        }
+
+        await _context.SaveChangesAsync();
+        await LogBasketActivity(basket.Id, null, "Discount", null);
+    }
+
+    public async Task RemoveDiscount()
+    {
+        var basket = GetOrCreateBasket();
+        foreach (var item in basket.Items)
+        {
+            item.AppliedDiscount = null;
+        }
+
+        await _context.SaveChangesAsync();
+        await LogBasketActivity(basket.Id, null, "RemoveDiscount", null);
+    }
+    private bool CheckItemAvailability(string productId, int quantity)
+    {
+        var product = _context.Products.Find(productId);
+        return product != null && product.Stock >= quantity;
+    }
+```
