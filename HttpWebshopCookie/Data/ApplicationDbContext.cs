@@ -29,17 +29,12 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ApplicationUser>(entity =>
-        {
-            entity.ToTable("Users");
-            entity.HasOne(e => e.Address)
-                .WithOne()
-                .HasForeignKey<ApplicationUser>(e => e.AddressId);
-        });
-
         modelBuilder.Entity<Customer>(entity =>
         {
+            entity.HasKey(e => e.Id);
             entity.ToTable("Customers");
+            entity.Property(e => e.FirstName);
+            entity.Property(e => e.LastName);
             entity.Property(e => e.Title);
             entity.Property(e => e.BirthDate);
             entity.Property(e => e.RegistrationDate);
@@ -50,16 +45,25 @@ public class ApplicationDbContext : IdentityDbContext
             entity.HasMany(e => e.Orders)
                 .WithOne()
                 .HasForeignKey(o => o.CustomerId);
+            entity.HasOne(e => e.Address)
+                .WithOne()
+                .HasForeignKey<Customer>(e => e.AddressId);
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
+            entity.HasKey(e => e.Id);
             entity.ToTable("Employees");
+            entity.Property(e => e.FirstName);
+            entity.Property(e => e.LastName);
             entity.Property(e => e.EmployeeNumber);
             entity.Property(e => e.JobTitle);
             entity.Property(e => e.Salary).HasColumnType("decimal(18,2)");
             entity.Property(e => e.HireDate);
             entity.Property(e => e.TerminationDate);
+            entity.HasMany(e => e.Orders)
+                .WithOne()
+                .HasForeignKey(o => o.EmployeeId);
             entity.HasOne(e => e.Address)
                 .WithOne()
                 .HasForeignKey<Employee>(e => e.AddressId);
