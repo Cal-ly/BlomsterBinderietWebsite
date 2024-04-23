@@ -87,10 +87,11 @@ public class ApplicationDbContext : IdentityDbContext
         {
             entity.HasKey(e => e.Id);
             entity.ToTable("Addresses");
+            entity.Property(e => e.Resident);
             entity.Property(e => e.Street);
-            entity.Property(e => e.PostalCode);
             entity.Property(e => e.City);
-            entity.Property(e => e.Country);
+            entity.Property(e => e.PostalCode);
+            entity.Property(e => e.Country).HasDefaultValue("Denmark");
         });
 
         modelBuilder.Entity<Company>(entity =>
