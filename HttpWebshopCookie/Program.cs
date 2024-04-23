@@ -3,6 +3,7 @@ global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.IndexTables;
 global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
+global using HttpWebshopCookie.Config;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Http;
@@ -13,6 +14,7 @@ global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Metadata;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.EntityFrameworkCore.Migrations;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +35,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentityCore<Customer>().AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddRoles<ApplicationDbContext>();
+builder.Services.AddIdentityCore<Employee>().AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddRoles<ApplicationDbContext>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddHttpContextAccessor();
@@ -75,11 +83,6 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-    if (context.Products.Any())
-        return;
-
-    context.Products.AddRange(MockProducts.ProductCatalog);
-    context.SaveChanges();
 }
 
 app.Run();

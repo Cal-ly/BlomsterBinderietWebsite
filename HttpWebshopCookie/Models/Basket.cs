@@ -9,4 +9,5 @@ public class Basket
     {
         return Items.Sum(item => item.LinePrice());
     }
+    //TODO: Implement relationship with Customer
 }
