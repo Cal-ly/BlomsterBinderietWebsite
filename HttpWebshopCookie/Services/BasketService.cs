@@ -1,16 +1,20 @@
-﻿namespace HttpWebshopCookie.Services;
+﻿using HttpWebshopCookie.Interfaces;
+
+namespace HttpWebshopCookie.Services;
 
 public class BasketService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IOrderCreator _orderCreator;
 
-    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager) //TODO: convert to primary constructor
+    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator) //TODO: convert to primary constructor
     {
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        _orderCreator = orderCreator;
     }
 
     public Basket GetOrCreateBasket()
@@ -158,7 +162,7 @@ public class BasketService
         var basket = GetOrCreateBasket();
         basket.Items.Clear();
         await _context.SaveChangesAsync();
-        await LogBasketActivity(basket.Id, null!, "Clear", 0);
+        await LogBasketActivity(basket.Id, null, "ClearAll", 0);
     }
 
     private async Task LogBasketActivity(string basketId, string? productId, string activityType, int? quantityChanged)
@@ -181,6 +185,28 @@ public class BasketService
     {
         var basket = GetOrCreateBasket();
         return basket.Items.Sum(item => item.LinePrice());
+    }
+
+    public Order Checkout(IdentityUser user)
+    {
+        var basket = GetOrCreateBasket();
+        var order = _orderCreator.CreateOrderFromBasket(basket);
+
+        if (user != null)
+        {
+            var customer = _context.Customers.FirstOrDefault(c => c.Id == user.Id);
+            if (customer != null)
+            {
+                order.CustomerId = customer.Id;
+                order.Customer = customer;
+            }
+        }
+
+        basket.Items.Clear();
+        LogBasketActivity(basket.Id, null, "Checkout", 0).Wait();
+        _context.SaveChanges();
+
+        return order;
     }
 
     public List<BasketItem> ListBasketItems()

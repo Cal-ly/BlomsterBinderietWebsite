@@ -24,14 +24,18 @@ public class Order
 
 public enum OrderStatus
 {
+    [Display(Name = "Pending")]
+    Pending = 0,
     [Display(Name = "Received")]
     Received = 1,
+    [Display(Name = "Accepted")]
+    Accepted = 2,
     [Display(Name = "Processing")]
-    Processing = 2,
+    Processing = 3,
     [Display(Name = "Ready")]
-    Ready = 3,
+    Ready = 4,
     [Display(Name = "Delivered")]
-    Delivered = 4,
+    Delivered = 5,
     [Display(Name = "Cancelled")]
-    Cancelled = 5
+    Cancelled = 6
 }
