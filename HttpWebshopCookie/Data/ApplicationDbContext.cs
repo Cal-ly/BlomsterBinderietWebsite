@@ -7,6 +7,7 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
 
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Guest> GuestUsers { get; set; }
@@ -23,13 +24,9 @@ public class ApplicationDbContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Apply other configurations...
-
         base.OnModelCreating(modelBuilder);
-        SeedRoles(modelBuilder);
-        SeedUsers(modelBuilder);
-        SeedProducts(modelBuilder);
 
+        modelBuilder.Entity<ApplicationUser>().ToTable("ApplicationUsers");
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
         modelBuilder.ApplyConfiguration(new GuestConfiguration());
@@ -43,6 +40,9 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.ApplyConfiguration(new BasketActivityConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
         modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
+        SeedRoles(modelBuilder);
+        SeedUsers(modelBuilder);
+        SeedProducts(modelBuilder);
     }
 
     private static void SeedRoles(ModelBuilder modelBuilder)

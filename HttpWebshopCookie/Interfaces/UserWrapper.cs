@@ -2,47 +2,25 @@ namespace HttpWebshopCookie.Interfaces;
 
 public class UserWrapper
 {
-    private readonly Guest? _guest;
-    private readonly Customer? _customer;
-    private readonly Employee? _employee;
-    private readonly ApplicationUser? _applicationUser;
-
-    public UserWrapper(Guest guestUser)
-    {
-        _guest = guestUser;
-    }
-    public UserWrapper(Customer customer)
-    {
-        _customer = customer;
-    }
-    public UserWrapper(Employee employee)
-    {
-        _employee = employee;
-    }
-    public UserWrapper(ApplicationUser applicationUser)
-    {
-        _applicationUser = applicationUser;
-    }
-
     public string Id
     {
         get
         {
-            if (_guest != null)
+            if (Guest != null)
             {
-                return _guest.Id;
+                return Guest.Id;
             }
-            else if (_customer != null)
+            else if (Customer != null)
             {
-                return _customer.Id;
+                return Customer.Id;
             }
-            else if (_employee != null)
+            else if (Employee != null)
             {
-                return _employee.Id;
+                return Employee.Id;
             }
-            else if (_applicationUser != null)
+            else if (ApplicationUser != null)
             {
-                return _applicationUser.Id;
+                return ApplicationUser.Id;
             }
             else
             {
@@ -51,21 +29,21 @@ public class UserWrapper
         }
         set
         {
-            if (_guest != null)
+            if (Guest != null)
             {
-                _guest.Id = value;
+                Guest.Id = value;
             }
-            else if (_customer != null)
+            else if (Customer != null)
             {
-                _customer.Id = value;
+                Customer.Id = value;
             }
-            else if (_employee != null)
+            else if (Employee != null)
             {
-                _employee.Id = value;
+                Employee.Id = value;
             }
-            else if (_applicationUser != null)
+            else if (ApplicationUser != null)
             {
-                _applicationUser.Id = value;
+                ApplicationUser.Id = value;
             }
             else
             {
@@ -73,8 +51,52 @@ public class UserWrapper
             }
         }
     }
-    public Guest? Guest => _guest;
-    public Customer? Customer => _customer;
-    public Employee? Employee => _employee;
-    public ApplicationUser? ApplicationUser => _customer;
+    public string FirstName => Guest?.FirstName ?? Customer?.FirstName ?? Employee?.FirstName ?? ApplicationUser?.FirstName ?? throw new InvalidOperationException("No user is set");
+    public string LastName => Guest?.LastName ?? Customer?.LastName ?? Employee?.LastName ?? ApplicationUser?.LastName ?? throw new InvalidOperationException("No user is set");
+    public string Email => Guest?.Email ?? Customer?.Email ?? Employee?.Email ?? ApplicationUser?.Email ?? throw new InvalidOperationException("No user is set");
+    public Guest? Guest { get; }
+    public Customer? Customer { get; }
+    public Employee? Employee { get; }
+    public ApplicationUser? ApplicationUser { get; }
+
+    public UserWrapper(Guest guestUser)
+    {
+        Guest = guestUser;
+    }
+    public UserWrapper(Customer customer)
+    {
+        Customer = customer;
+    }
+    public UserWrapper(Employee employee)
+    {
+        Employee = employee;
+    }
+    public UserWrapper(ApplicationUser applicationUser)
+    {
+        ApplicationUser = applicationUser;
+    }
+
+    public string GetUserType()
+    {
+        if (Guest != null)
+        {
+            return "Guest";
+        }
+        else if (Customer != null)
+        {
+            return "Customer";
+        }
+        else if (Employee != null)
+        {
+            return "Employee";
+        }
+        else if (ApplicationUser != null)
+        {
+            return "ApplicationUser";
+        }
+        else
+        {
+            throw new InvalidOperationException("No user is set");
+        }
+    }
 }

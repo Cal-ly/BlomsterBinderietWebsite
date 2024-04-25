@@ -2,6 +2,7 @@ global using HttpWebshopCookie.Data;
 global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.IndexTables;
 global using HttpWebshopCookie.Models.Users;
+global using HttpWebshopCookie.Models.ViewModels;
 global using HttpWebshopCookie.Services;
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Interfaces;
@@ -56,6 +57,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<BasketService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<IOrderCreator, OrderService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

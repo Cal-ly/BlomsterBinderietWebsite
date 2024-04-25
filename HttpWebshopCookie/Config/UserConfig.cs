@@ -47,8 +47,8 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
         builder.HasKey(g => g.Id);
         builder.ToTable("Guests");
         builder.HasMany(g => g.Orders)
-            .WithOne(o => o.GuestUser)
-            .HasForeignKey(o => o.GuestUserId)
+            .WithOne(o => o.Guest)
+            .HasForeignKey(o => o.GuestId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(g => g.Address)
             .WithOne()

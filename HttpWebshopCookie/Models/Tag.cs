@@ -1,6 +1,4 @@
-﻿using HttpWebshopCookie.Models.IndexTables;
-
-namespace HttpWebshopCookie.Models;
+﻿namespace HttpWebshopCookie.Models;
 
 public class Tag
 {

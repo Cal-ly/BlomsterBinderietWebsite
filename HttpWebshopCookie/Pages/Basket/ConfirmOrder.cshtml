@@ -1,10 +1,10 @@
 ﻿@page
-@model HttpWebshopCookie.Pages.Basket.ViewBasketModel
+@model HttpWebshopCookie.Pages.Basket.ConfirmOrderModel
 
-<h1>View Basket</h1>
+<h1>Confirm Order</h1>
 
 <div style="text-align: center;">
-    <h2>Basket Items</h2>
+    <h2>Your Order Details</h2>
     <table style="width: auto;">
         <thead>
             <tr>
@@ -30,6 +30,13 @@
 </div>
 
 <div>
-    <a asp-page="Checkout" class="btn btn-primary">Proceed to Checkout</a>
-    <a asp-page="/Products/Index" class="btn btn-secondary">Continue Shopping</a>
+    <h2>Your Information</h2>
+    <p>Name: @Model.UserWrapper.FirstName @Model.UserWrapper.LastName</p>
+    <p>Email: @Model.UserWrapper.Email</p>
+    <p>Phone Number: @Model.UserWrapper.PhoneNumber</p>
+    <p>Address: @Model.UserWrapper.Address.FullAddress</p> <!-- Assuming FullAddress is a formatted address property -->
 </div>
+
+<form method="post">
+    <button type="submit" class="btn btn-success">Place Order</button>
+</form>

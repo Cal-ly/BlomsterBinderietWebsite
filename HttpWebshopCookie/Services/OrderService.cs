@@ -10,6 +10,7 @@ public class OrderService(ApplicationDbContext context) : IOrderCreator
             Status = OrderStatus.Pending,
         };
 
+        // Add each basket item to the order as order items
         foreach (var basketItem in basket.Items)
         {
             var orderItem = new OrderItem
@@ -23,21 +24,26 @@ public class OrderService(ApplicationDbContext context) : IOrderCreator
             order.OrderItems.Add(orderItem);
         }
 
-        if (userWrapper.Guest != null)
+        // Set the user-related information on the order based on user type
+        switch (userWrapper.GetUserType())
         {
-            order.GuestUser = userWrapper.Guest;
-            order.GuestUserId = userWrapper.Id;
-        }
-        else if (userWrapper.Customer != null)
-        {
-            order.Customer = userWrapper.Customer;
-            order.CustomerId = userWrapper.Id;
-        }
-        else
-        {
-            throw new ArgumentException("User or GuestUser must be provided");
+            case "Guest":
+                order.Guest = userWrapper.Guest;
+                order.GuestId = userWrapper.Id;
+                break;
+            case "Customer":
+                order.Customer = userWrapper.Customer;
+                order.CustomerId = userWrapper.Id;
+                break;
+            case "Employee":
+                order.Employee = userWrapper.Employee;
+                order.EmployeeId = userWrapper.Id;
+                break;
+            default:
+                throw new ArgumentException("Valid user type must be provided");
         }
 
+        // Save the order to the database
         context.Orders.Add(order);
         context.SaveChanges();
 

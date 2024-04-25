@@ -1,21 +1,10 @@
-﻿using HttpWebshopCookie.Interfaces;
+﻿namespace HttpWebshopCookie.Services;
 
-namespace HttpWebshopCookie.Services;
-
-public class BasketService
+public class BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IOrderCreator _orderCreator;
-
-    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator) //TODO: convert to primary constructor
-    {
-        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-        _orderCreator = orderCreator;
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    private readonly UserManager<IdentityUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
 
     public Basket GetOrCreateBasket()
     {
@@ -181,37 +170,15 @@ public class BasketService
         await _context.SaveChangesAsync();
     }
 
-    public Order Checkout(UserWrapper userWrapper)
+    public Order PlaceOrder(UserWrapper userWrapper)
     {
         var basket = GetOrCreateBasket();
-        var order = _orderCreator.CreateOrderFromBasket(basket, userWrapper);
-
-        if (userWrapper != null)
-        {
-            var customer = _context.Customers.FirstOrDefault(c => c.Id == userWrapper.Id);
-            if (customer != null)
-            {
-                order.CustomerId = customer.Id;
-                order.Customer = customer;
-            }
-        }
+        var order = orderCreator.CreateOrderFromBasket(basket, userWrapper);
 
         basket.Items.Clear();
         LogBasketActivity(basket.Id, null, "Checkout", 0).Wait();
         _context.SaveChanges();
 
         return order;
-    }
-
-    public List<BasketItem> ListBasketItems()
-    {
-        var basket = GetOrCreateBasket();
-        return basket.Items.ToList();
-    }
-    //TODO: Might remove this method, as it is not used in the project
-    public decimal CalculateTotalPrice()
-    {
-        var basket = GetOrCreateBasket();
-        return basket.Items.Sum(item => item.LinePrice());
     }
 }

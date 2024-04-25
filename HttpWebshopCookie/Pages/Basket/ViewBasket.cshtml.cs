@@ -1,22 +1,16 @@
+using HttpWebshopCookie.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 namespace HttpWebshopCookie.Pages.Basket;
 
 public class ViewBasketModel(ApplicationDbContext context, BasketService basketService, UserManager<ApplicationUser> userManager) : PageModel
 {
     public Models.Basket Basket { get; set; } = default!;
-    public UserWrapper UserWrapper { get; set; } = default!;
+    public UserWrapper? UserWrapper { get; set; }
 
-    public Task OnGet()
+    public void OnGet()
     {
         Basket = basketService.GetOrCreateBasket();
-        if (User.Identity is not null)
-        {
-            var currentUser = userManager.GetUserAsync(User);
-            if (currentUser is not null)
-            {
-                UserWrapper = new UserWrapper(currentUser.Result);
-            }
-        }
-        return Task.CompletedTask;
     }
-
 }
