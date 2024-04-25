@@ -1,27 +1,22 @@
-using HttpWebshopCookie.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+namespace HttpWebshopCookie.Pages.Basket;
 
-namespace HttpWebshopCookie.Pages.Basket
+public class ViewBasketModel(ApplicationDbContext context, BasketService basketService, UserManager<ApplicationUser> userManager) : PageModel
 {
-    public class ViewBasketModel : PageModel
+    public Models.Basket Basket { get; set; } = default!;
+    public UserWrapper UserWrapper { get; set; } = default!;
+
+    public Task OnGet()
     {
-
-        private readonly ApplicationDbContext _context;
-        private readonly BasketService _basketService;
-
-        public Models.Basket Basket { get; set; } = default!;
-
-        public ViewBasketModel(ApplicationDbContext context, BasketService basketService)
+        Basket = basketService.GetOrCreateBasket();
+        if (User.Identity is not null)
         {
-            _context = context;
-            _basketService = basketService;
+            var currentUser = userManager.GetUserAsync(User);
+            if (currentUser is not null)
+            {
+                UserWrapper = new UserWrapper(currentUser.Result);
+            }
         }
-
-        public void OnGet()
-        {
-            Basket = _basketService.GetOrCreateBasket();
-        }
+        return Task.CompletedTask;
     }
+
 }

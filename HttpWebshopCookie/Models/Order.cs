@@ -17,7 +17,7 @@ public class Order
     public string? CustomerId { get; set; }
 
     [ForeignKey("GuestUserId")]
-    public GuestUser? GuestUser { get; set; }
+    public Guest? GuestUser { get; set; }
     public string? GuestUserId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = [];
 }

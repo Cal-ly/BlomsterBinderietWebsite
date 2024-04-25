@@ -40,9 +40,9 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     }
 }
 
-public class GuestConfiguration : IEntityTypeConfiguration<GuestUser>
+public class GuestConfiguration : IEntityTypeConfiguration<Guest>
 {
-    public void Configure(EntityTypeBuilder<GuestUser> builder)
+    public void Configure(EntityTypeBuilder<Guest> builder)
     {
         builder.HasKey(g => g.Id);
         builder.ToTable("Guests");
@@ -52,7 +52,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<GuestUser>
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(g => g.Address)
             .WithOne()
-            .HasForeignKey<GuestUser>(g => g.AddressId)
+            .HasForeignKey<Guest>(g => g.AddressId)
             .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

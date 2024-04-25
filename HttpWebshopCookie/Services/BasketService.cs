@@ -181,20 +181,14 @@ public class BasketService
         await _context.SaveChangesAsync();
     }
 
-    public decimal CalculateTotalPrice()
+    public Order Checkout(UserWrapper userWrapper)
     {
         var basket = GetOrCreateBasket();
-        return basket.Items.Sum(item => item.LinePrice());
-    }
+        var order = _orderCreator.CreateOrderFromBasket(basket, userWrapper);
 
-    public Order Checkout(IdentityUser user)
-    {
-        var basket = GetOrCreateBasket();
-        var order = _orderCreator.CreateOrderFromBasket(basket);
-
-        if (user != null)
+        if (userWrapper != null)
         {
-            var customer = _context.Customers.FirstOrDefault(c => c.Id == user.Id);
+            var customer = _context.Customers.FirstOrDefault(c => c.Id == userWrapper.Id);
             if (customer != null)
             {
                 order.CustomerId = customer.Id;
@@ -213,5 +207,11 @@ public class BasketService
     {
         var basket = GetOrCreateBasket();
         return basket.Items.ToList();
+    }
+    //TODO: Might remove this method, as it is not used in the project
+    public decimal CalculateTotalPrice()
+    {
+        var basket = GetOrCreateBasket();
+        return basket.Items.Sum(item => item.LinePrice());
     }
 }

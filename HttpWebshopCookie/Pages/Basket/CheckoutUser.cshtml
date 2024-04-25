@@ -1,9 +1,9 @@
 ﻿@page
-@model HttpWebshopCookie.Pages.Basket.ViewBasketModel
+@model HttpWebshopCookie.Pages.Basket.CheckoutUserModel
 @{
 }
 
-<h1>ViewBasket</h1>
+<h1>Checkout</h1>
 
 <div style="text-align: center;">
     <h2>Basket Items</h2>
@@ -31,14 +31,19 @@
     <p>@Model.Basket.TotalPrice()</p>
 </div>
 
-@if (!User.Identity!.IsAuthenticated)
+@if (User.Identity!.IsAuthenticated)
 {
     <div>
-        <p>Please register or log in to continue</p>
+        <p>Hello there! You are logged in as: @User.Identity!.Name</p>
+        <p>This is your current contact information</p>
         <p>
-            <a asp-page="/Account/Login">Log in</a> |
-            <a asp-page="/Account/Register">Register</a> |
-            <a asp-page="Checkout">Checkout</a> |
+            <span>First Name: @Model.UserWrapper.ApplicationUser.FirstName</span><br />
+            <span>Last Name: @Model.UserWrapper.ApplicationUser.LastName</span><br />
+            <span>Email: @Model.UserWrapper.ApplicationUser.Email</span><br />
+            <span>Phone Number: @Model.UserWrapper.ApplicationUser.PhoneNumber</span><br />
+        <p>
+            <a asp-page="/Account/Login"></a>
+            <a asp-page="CheckoutUser" asp-route-user="@Model.UserWrapper">Checkout</a> |
             <a asp-page="./Products/Index">Back to Products</a>
         </p>
     </div>
@@ -46,9 +51,10 @@
 else
 {
     <div>
-        <p>Hello there! You are logged in as: @User.Identity!.Name</p>
+        <p>Not you? Please register or log in to continue</p>
         <p>
-            <a asp-page="CheckoutUser" asp-route-user="@Model.UserWrapper">Checkout</a> |
+            <a asp-page="/Account/Login">Log in</a> |
+            <a asp-page="/Account/Register">Register</a> |
             <a asp-page="./Products/Index">Back to Products</a>
         </p>
     </div>

@@ -2,5 +2,5 @@
 
 public interface IOrderCreator
 {
-    Order CreateOrderFromBasket(Basket basket);
+    Order CreateOrderFromBasket(Basket basket, UserWrapper userWrapper);
 }

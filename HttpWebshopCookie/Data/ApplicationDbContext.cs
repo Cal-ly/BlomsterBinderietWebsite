@@ -9,7 +9,7 @@ public class ApplicationDbContext : IdentityDbContext
 
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }
-    public DbSet<GuestUser> GuestUsers { get; set; }
+    public DbSet<Guest> GuestUsers { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<Product> Products { get; set; }
