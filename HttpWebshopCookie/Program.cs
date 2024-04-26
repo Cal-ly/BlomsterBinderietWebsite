@@ -1,11 +1,10 @@
+global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
+global using HttpWebshopCookie.Interfaces;
 global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.IndexTables;
 global using HttpWebshopCookie.Models.Users;
-global using HttpWebshopCookie.Models.ViewModels;
 global using HttpWebshopCookie.Services;
-global using HttpWebshopCookie.Config;
-global using HttpWebshopCookie.Interfaces;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Http;

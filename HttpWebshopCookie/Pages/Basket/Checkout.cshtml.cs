@@ -16,7 +16,7 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
         if (User!.Identity!.IsAuthenticated)
         {
             var userId = userManager.GetUserId(User);
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(userId!);
 
             if (user != null)
             {
@@ -24,12 +24,12 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
                 if (context.Customers.Any(c => c.Id == userId))
                 {
                     var customer = await context.Customers.FindAsync(userId);
-                    UserWrapper = new UserWrapper(customer);
+                    UserWrapper = new UserWrapper(customer!);
                 }
                 else if (context.Employees.Any(e => e.Id == userId))
                 {
                     var employee = await context.Employees.FindAsync(userId);
-                    UserWrapper = new UserWrapper(employee);
+                    UserWrapper = new UserWrapper(employee!);
                 }
                 else
                 {

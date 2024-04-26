@@ -15,18 +15,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Basket.Items)
+            @foreach (var item in Model.Basket?.Items ?? new List<BasketItem>())
             {
                 <tr>
                     <td>@(item.ProductInBasket?.Name)</td>
                     <td>@item.Quantity</td>
                     <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
-                    <td>@item.LinePrice().ToString("C"))</td>
+                    <td>@(item.LinePrice().ToString("C"))</td>
                 </tr>
             }
         </tbody>
     </table>
-    <p>Total: @Model.Basket.TotalPrice().ToString("C")</p>
+    <p>Total: @Model.Basket?.TotalPrice().ToString("C")</p>
 </div>
 
 @if (Model.UserWrapper != null)

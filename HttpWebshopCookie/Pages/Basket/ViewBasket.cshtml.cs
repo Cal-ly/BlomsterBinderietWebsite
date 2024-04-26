@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HttpWebshopCookie.Pages.Basket;
 
-public class ViewBasketModel(ApplicationDbContext context, BasketService basketService, UserManager<ApplicationUser> userManager) : PageModel
+public class ViewBasketModel(BasketService basketService) : PageModel
 {
     public Models.Basket Basket { get; set; } = default!;
     public UserWrapper? UserWrapper { get; set; }

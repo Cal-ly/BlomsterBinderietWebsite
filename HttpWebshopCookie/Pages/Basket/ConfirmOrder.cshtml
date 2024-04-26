@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Basket.Items)
+            @foreach (var item in Model.Basket?.Items ?? new List<BasketItem>())
             {
                 <tr>
                     <td>@(item.ProductInBasket?.Name)</td>
@@ -26,15 +26,15 @@
             }
         </tbody>
     </table>
-    <p>Total: @Model.Basket.TotalPrice().ToString("C")</p>
+    <p>Total: @Model.Basket?.TotalPrice().ToString("C")</p>
 </div>
 
 <div>
     <h2>Your Information</h2>
-    <p>Name: @Model.UserWrapper.FirstName @Model.UserWrapper.LastName</p>
-    <p>Email: @Model.UserWrapper.Email</p>
-    <p>Phone Number: @Model.UserWrapper.PhoneNumber</p>
-    <p>Address: @Model.UserWrapper.Address.FullAddress</p> <!-- Assuming FullAddress is a formatted address property -->
+    <p>Name: @(Model.UserWrapper?.FirstName) @(Model.UserWrapper?.LastName)</p>
+    <p>Email: @Model.UserWrapper?.Email</p>
+    <p>Phone Number: @Model.UserWrapper?.PhoneNumber</p>
+    <p>Address: @(Model.UserWrapper?.Address?.FullAddress() ?? "Address not available")</p>
 </div>
 
 <form method="post">

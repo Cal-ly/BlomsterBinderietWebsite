@@ -5,26 +5,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HttpWebshopCookie.Pages.Basket;
 
-public class ConfirmOrderModel : PageModel
+public class ConfirmOrderModel(BasketService basketService) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-    private readonly BasketService _basketService;
-    private readonly UserManager<ApplicationUser> _userManager;
+    public Models.Basket? Basket { get; private set; }
+    public UserWrapper? UserWrapper { get; private set; }
 
-    public Models.Basket Basket { get; private set; }
-    public UserWrapper UserWrapper { get; private set; }
-
-    public ConfirmOrderModel(ApplicationDbContext context, BasketService basketService, UserManager<ApplicationUser> userManager)
-    {
-        _context = context;
-        _basketService = basketService;
-        _userManager = userManager;
-    }
-
-    public async Task<IActionResult> OnGetAsync(UserWrapper userWrapper)
+    public IActionResult OnGet(UserWrapper userWrapper)
     {
         UserWrapper = userWrapper ?? throw new ArgumentNullException(nameof(userWrapper));
-        Basket = _basketService.GetOrCreateBasket();
+        Basket = basketService.GetOrCreateBasket();
 
         if (Basket.Items.Count == 0)
         {
@@ -35,7 +24,7 @@ public class ConfirmOrderModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public IActionResult OnPost()
     {
         if (!ModelState.IsValid || UserWrapper == null)
         {
@@ -43,7 +32,7 @@ public class ConfirmOrderModel : PageModel
         }
 
         // Assume PlaceOrder completes the order process
-        var orderResult = _basketService.PlaceOrder(UserWrapper);
+        var orderResult = basketService.PlaceOrder(UserWrapper);
 
         if (orderResult != null)
         {
