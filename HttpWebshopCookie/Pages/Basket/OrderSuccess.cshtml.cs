@@ -1,22 +1,14 @@
 namespace HttpWebshopCookie.Pages.Basket;
 
-public class OrderSuccessModel : PageModel
+public class OrderSuccessModel(ApplicationDbContext context) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-
-    public string OrderId { get; set; }
-    public DateTime EstimatedDeliveryDate { get; set; }
-    public List<OrderItemView> OrderItems { get; set; }
-    public decimal Total { get; set; }
-
-    public OrderSuccessModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    public string? OrderId { get; set; }
+    public List<OrderItemView>? OrderItems { get; set; } = [];
+    public string? TotalString { get; set; }
 
     public void OnGet(string orderId)
     {
-        var order = _context.Orders
+        var order = context.Orders
             .Include(o => o.OrderItems)
             .ThenInclude(oi => oi.ProductItem)
             .SingleOrDefault(o => o.Id == orderId);
@@ -27,21 +19,20 @@ public class OrderSuccessModel : PageModel
         }
 
         OrderId = orderId;
-        OrderItems = order.OrderItems.Select(oi => new OrderItemView
+        OrderItems = order!.OrderItems.Select(oi => new OrderItemView
         {
-            ProductName = oi.ProductItem.Name,
+            ProductName = oi.ProductItem?.Name,
             Quantity = oi.Quantity,
-            Price = oi.ProductItem.Price
+            Price = oi.ProductItem?.Price
         }).ToList();
 
-        Total = OrderItems.Sum(oi => oi.Price * oi.Quantity);
-        EstimatedDeliveryDate = DateTime.Now.AddDays(3); // Example: Adding three days for delivery.
+        TotalString = order?.TotalPrice.ToString("C2");
     }
 
     public class OrderItemView
     {
         public string? ProductName { get; set; }
-        public int Quantity { get; set; }
-        public decimal Price { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? Price { get; set; }
     }
 }

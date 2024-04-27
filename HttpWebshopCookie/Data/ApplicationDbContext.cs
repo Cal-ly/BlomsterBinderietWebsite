@@ -26,7 +26,7 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ApplicationUser>().ToTable("ApplicationUsers");
+        modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
         modelBuilder.ApplyConfiguration(new GuestConfiguration());
@@ -40,6 +40,9 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.ApplyConfiguration(new BasketActivityConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
         modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
+
+        modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
+
         SeedRoles(modelBuilder);
         SeedUsers(modelBuilder);
         SeedProducts(modelBuilder);
@@ -75,7 +78,7 @@ public class ApplicationDbContext : IdentityDbContext
             SecurityStamp = string.Empty,
             JobTitle = "CEO",
             Salary = 100000,
-            HireDate = DateTime.Now
+            EnrollmentDate = DateTime.UtcNow
         };
         Employee managerUser = new()
         {
@@ -89,7 +92,7 @@ public class ApplicationDbContext : IdentityDbContext
             SecurityStamp = string.Empty,
             JobTitle = "Manager",
             Salary = 50000,
-            HireDate = DateTime.Now
+            EnrollmentDate = DateTime.UtcNow
         };
         Employee staffUser = new()
         {
@@ -103,7 +106,7 @@ public class ApplicationDbContext : IdentityDbContext
             SecurityStamp = string.Empty,
             JobTitle = "Staff",
             Salary = 30000,
-            HireDate = DateTime.Now
+            EnrollmentDate = DateTime.UtcNow
         };
         Employee assistantUser = new()
         {
@@ -117,7 +120,7 @@ public class ApplicationDbContext : IdentityDbContext
             SecurityStamp = string.Empty,
             JobTitle = "Assistant",
             Salary = 20000,
-            HireDate = DateTime.Now
+            EnrollmentDate = DateTime.UtcNow
         };
         Customer companyRepUser = new()
         {
@@ -177,7 +180,7 @@ public class ApplicationDbContext : IdentityDbContext
             Description = "Description of Product 1",
             Price = 100,
             ImageUrl = "https://via.placeholder.com/150",
-            IsActivated = true,
+            IsDeleted = true,
             UpdatedAt = DateTime.Now
         };
         Product product2 = new Product
@@ -187,7 +190,7 @@ public class ApplicationDbContext : IdentityDbContext
             Description = "Description of Product 2",
             Price = 200,
             ImageUrl = "https://via.placeholder.com/150",
-            IsActivated = true,
+            IsDeleted = true,
             UpdatedAt = DateTime.Now
         };
         Product product3 = new Product
@@ -197,7 +200,7 @@ public class ApplicationDbContext : IdentityDbContext
             Description = "Description of Product 3",
             Price = 300,
             ImageUrl = "https://via.placeholder.com/150",
-            IsActivated = true,
+            IsDeleted = true,
             UpdatedAt = DateTime.Now
         };
         Product product4 = new Product
@@ -207,7 +210,7 @@ public class ApplicationDbContext : IdentityDbContext
             Description = "Description of Product 4",
             Price = 400,
             ImageUrl = "https://via.placeholder.com/150",
-            IsActivated = true,
+            IsDeleted = true,
             UpdatedAt = DateTime.Now
         };
         Product product5 = new Product
@@ -217,7 +220,7 @@ public class ApplicationDbContext : IdentityDbContext
             Description = "Description of Product 5",
             Price = 500,
             ImageUrl = "https://via.placeholder.com/150",
-            IsActivated = true,
+            IsDeleted = true,
             UpdatedAt = DateTime.Now
         };
 
@@ -226,7 +229,7 @@ public class ApplicationDbContext : IdentityDbContext
         Tag tag1 = new Tag
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Tag 1",
+            Description = "Tag 1",
             Catergory = "Category 1",
             SubCategory = "SubCategory 1",
 
@@ -234,28 +237,28 @@ public class ApplicationDbContext : IdentityDbContext
         Tag tag2 = new Tag
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Tag 2",
+            Description = "Tag 2",
             Catergory = "Category 2",
             SubCategory = "SubCategory 2"
         };
         Tag tag3 = new Tag
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Tag 3",
+            Description = "Tag 3",
             Catergory = "Category 3",
             SubCategory = "SubCategory 3"
         };
         Tag tag4 = new Tag
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Tag 4",
+            Description = "Tag 4",
             Catergory = "Category 4",
             SubCategory = "SubCategory 4"
         };
         Tag tag5 = new Tag
         {
             Id = Guid.NewGuid().ToString(),
-            Name = "Tag 5",
+            Description = "Tag 5",
             Catergory = "Category 5",
             SubCategory = "SubCategory 5"
         };

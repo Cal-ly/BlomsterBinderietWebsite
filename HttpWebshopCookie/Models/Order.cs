@@ -2,24 +2,18 @@
 
 public class Order
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    public DateTime OrderDate { get; set; } = DateTime.Now;
+    public DateTime OrderDate { get; set; }
     public DateTime? CompletionDate { get; set; }
     public OrderStatus Status { get; set; }
-
-    [ForeignKey("EmployeeId")]
-    public Employee? Employee { get; set; }
-    public string? EmployeeId { get; set; }
-
-    [ForeignKey("CustomerId")]
     public Customer? Customer { get; set; }
     public string? CustomerId { get; set; }
-
-    [ForeignKey("GuestId")]
     public Guest? Guest { get; set; }
     public string? GuestId { get; set; }
+    public Employee? Employee { get; set; }
+    public string? EmployeeId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = [];
+    public decimal TotalPrice => OrderItems.Sum(item => item.UnitPrice * item.Quantity);
 }
 
 public enum OrderStatus

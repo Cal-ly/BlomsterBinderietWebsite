@@ -2,13 +2,13 @@
 
 public class ApplicationUser : IdentityUser
 {
-    [Display(Name = "First Name")]
     public string? FirstName { get; set; }
-    [Display(Name = "Last Name")]
     public string? LastName { get; set; }
-    [ForeignKey("AddressId")]
+    public DateTime? EnrollmentDate { get; set; }
+    public DateTime? LastLogin { get; set; }
     public virtual Address? Address { get; set; }
     public string? AddressId { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = [];
 }
 
 // IdentityUser is a class from the Microsoft.AspNetCore.Identity.EntityFrameworkCore namespace.

@@ -3,39 +3,47 @@
 
 <h1>Order Confirmation</h1>
 
-<div style="text-align: center;">
-    <h2>Thank You for Your Purchase!</h2>
-    <p>Your order has been placed successfully.</p>
-    <p>Order Number: @Model.OrderId</p>
 
-    <h3>Order Details</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.OrderItems)
-            {
+
+
+@if (Model.OrderItems != null)
+{
+
+    <div style="text-align: center;">
+        <h2>Thank You for Your Purchase!</h2>
+        <p>Your order has been placed successfully.</p>
+        <p>Order Number: @Model.OrderId</p>
+        <h3>Order Details</h3>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.ProductName</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <p>Total: @Model.Total.ToString("C")</p>
-
-@*     <p>Expected Delivery: @Model.EstimatedDeliveryDate.ToShortDateString()</p> *@ <!-- Implement? -->
-
-    <div class="actions">
-        <a asp-page="/Products/Index" class="btn btn-primary">Continue Shopping</a>
-        <a asp-page="/Account/OrderHistory" class="btn btn-secondary">View Order History</a>
+            </thead>
+            <tbody>
+               @foreach (var item in Model.OrderItems)
+               {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price</td>
+                        <td>@(item.Price.HasValue && item.Quantity.HasValue ? (item.Price * item.Quantity).Value.ToString("C2") : "0")</td>
+                    </tr>
+               }
+            </tbody>
+        </table>
+    <p>Total: @Model.TotalString?</p>
     </div>
+}
+else
+{
+    <p>Order Details not available</p>
+}
+
+<div class="actions">
+    <a asp-page="/Products/Index" class="btn btn-primary">Continue Shopping</a>
+    <a asp-page="/Account/OrderHistory" class="btn btn-secondary">View Order History</a>
 </div>

@@ -37,6 +37,8 @@
             Name: @Model.UserWrapper.FirstName @Model.UserWrapper.LastName
             <br>
             Email: @Model.UserWrapper.Email
+            <br>
+            Phone Number: @Model.UserWrapper.PhoneNumber
         </p>
         <form method="post" asp-page-handler="User">
             <button type="submit" class="btn btn-success">Confirm Order</button>

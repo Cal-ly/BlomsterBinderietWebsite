@@ -1,42 +1,69 @@
 ﻿namespace HttpWebshopCookie.Config;
 
-public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
+public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : ApplicationUser
 {
-    public void Configure(EntityTypeBuilder<Customer> builder)
+    public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        builder.HasKey(c => c.Id);
+        builder.HasKey(u => u.Id);
+        builder.Property(u => u.Id).ValueGeneratedOnAdd();
+        builder.Property(u => u.Email)
+            .HasComment("Must be a valid email format")
+            .IsRequired()
+            .HasMaxLength(256);
+        builder.Property(u => u.FirstName).IsRequired();
+        builder.Property(u => u.LastName).IsRequired();
+        builder.Property(u => u.PhoneNumber).IsRequired();
+        builder.Property(u => u.EnrollmentDate).HasColumnType("datetime").HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(u => u.LastLogin).HasColumnType("datetime");
+
+        builder.HasOne(u => u.Address)
+            .WithOne()
+            .HasForeignKey<T>(u => u.AddressId)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
+        builder.HasIndex(u => u.Email).IsUnique();
+    }
+}
+
+public class ApplicationUserConfiguration : UserConfiguration<ApplicationUser>
+{
+    public override void Configure(EntityTypeBuilder<ApplicationUser> builder)
+    {
+        base.Configure(builder);
+        builder.ToTable("ApplicationUsers");
+    }
+}
+
+public class CustomerConfiguration : UserConfiguration<Customer>
+{
+    public override void Configure(EntityTypeBuilder<Customer> builder)
+    {
+        base.Configure(builder);
         builder.ToTable("Customers");
-        builder.HasIndex(c => c.Email).IsUnique();
+        builder.Property(c => c.BirthDate).HasColumnType("datetime");
+
         builder.HasMany(c => c.Orders)
             .WithOne(o => o.Customer)
             .HasForeignKey(o => o.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(c => c.Address)
-            .WithOne()
-            .HasForeignKey<Customer>(c => c.AddressId)
-            .OnDelete(DeleteBehavior.ClientCascade);
         builder.HasOne(c => c.Company)
             .WithMany(c => c.Representatives)
             .HasForeignKey(c => c.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
-public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+public class EmployeeConfiguration : UserConfiguration<Employee>
 {
-    public void Configure(EntityTypeBuilder<Employee> builder)
+    public override void Configure(EntityTypeBuilder<Employee> builder)
     {
-        builder.HasKey(e => e.Id);
+        base.Configure(builder);
         builder.ToTable("Employees");
-        builder.HasIndex(e => e.Email).IsUnique();
         builder.Property(e => e.Salary).HasColumnType("decimal(18,2)");
+        builder.Property(e => e.TerminationDate).HasColumnType("datetime");
         builder.HasMany(e => e.Orders)
             .WithOne(e => e.Employee)
             .HasForeignKey(o => o.EmployeeId)
             .OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(e => e.Address)
-            .WithOne()
-            .HasForeignKey<Employee>(e => e.AddressId)
-            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }
 
@@ -45,7 +72,14 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
     public void Configure(EntityTypeBuilder<Guest> builder)
     {
         builder.HasKey(g => g.Id);
+        builder.Property(g => g.Id).ValueGeneratedOnAdd();
         builder.ToTable("Guests");
+
+        builder.Property(g => g.FirstName).IsRequired();
+        builder.Property(g => g.LastName).IsRequired();
+        builder.Property(g => g.Email).IsRequired();
+        builder.Property(g => g.PhoneNumber).IsRequired();
+        builder.HasKey(g => g.Id);
         builder.HasMany(g => g.Orders)
             .WithOne(o => o.Guest)
             .HasForeignKey(o => o.GuestId)
@@ -53,6 +87,8 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
         builder.HasOne(g => g.Address)
             .WithOne()
             .HasForeignKey<Guest>(g => g.AddressId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(g => g.Email).IsUnique();
     }
 }

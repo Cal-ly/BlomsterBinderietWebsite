@@ -1,10 +1,19 @@
 ﻿namespace HttpWebshopCookie.Services;
 
-public class BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator)
+public class BasketService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-    private readonly UserManager<IdentityUser> _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly IOrderCreator orderCreator;
+
+    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator)
+    {
+        this.orderCreator = orderCreator;
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+    }
 
     public Basket GetOrCreateBasket()
     {
@@ -50,7 +59,7 @@ public class BasketService(IHttpContextAccessor httpContextAccessor, Application
     public async Task AddToBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.Find(i => i.ProductId == productId);
+        var item = basket.Items.First(i => i.ProductId == productId);
 
         if (item == null)
         {
@@ -80,7 +89,7 @@ public class BasketService(IHttpContextAccessor httpContextAccessor, Application
     public async Task<int> GetQuantityInBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.Find(i => i.ProductId == productId);
+        var item = basket.Items.First(i => i.ProductId == productId);
         int itemQuantity = item?.Quantity ?? 0;
         return await Task.FromResult(itemQuantity);
     }
@@ -126,7 +135,7 @@ public class BasketService(IHttpContextAccessor httpContextAccessor, Application
     public async Task RemoveFromBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.Find(i => i.ProductId == productId);
+        var item = basket.Items.First(i => i.ProductId == productId);
 
         if (item == null)
         {
@@ -156,14 +165,18 @@ public class BasketService(IHttpContextAccessor httpContextAccessor, Application
 
     private async Task LogBasketActivity(string basketId, string? productId, string activityType, int? quantityChanged)
     {
+        var userId = _userManager.GetUserId(_httpContextAccessor!.HttpContext?.User!);
+        var sessionId = _httpContextAccessor.HttpContext?.Session.Id;
+
         var activity = new BasketActivity
         {
             BasketId = basketId,
             ProductId = productId,
             ActivityType = activityType,
             QuantityChanged = quantityChanged ?? 0,
-            SessionId = _httpContextAccessor.HttpContext?.Session.Id,
-            UserId = _userManager.GetUserId(_httpContextAccessor.HttpContext?.User!),
+            SessionId = sessionId,
+            UserId = string.IsNullOrEmpty(userId) ? null : userId,
+            IsRegisteredUser = !string.IsNullOrEmpty(userId)
         };
 
         _context.BasketActivities.Add(activity);
