@@ -7,7 +7,7 @@ namespace HttpWebshopCookie.Pages.Basket;
 
 public class ConfirmOrderModel(BasketService basketService) : PageModel
 {
-    public Models.Basket? Basket { get; private set; }
+    public Models.Basket Basket { get; set; } = default!;
     public UserWrapper? UserWrapper { get; private set; }
 
     public IActionResult OnGet(UserWrapper userWrapper)

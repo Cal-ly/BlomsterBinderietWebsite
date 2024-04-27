@@ -6,7 +6,7 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
     public Guest Guest { get; set; } = new Guest();
     [BindProperty]
     public Address Address { get; set; } = new Address();
-    public Models.Basket? Basket { get; private set; }
+    public Models.Basket Basket { get; set; } = default!;
     public UserWrapper? UserWrapper { get; private set; }
 
     public async Task<IActionResult> OnGet()
