@@ -3,8 +3,8 @@
 public class Tag
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
-    public string? Description { get; set; }
-    public string? Catergory { get; set; }
+    public string? Occasion { get; set; }
+    public string? Category { get; set; }
     public string? SubCategory { get; set; }
     public List<ProductTag> ProductTags { get; set; } = [];
 }

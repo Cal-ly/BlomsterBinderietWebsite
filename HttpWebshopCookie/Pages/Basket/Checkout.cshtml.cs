@@ -20,7 +20,6 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
 
             if (user != null)
             {
-                // Determine the specific type of user and set the UserWrapper accordingly
                 if (context.Customers.Any(c => c.Id == userId))
                 {
                     var customer = await context.Customers.FindAsync(userId);

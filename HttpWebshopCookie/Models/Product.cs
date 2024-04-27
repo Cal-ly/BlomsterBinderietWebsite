@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using HttpWebshopCookie.Models.IndexTables;
+using HttpWebshopCookie.Data.IndexTables;
 
 namespace HttpWebshopCookie.Models;
 

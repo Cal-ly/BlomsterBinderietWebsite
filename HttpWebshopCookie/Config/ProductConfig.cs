@@ -29,12 +29,14 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
         builder.Property(t => t.Id).ValueGeneratedOnAdd();
         builder.ToTable("Tags");
 
-        builder.Property(t => t.Catergory).IsRequired();
+        builder.Property(t => t.Category).IsRequired();
 
         builder.HasMany(t => t.ProductTags)
             .WithOne(pt => pt.Tag)
             .HasForeignKey(pt => pt.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(t => new { t.Occasion, t.Category, t.SubCategory }).IsUnique(); // Unique constraint on and indexed by hierarchy of Occasion, Category, SubCategory.
     }
 }
 

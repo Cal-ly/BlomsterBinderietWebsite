@@ -30,6 +30,15 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Product.Price)
         </dd>
+        <dt class="col-sm-2">
+            Tags
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var tag in Model.ProductTagStrings)
+            {
+                <span class="badge badge-secondary">@tag</span>
+            }
+        </dd>
     </dl>
 </div>
 <div>

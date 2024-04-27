@@ -1,13 +1,11 @@
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
+global using HttpWebshopCookie.Data.IndexTables;
+global using HttpWebshopCookie.Data.MockData;
 global using HttpWebshopCookie.Interfaces;
 global using HttpWebshopCookie.Models;
-global using HttpWebshopCookie.Models.IndexTables;
 global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
-global using Microsoft.AspNetCore.Builder;
-global using Microsoft.AspNetCore.Hosting;
-global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc;
@@ -17,16 +15,7 @@ global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Metadata;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.EntityFrameworkCore.Migrations;
-global using Microsoft.Extensions.Configuration;
-global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.Extensions.Hosting;
-global using Microsoft.Extensions.Logging;
-global using System;
-global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
-global using System.ComponentModel.DataAnnotations.Schema;
-global using System.Linq;
-global using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,9 +43,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<ProductService>();
+builder.Services.AddSingleton<OrderService>();
 builder.Services.AddScoped<BasketService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<IOrderCreator, OrderService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

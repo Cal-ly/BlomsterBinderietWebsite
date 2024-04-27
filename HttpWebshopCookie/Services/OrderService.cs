@@ -1,6 +1,6 @@
 namespace HttpWebshopCookie.Services;
 
-public class OrderService(ApplicationDbContext context) : IOrderCreator
+public class OrderService(ApplicationDbContext context)
 {
     public Order CreateOrderFromBasket(Basket basket, UserWrapper userWrapper)
     {
