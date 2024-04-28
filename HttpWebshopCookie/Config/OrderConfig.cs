@@ -10,7 +10,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders");
         builder.Property(o => o.OrderDate)
             .HasColumnType("datetime")
-            .HasDefaultValueSql("GETUTCDATE()");
+            .HasDefaultValue(DateTime.UtcNow);
         builder.Property(o => o.CompletionDate)
             .HasColumnType("datetime");
         builder.Property(o => o.Status)
@@ -18,8 +18,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasConversion<string>();
         builder.Property(o => o.TotalPrice)
             .HasColumnType("decimal(18,2)");
-        builder.Property(o => o.TotalPrice)
-               .HasComputedColumnSql("SELECT SUM(UnitPrice * Quantity) FROM OrderItems WHERE OrderId = Id", stored: true);
+        //builder.Property(o => o.TotalPrice)
+        //       .HasComputedColumnSql("SELECT SUM(UnitPrice * Quantity) FROM OrderItems WHERE OrderId = Id", stored: true);
 
         builder.HasOne(o => o.Customer)
             .WithMany(c => c.Orders)
@@ -55,8 +55,6 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
             .HasDefaultValue(1);
         builder.Property(oi => oi.UnitPrice)
             .HasColumnType("decimal(18,2)");
-        builder.Property(oi => oi.UnitPrice)
-            .HasComputedColumnSql("SELECT Price FROM Products WHERE Id = ProductId", stored: true);
 
         builder.HasOne(oi => oi.ProductItem)
             .WithMany()

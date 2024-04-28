@@ -1,12 +1,7 @@
 ﻿namespace HttpWebshopCookie.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
-
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }
@@ -43,11 +38,10 @@ public class ApplicationDbContext : IdentityDbContext
 
         modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
 
-        SeedData.SeedRoles(modelBuilder);
-        SeedData.SeedEmployees(modelBuilder);
-        SeedData.SeedCompanies(modelBuilder);
-        SeedData.SeedCustomers(modelBuilder);
-        SeedData.SeedGuests(modelBuilder);
+        //SeedData.SeedEmployees(modelBuilder);
+        //SeedData.SeedCompanies(modelBuilder);
+        //SeedData.SeedCustomers(modelBuilder);
+        //SeedData.SeedGuests(modelBuilder);
         SeedData.SeedProducts(modelBuilder);
     }
 }

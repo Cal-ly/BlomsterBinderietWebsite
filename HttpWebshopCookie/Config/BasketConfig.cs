@@ -51,7 +51,7 @@ public class BasketActivityConfiguration : IEntityTypeConfiguration<BasketActivi
         builder.Property(ba => ba.UserId).HasMaxLength(450);
         builder.Property(ba => ba.IsRegisteredUser).HasDefaultValue(false);
         builder.Property(ba => ba.SessionId).HasMaxLength(450);
-        builder.Property(ba => ba.Timestamp).HasColumnType("datetime").HasDefaultValueSql("GETUTCDATE()");
+        builder.Property(ba => ba.Timestamp).HasColumnType("datetime").HasDefaultValue(DateTime.UtcNow);
 
         builder.HasOne(ba => ba.Basket)
             .WithMany()

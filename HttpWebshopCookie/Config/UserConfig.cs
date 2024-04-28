@@ -4,16 +4,14 @@ public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : Applic
 {
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        builder.HasKey(u => u.Id);
-        builder.Property(u => u.Id).ValueGeneratedOnAdd();
         builder.Property(u => u.Email)
             .HasComment("Must be a valid email format")
             .IsRequired()
             .HasMaxLength(256);
-        builder.Property(u => u.FirstName).IsRequired();
-        builder.Property(u => u.LastName).IsRequired();
-        builder.Property(u => u.PhoneNumber).IsRequired();
-        builder.Property(u => u.EnrollmentDate).HasColumnType("datetime").HasDefaultValueSql("GETUTCDATE()");
+        //builder.Property(u => u.FirstName).IsRequired();
+        //builder.Property(u => u.LastName).IsRequired();
+        //builder.Property(u => u.PhoneNumber).IsRequired();
+        builder.Property(u => u.EnrollmentDate).HasColumnType("datetime").HasDefaultValue(DateTime.UtcNow);
         builder.Property(u => u.LastLogin).HasColumnType("datetime");
 
         builder.HasOne(u => u.Address)

@@ -1,18 +1,20 @@
-﻿namespace HttpWebshopCookie.Services;
+﻿using System.Security.Claims;
+
+namespace HttpWebshopCookie.Services;
 
 public class BasketService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IOrderCreator orderCreator;
+    //private readonly UserManager<ApplicationUser> _userManager;
+    private readonly OrderService orderCreator;
 
-    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, UserManager<IdentityUser> userManager, IOrderCreator orderCreator)
+    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, OrderService orderCreator)
     {
         this.orderCreator = orderCreator;
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        //_userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
     }
 
     public Basket GetOrCreateBasket()
@@ -165,7 +167,8 @@ public class BasketService
 
     private async Task LogBasketActivity(string basketId, string? productId, string activityType, int? quantityChanged)
     {
-        var userId = _userManager.GetUserId(_httpContextAccessor!.HttpContext?.User!);
+        //var userId = _userManager.GetUserId(_httpContextAccessor!.HttpContext?.User!);
+        var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         var sessionId = _httpContextAccessor.HttpContext?.Session.Id;
 
         var activity = new BasketActivity

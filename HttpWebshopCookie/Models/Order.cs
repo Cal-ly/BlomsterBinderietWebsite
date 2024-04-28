@@ -13,7 +13,11 @@ public class Order
     public Employee? Employee { get; set; }
     public string? EmployeeId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = [];
-    public decimal TotalPrice => OrderItems.Sum(item => item.UnitPrice * item.Quantity);
+    public decimal TotalPrice
+    {
+        get { return TotalPrice; }
+        set { TotalPrice = OrderItems?.Sum(item => item.UnitPrice * item.Quantity) ?? 0; }
+    }
 }
 
 public enum OrderStatus
