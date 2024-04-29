@@ -9,19 +9,15 @@ public class SeedUsers(IServiceProvider serviceProvider)
     private static readonly Random random = new();
     private const string Password = "Tester";
 
-    public static List<string>? EmployeeIdList;
-    public static List<string>? CompanyRepIdList;
-    public static List<string>? CustomerIdList;
-    public static List<string>? GuestIdList;
-    public static List<string>? ProductIdList;
-    public static List<string>? TagIdList;
+    public List<string>? EmployeeIdList = [];
+    public List<string>? CompanyRepIdList = [];
+    public List<string>? CustomerIdList = [];
+    public List<string>? GuestIdList = [];
+    //public List<string>? ProductIdList = [];
+    //public List<string>? TagIdList = [];
 
     public void SeedEmployee()
     {
-        EmployeeIdList = [];
-        //var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        //var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
         List<Address> employeeAddressList = new List<Address>();
         List<Employee> employeeList = new List<Employee>();
 
@@ -50,11 +46,11 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 FirstName = randomName[0],
                 LastName = randomName[1],
                 JobTitle = EmployeeRoles[i],
-                Salary = 100000,
+                Salary = decimal.Parse(random.Next(170000, 500000).ToString()),
                 EnrollmentDate = DateTime.UtcNow,
                 AddressId = employeeAddress.Id
             };
-            EmployeeIdList.Add(employeeUser.Id);
+            EmployeeIdList?.Add(employeeUser.Id);
             employeeAddressList.Add(employeeAddress);
             employeeList.Add(employeeUser);
         }
@@ -69,10 +65,6 @@ public class SeedUsers(IServiceProvider serviceProvider)
 
     public void SeedCompanies()
     {
-        //var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        //var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-        CompanyRepIdList = [];
         List<Address> companyAddresses = [];
         List<Company> companies = [];
         List<Customer> companyReps = [];
@@ -82,7 +74,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
             string randomPhone = random.Next(10000000, 99999999).ToString();
             string[] randomAddress = GenerateRandomAddress(random);
             string[] randomName = GenerateRandomName(random);
-            string uniqueEmail = $"{randomName[0]}{randomName[1]}{random.Next(10, 99)}rep@test.com";
+            string uniqueEmail = $"{randomName[0]}{randomName[1]}{random.Next(10, 99)}" + "rep@test.com";
             Address companyAddress = new()
             {
                 Resident = $"Company {i}",
@@ -91,6 +83,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 City = $"{randomAddress[2]}",
             };
             companyAddresses.Add(companyAddress);
+
             Company company = new()
             {
                 CVR = randomCVR,
@@ -99,6 +92,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 AddressId = companyAddress.Id
             };
             companies.Add(company);
+
             Customer companyRep = new()
             {
                 UserName = uniqueEmail,
@@ -110,10 +104,13 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 PhoneNumber = randomPhone,
                 FirstName = randomName[0],
                 LastName = randomName[1],
-                AddressId = company.AddressId,
-                Title = "Owner"
+                AddressId = companyAddress.Id,
+                Title = "Owner",
+                BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70)),
+                CompanyId = company.Id
             };
-            CompanyRepIdList.Add(companyRep.Id);
+            companyReps.Add(companyRep);
+            CompanyRepIdList?.Add(companyRep.Id);
         }
         context.Addresses.AddRange(companyAddresses);
         context.Companies.AddRange(companies);
@@ -127,7 +124,6 @@ public class SeedUsers(IServiceProvider serviceProvider)
 
     public void SeedCustomers()
     {
-        CustomerIdList = [];
         List<Address> customerAddresses = [];
         List<Customer> customers = [];
         for (int i = 0; i < 10; i++)
@@ -138,7 +134,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
             string randomPhone = random.Next(10000000, 99999999).ToString();
             Address customerAddress = new()
             {
-                Resident = $"{randomName[0]}{randomName[1]}",
+                Resident = $"{randomName[0]} {randomName[1]}",
                 Street = $"{randomAddress[0]}",
                 PostalCode = $"{randomAddress[1]}",
                 City = $"{randomAddress[2]}",
@@ -157,10 +153,11 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 FirstName = randomName[0],
                 LastName = randomName[1],
                 AddressId = customerAddress.Id,
-                Title = "Mr/Mrs/Ms"
+                Title = "Mr/Mrs/Ms",
+                BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70)) 
             };
             customers.Add(customer);
-            CustomerIdList.Add(customer.Id);
+            CustomerIdList?.Add(customer.Id);
         }
 
         context.Addresses.AddRange(customerAddresses);
@@ -170,6 +167,42 @@ public class SeedUsers(IServiceProvider serviceProvider)
             userManager.CreateAsync(customer, Password).Wait();
             userManager.AddToRoleAsync(customer, "customer").Wait();
         }
+    }
+
+public void SeedGuests()
+    {
+        List<Address> guestAddresses = [];
+        List<Guest> guests = [];
+        for (int i = 0; i < 10; i++)
+        {
+            string[] randomAddress = GenerateRandomAddress(random);
+            string[] randomName = GenerateRandomName(random);
+            string uniqueEmail = $"{randomName[0]}{randomName[1]}{random.Next(10, 99)}@test.com";
+            string randomPhone = random.Next(10000000, 99999999).ToString();
+            Address guestAddress = new()
+            {
+                Resident = $"{randomName[0]} {randomName[1]}",
+                Street = $"{randomAddress[0]}",
+                PostalCode = $"{randomAddress[1]}",
+                City = $"{randomAddress[2]}",
+            };
+            guestAddresses.Add(guestAddress);
+
+            Guest guest = new()
+            {
+                Email = uniqueEmail,
+                FirstName = randomName[0],
+                LastName = randomName[1],
+                PhoneNumber = randomPhone,
+                AddressId = guestAddress.Id
+            };
+            guests.Add(guest);
+            GuestIdList?.Add(guest.Id);
+        }
+
+        context.Addresses.AddRange(guestAddresses);
+        context.GuestUsers.AddRange(guests);
+        context.SaveChanges();
     }
 
     public static string[] GenerateRandomName(Random random)

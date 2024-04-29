@@ -42,12 +42,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Manager", policy => policy.RequireRole("Manager"));
-    options.AddPolicy("Staff", policy => policy.RequireRole("Staff"));
-    options.AddPolicy("Assistant", policy => policy.RequireRole("Assistant"));
-    options.AddPolicy("CompanyRep", policy => policy.RequireRole("CompanyRep"));
-    options.AddPolicy("Registered", policy => policy.RequireRole("Registered"));
+    options.AddPolicy("admin", policy => policy.RequireRole("admin"));
+    options.AddPolicy("manager", policy => policy.RequireRole("manager"));
+    options.AddPolicy("staff", policy => policy.RequireRole("staff"));
+    options.AddPolicy("assistant", policy => policy.RequireRole("assistant"));
+    options.AddPolicy("companyrep", policy => policy.RequireRole("companyrep"));
+    options.AddPolicy("customer", policy => policy.RequireRole("customer"));
 });
 builder.Services.AddSession(options =>
 {
@@ -66,10 +66,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 4;
     options.Password.RequiredUniqueChars = 1;
 
-    // Lockout settings.
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true;
+    //// Lockout settings.
+    //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    //options.Lockout.MaxFailedAccessAttempts = 5;
+    //options.Lockout.AllowedForNewUsers = true;
 
     // User settings.
     options.User.AllowedUserNameCharacters =
