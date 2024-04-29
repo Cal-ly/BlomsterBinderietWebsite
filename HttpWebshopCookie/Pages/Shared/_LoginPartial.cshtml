@@ -6,8 +6,8 @@
 @if (SignInManager.IsSignedIn(User))
 {
     var user = await UserManager.FindByNameAsync(User.Identity?.Name!) ?? null;
-    string? FirstName = user.FirstName ?? string.Empty;
-    string? LastName = user.LastName ?? string.Empty;
+    string? FirstName = user?.FirstName ?? string.Empty;
+    string? LastName = user?.LastName ?? string.Empty;
     <li class="nav-item">
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @FirstName @LastName!</a>
     </li>
