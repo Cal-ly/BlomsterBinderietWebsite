@@ -31,10 +31,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 builder.Services.AddIdentityCore<Customer>()
     .AddRoles<IdentityRole>()
+    .AddSignInManager<SignInManager<Customer>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentityCore<Employee>()
     .AddRoles<IdentityRole>()
+    .AddSignInManager<SignInManager<Employee>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();

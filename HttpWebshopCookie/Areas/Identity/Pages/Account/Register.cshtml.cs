@@ -107,9 +107,9 @@ namespace HttpWebshopCookie.Areas.Identity.Pages.Account
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
-            [Phone]
-            [Display(Name = "Phone Number")]
-            public string PhoneNumber { get; set; }
+            //[Phone]
+            //[Display(Name = "Phone Number")]
+            //public string PhoneNumber { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -129,7 +129,7 @@ namespace HttpWebshopCookie.Areas.Identity.Pages.Account
                 user.Email = Input.Email;
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
-                user.PhoneNumber = Input.PhoneNumber;
+                //user.PhoneNumber = Input.PhoneNumber;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
