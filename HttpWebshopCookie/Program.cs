@@ -119,8 +119,10 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
     SeedRoles.SeedTheRoles(services);
-    SeedUsers.SeedEmployee(services);
-    SeedUsers.SeedCompanies(services);
+    SeedUsers seedUsers = new(services);
+    seedUsers.SeedEmployee();
+    seedUsers.SeedCompanies();
+    seedUsers.SeedCustomers();
 }
 
 app.Run();

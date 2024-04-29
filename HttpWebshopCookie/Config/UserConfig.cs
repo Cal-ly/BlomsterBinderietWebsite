@@ -4,10 +4,6 @@ public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : Applic
 {
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        builder.Property(u => u.Email)
-            .HasComment("Must be a valid email format")
-            .IsRequired()
-            .HasMaxLength(256);
         //builder.Property(u => u.FirstName).IsRequired();
         //builder.Property(u => u.LastName).IsRequired();
         //builder.Property(u => u.PhoneNumber).IsRequired();
@@ -28,6 +24,8 @@ public class ApplicationUserConfiguration : UserConfiguration<ApplicationUser>
     public override void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         base.Configure(builder);
+        //builder.HasKey(u => u.Id);
+        //builder.Property(u => u.Id).ValueGeneratedOnAdd();
         builder.ToTable("ApplicationUsers");
     }
 }
@@ -37,7 +35,7 @@ public class CustomerConfiguration : UserConfiguration<Customer>
     public override void Configure(EntityTypeBuilder<Customer> builder)
     {
         base.Configure(builder);
-        builder.ToTable("Customers");
+        //builder.ToTable("Customers");
         builder.Property(c => c.BirthDate).HasColumnType("datetime");
 
         builder.HasMany(c => c.Orders)
@@ -55,7 +53,7 @@ public class EmployeeConfiguration : UserConfiguration<Employee>
     public override void Configure(EntityTypeBuilder<Employee> builder)
     {
         base.Configure(builder);
-        builder.ToTable("Employees");
+        //builder.ToTable("Employees");
         builder.Property(e => e.Salary).HasColumnType("decimal(18,2)");
         builder.Property(e => e.TerminationDate).HasColumnType("datetime");
         builder.HasMany(e => e.Orders)

@@ -2,7 +2,7 @@
 
 public static class SeedRoles
 {
-    private static string[] RoleNames = ["Admin", "Manager", "Staff", "Assistant", "CompanyRep", "Registered"];
+    private static string[] RoleNames = ["admin", "manager", "staff", "assistant", "companyrep", "customer"];
     public static void SeedTheRoles(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();

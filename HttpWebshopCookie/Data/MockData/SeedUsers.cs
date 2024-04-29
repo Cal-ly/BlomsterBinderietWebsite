@@ -1,7 +1,11 @@
-﻿namespace HttpWebshopCookie.Data.MockData;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class SeedUsers()
+namespace HttpWebshopCookie.Data.MockData;
+
+public class SeedUsers(IServiceProvider serviceProvider)
 {
+    private readonly ApplicationDbContext context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+    private readonly UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     private static readonly Random random = new();
     private const string Password = "Tester";
 
@@ -12,16 +16,16 @@ public class SeedUsers()
     public static List<string>? ProductIdList;
     public static List<string>? TagIdList;
 
-    public static void SeedEmployee(IServiceProvider serviceProvider)
+    public void SeedEmployee()
     {
         EmployeeIdList = [];
-        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        //var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        //var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         List<Address> employeeAddressList = new List<Address>();
         List<Employee> employeeList = new List<Employee>();
 
-        string[] EmployeeRoles = ["Admin", "Manager", "Staff", "Assistant"];
+        string[] EmployeeRoles = ["admin", "manager", "staff", "assistant"];
         for(int i = 0; i < EmployeeRoles.Length; i++)
         {
             string[] randomAddress = GenerateRandomAddress(random);
@@ -35,7 +39,7 @@ public class SeedUsers()
             };
             Employee employeeUser = new()
             {
-                UserName = EmployeeRoles[i],
+                UserName = $"{EmployeeRoles[i]}@test.com",
                 NormalizedUserName = EmployeeRoles[i].ToUpper(),
                 Email = $"{EmployeeRoles[i]}@test.com",
                 NormalizedEmail = $"{EmployeeRoles[i]}@test.com".ToUpper(),
@@ -63,10 +67,10 @@ public class SeedUsers()
         }
     }
 
-    public static void SeedCompanies(IServiceProvider serviceProvider)
+    public void SeedCompanies()
     {
-        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        //var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        //var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         CompanyRepIdList = [];
         List<Address> companyAddresses = [];
@@ -77,6 +81,8 @@ public class SeedUsers()
             string randomCVR = random.Next(10000000, 99999999).ToString();
             string randomPhone = random.Next(10000000, 99999999).ToString();
             string[] randomAddress = GenerateRandomAddress(random);
+            string[] randomName = GenerateRandomName(random);
+            string uniqueEmail = $"{randomName[0]}{randomName[1]}{random.Next(10, 99)}rep@test.com";
             Address companyAddress = new()
             {
                 Resident = $"Company {i}",
@@ -93,30 +99,76 @@ public class SeedUsers()
                 AddressId = companyAddress.Id
             };
             companies.Add(company);
-            string[] randomName = GenerateRandomName(random);
             Customer companyRep = new()
             {
-                UserName = $"CompanyRep{i}",
-                NormalizedUserName = $"CompanyRep{i}".ToUpper(),
-                Email = $"companyrep{i}@rep.com",
-                NormalizedEmail = $"companyrep{i}@test.com".ToUpper(),
+                UserName = uniqueEmail,
+                NormalizedUserName = uniqueEmail.ToUpper(),
+                Email = uniqueEmail,
+                NormalizedEmail = uniqueEmail.ToUpper(),
                 EmailConfirmed = true,
-                SecurityStamp = string.Empty,
-                Title = "Owner",
+                SecurityStamp = Guid.NewGuid().ToString(),
+                PhoneNumber = randomPhone,
                 FirstName = randomName[0],
                 LastName = randomName[1],
-                PhoneNumber = randomPhone,
-                AddressId = company.AddressId
+                AddressId = company.AddressId,
+                Title = "Owner"
             };
             CompanyRepIdList.Add(companyRep.Id);
         }
-        context.AddRange(companyAddresses);
-        context.AddRange(companies);
+        context.Addresses.AddRange(companyAddresses);
+        context.Companies.AddRange(companies);
         context.SaveChanges();
         foreach (var companyRep in companyReps)
         {
             userManager.CreateAsync(companyRep, Password).Wait();
-            userManager.AddToRoleAsync(companyRep, "CompanyRep").Wait();
+            userManager.AddToRoleAsync(companyRep, "companyrep").Wait();
+        }
+    }
+
+    public void SeedCustomers()
+    {
+        CustomerIdList = [];
+        List<Address> customerAddresses = [];
+        List<Customer> customers = [];
+        for (int i = 0; i < 10; i++)
+        {
+            string[] randomAddress = GenerateRandomAddress(random);
+            string[] randomName = GenerateRandomName(random);
+            string uniqueEmail = $"{randomName[0]}{randomName[1]}{random.Next(10, 99)}@test.com";
+            string randomPhone = random.Next(10000000, 99999999).ToString();
+            Address customerAddress = new()
+            {
+                Resident = $"{randomName[0]}{randomName[1]}",
+                Street = $"{randomAddress[0]}",
+                PostalCode = $"{randomAddress[1]}",
+                City = $"{randomAddress[2]}",
+            };
+            customerAddresses.Add(customerAddress);
+
+            Customer customer = new()
+            {
+                UserName = uniqueEmail,
+                NormalizedUserName = uniqueEmail.ToUpper(),
+                Email = uniqueEmail,
+                NormalizedEmail = uniqueEmail.ToUpper(),
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                PhoneNumber = randomPhone,
+                FirstName = randomName[0],
+                LastName = randomName[1],
+                AddressId = customerAddress.Id,
+                Title = "Mr/Mrs/Ms"
+            };
+            customers.Add(customer);
+            CustomerIdList.Add(customer.Id);
+        }
+
+        context.Addresses.AddRange(customerAddresses);
+        context.SaveChanges();
+        foreach (var customer in customers)
+        {
+            userManager.CreateAsync(customer, Password).Wait();
+            userManager.AddToRoleAsync(customer, "customer").Wait();
         }
     }
 
