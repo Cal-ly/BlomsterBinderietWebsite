@@ -61,16 +61,11 @@ public class BasketService
     public async Task AddToBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.First(i => i.ProductId == productId);
+        var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
 
         if (item == null)
         {
-            Product? product = await _context.Products.FindAsync(productId);
-            if (product == null)
-            {
-                throw new InvalidOperationException("Product not found.");
-            }
-
+            Product? product = await _context.Products.FindAsync(productId) ?? throw new InvalidOperationException("Product not found.");
             item = new BasketItem
             {
                 ProductId = productId,

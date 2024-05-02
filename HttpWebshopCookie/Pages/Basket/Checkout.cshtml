@@ -4,7 +4,6 @@
 <h1>Checkout</h1>
 
 <div style="text-align: center;">
-    <h2>Basket Items</h2>
     <table style="width: auto;">
         <thead>
             <tr>
@@ -38,9 +37,8 @@
             <br>
             Email: @Model.UserWrapper.Email
             <br>
-            Phone Number: @Model.UserWrapper.PhoneNumber
         </p>
-        <form method="post" asp-page-handler="User">
+        <form method="post" asp-page-handler="User" asp-page="@Model.UserWrapper">
             <button type="submit" class="btn btn-success">Confirm Order</button>
         </form>
     </div>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HttpWebshopCookie.Models.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace HttpWebshopCookie.Data.MockData;
 
@@ -168,8 +169,44 @@ public class SeedUsers(IServiceProvider serviceProvider)
             userManager.AddToRoleAsync(customer, "customer").Wait();
         }
     }
+    public void SeedTester()
+    {
+        string uniqueEmail = "test@test.com";
+        string[] randomName = ["Test", "Tester"];
+        string[] randomAddress = GenerateRandomAddress(random);
+        string randomPhone = random.Next(10000000, 99999999).ToString();
+        Address customerAddress = new()
+        {
+            Resident = "Test Tester",
+            Street = $"{randomAddress[0]}",
+            PostalCode = $"{randomAddress[1]}",
+            City = $"{randomAddress[2]}",
+        };
 
-public void SeedGuests()
+        Customer customer = new()
+        {
+            UserName = "test@test.com",
+            NormalizedUserName = uniqueEmail.ToUpper(),
+            Email = uniqueEmail,
+            NormalizedEmail = uniqueEmail.ToUpper(),
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            PhoneNumber = randomPhone,
+            FirstName = randomName[0],
+            LastName = randomName[1],
+            AddressId = customerAddress.Id,
+            Title = "DevOps",
+            BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70))
+        };
+        CustomerIdList?.Add(customer.Id);
+
+        context.Addresses.Add(customerAddress);
+        context.SaveChanges();
+        userManager.CreateAsync(customer, Password).Wait();
+        userManager.AddToRoleAsync(customer, "customer").Wait();
+    }
+
+    public void SeedGuests()
     {
         List<Address> guestAddresses = [];
         List<Guest> guests = [];

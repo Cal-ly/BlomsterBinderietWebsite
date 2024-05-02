@@ -23,8 +23,7 @@ public class CustomerConfiguration : UserConfiguration<Customer>
     public override void Configure(EntityTypeBuilder<Customer> builder)
     {
         base.Configure(builder);
-
-        builder.Property(c => c.Title).IsRequired();
+        builder.ToTable("Customers");
         builder.Property(c => c.BirthDate).HasColumnType("datetime");
 
         builder.HasMany(c => c.Orders)
@@ -43,6 +42,7 @@ public class EmployeeConfiguration : UserConfiguration<Employee>
     public override void Configure(EntityTypeBuilder<Employee> builder)
     {
         base.Configure(builder);
+        builder.ToTable("Employees");
         builder.Property(e => e.Salary).HasColumnType("decimal(18,2)");
         builder.Property(e => e.TerminationDate).HasColumnType("datetime");
         builder.HasMany(e => e.Orders)

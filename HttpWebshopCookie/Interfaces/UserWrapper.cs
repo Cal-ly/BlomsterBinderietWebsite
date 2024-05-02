@@ -55,7 +55,7 @@ public class UserWrapper
     public string LastName => Guest?.LastName ?? Customer?.LastName ?? Employee?.LastName ?? ApplicationUser?.LastName ?? throw new InvalidOperationException("No user is set");
     public string Email => Guest?.Email ?? Customer?.Email ?? Employee?.Email ?? ApplicationUser?.Email ?? throw new InvalidOperationException("No user is set");
     public string PhoneNumber => Guest?.PhoneNumber ?? Customer?.PhoneNumber ?? Employee?.PhoneNumber ?? ApplicationUser?.PhoneNumber ?? throw new InvalidOperationException("No user is set");
-    public Address? Address => Guest?.Address ?? Customer?.Address ?? throw new InvalidOperationException("No user is set");
+    public Address? Address => Guest?.Address ?? Customer?.Address ?? Employee?.Address ?? ApplicationUser?.Address ?? throw new InvalidOperationException("No user is set");
     public Guest? Guest { get; }
     public Customer? Customer { get; }
     public Employee? Employee { get; }

@@ -3,7 +3,7 @@
 
 <h1>Confirm Order</h1>
 
-<div style="text-align: center;">
+<div style="text-align: left;">
     <h2>Your Order Details</h2>
     <table style="width: auto;">
         <thead>
@@ -33,6 +33,13 @@
     <h2>Your Information</h2>
     <p>Name: @(Model.UserWrapper?.FirstName) @(Model.UserWrapper?.LastName)</p>
     <p>Email: @Model.UserWrapper?.Email</p>
+    <p>Phone Number: @Model.UserWrapper?.PhoneNumber</p>
+    <p>Address: @(Model.UserWrapper?.Address?.FullAddress() ?? "Address not available")</p>
+</div>
+<div>
+    <h2>Your Information</h2>
+    <p>Name: @Model.UserInfo.FirstName  @(Model.UserInfo.LastName)</p>
+    <p>Email: @Model.UserInfo.Email</p>
     <p>Phone Number: @Model.UserWrapper?.PhoneNumber</p>
     <p>Address: @(Model.UserWrapper?.Address?.FullAddress() ?? "Address not available")</p>
 </div>

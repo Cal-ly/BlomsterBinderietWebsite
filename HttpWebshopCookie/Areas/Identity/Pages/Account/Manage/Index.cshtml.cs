@@ -102,7 +102,7 @@ namespace HttpWebshopCookie.Areas.Identity.Pages.Account.Manage
             public string Country { get; set; }
         }
 
-        private async Task LoadAsync(Customer user)
+        private async Task LoadAsync(Customer user) //TODO make generic
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
