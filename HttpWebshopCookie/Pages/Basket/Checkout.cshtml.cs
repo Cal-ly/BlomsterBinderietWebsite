@@ -1,15 +1,19 @@
+using Newtonsoft.Json;
+
 namespace HttpWebshopCookie.Pages.Basket;
 
 public class CheckoutModel(ApplicationDbContext context, BasketService basketService, UserManager<ApplicationUser> userManager) : PageModel
 {
     [BindProperty]
-    public Guest Guest { get; set; } = new Guest();
+    public Guest Guest { get; set; } = null!;
     [BindProperty]
-    public Address Address { get; set; } = new Address();
-    public Models.Basket Basket { get; set; } = default!;
+    public Address Address { get; set; } = null!;
+    [TempData]
+    public string UserWrapJson { get; set; } = null!;
+    public Models.Basket? Basket { get; set; }
     public UserWrapper? UserWrapper { get; private set; }
 
-    public async Task<IActionResult> OnGet()
+    public async Task OnGet()
     {
         Basket = basketService.GetOrCreateBasket();
 
@@ -40,7 +44,17 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
         {
             UserWrapper = null;
         }
-        return Page();
+    }
+    public IActionResult OnPostUser()
+    {
+        //if (!ModelState.IsValid)
+        //{
+        //    return Page();
+        //}
+
+        UserWrapJson = JsonConvert.SerializeObject(UserWrapper);
+        TempData["UserWrapper"] = UserWrapJson;
+        return RedirectToPage("ConfirmOrder", new { userWrapJson = UserWrapJson });
     }
 
     public async Task<IActionResult> OnPostGuestAsync()
@@ -50,22 +64,14 @@ public class CheckoutModel(ApplicationDbContext context, BasketService basketSer
             return Page();
         }
 
-        // Create guest and address
         Guest.Address = Address;
         UserWrapper = new UserWrapper(Guest);
-        await context.SaveChangesAsync(); // Assuming you save the guest data
 
-        return RedirectToPage("/Basket/ConfirmOrder", new { user = UserWrapper });
-    }
+        UserWrapJson = JsonConvert.SerializeObject(UserWrapper);
+        TempData["UserWrapper"] = UserWrapJson;
 
-    public IActionResult OnPostUser()
-    {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
+        await context.SaveChangesAsync();
 
-        // Confirm order for registered user
-        return RedirectToPage("/Basket/ConfirmOrder", new { user = UserWrapper });
+        return RedirectToPage("ConfirmOrder", new { userWrapJson = UserWrapJson });
     }
 }

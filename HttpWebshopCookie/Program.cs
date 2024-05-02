@@ -39,7 +39,9 @@ builder.Services.AddIdentityCore<Employee>()
     .AddSignInManager<SignInManager<Employee>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization(options =>
@@ -51,6 +53,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("companyrep", policy => policy.RequireRole("companyrep"));
     options.AddPolicy("customer", policy => policy.RequireRole("customer"));
 });
+
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".HttpWebshopCookie.Session";
@@ -106,7 +109,7 @@ else
     app.UseExceptionHandler("/Error");
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseSession();
 app.UseStaticFiles();
 app.UseRouting();
@@ -125,6 +128,7 @@ using (var scope = app.Services.CreateScope())
     seedUsers.SeedEmployee();
     seedUsers.SeedCompanies();
     seedUsers.SeedCustomers();
+    seedUsers.SeedTester();
 }
 
 app.Run();

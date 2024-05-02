@@ -30,6 +30,7 @@ public class OrderService(ApplicationDbContext context)
             case "Guest":
                 order.Guest = userWrapper.Guest;
                 order.GuestId = userWrapper.Id;
+                context.GuestUsers.Add(userWrapper.Guest!);
                 break;
             case "Customer":
                 order.Customer = userWrapper.Customer;
@@ -43,7 +44,6 @@ public class OrderService(ApplicationDbContext context)
                 throw new ArgumentException("Valid user type must be provided");
         }
 
-        // Save the order to the database
         context.Orders.Add(order);
         context.SaveChanges();
 

@@ -56,7 +56,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
 {
     public void Configure(EntityTypeBuilder<Guest> builder)
     {
-        builder.ToTable("Guests");
+        builder.ToTable("GuestUsers");
 
         builder.Property(g => g.Id).ValueGeneratedOnAdd();
         builder.Property(g => g.FirstName).IsRequired();
@@ -77,3 +77,19 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
         builder.HasIndex(g => g.Email).IsUnique();
     }
 }
+
+//public class UserWrapperConfiguration : IEntityTypeConfiguration<UserWrapper>
+//{
+//    public void Configure(EntityTypeBuilder<UserWrapper> builder)
+//    {
+//        builder.ToTable("UserWrappers");
+
+//        builder.Property(uw => uw.Id).ValueGeneratedOnAdd();
+
+//        builder.HasOne(uw => uw.Address)
+//            .WithOne()
+//            .HasForeignKey<UserWrapper>(uw => uw.AddressId);
+
+//        builder.HasIndex(uw => uw.Email).IsUnique();
+//    }
+//}

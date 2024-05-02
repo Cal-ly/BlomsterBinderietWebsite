@@ -1,7 +1,14 @@
-﻿@page
+﻿@page "{userWrapJson}"
 @model HttpWebshopCookie.Pages.Basket.ConfirmOrderModel
 
 <h1>Confirm Order</h1>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 
 <div style="text-align: left;">
     <h2>Your Order Details</h2>
@@ -36,14 +43,8 @@
     <p>Phone Number: @Model.UserWrapper?.PhoneNumber</p>
     <p>Address: @(Model.UserWrapper?.Address?.FullAddress() ?? "Address not available")</p>
 </div>
-<div>
-    <h2>Your Information</h2>
-    <p>Name: @Model.UserInfo.FirstName  @(Model.UserInfo.LastName)</p>
-    <p>Email: @Model.UserInfo.Email</p>
-    <p>Phone Number: @Model.UserWrapper?.PhoneNumber</p>
-    <p>Address: @(Model.UserWrapper?.Address?.FullAddress() ?? "Address not available")</p>
-</div>
 
 <form method="post">
+    <input type="hidden" name="userWrapperId" value="@Model.UserWrapper!.Id" />
     <button type="submit" class="btn btn-success">Place Order</button>
 </form>

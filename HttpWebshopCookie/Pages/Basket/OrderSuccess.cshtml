@@ -3,8 +3,12 @@
 
 <h1>Order Confirmation</h1>
 
-
-
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Success"]
+    </div>
+}
 
 @if (Model.OrderItems != null)
 {
