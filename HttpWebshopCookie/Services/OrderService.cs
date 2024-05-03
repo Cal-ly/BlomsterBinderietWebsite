@@ -30,6 +30,7 @@ public class OrderService(ApplicationDbContext context)
             case "Guest":
                 order.Guest = userWrapper.Guest;
                 order.GuestId = userWrapper.Id;
+                context.Addresses.Add(userWrapper.Guest!.Address!);
                 context.GuestUsers.Add(userWrapper.Guest!);
                 break;
             case "Customer":

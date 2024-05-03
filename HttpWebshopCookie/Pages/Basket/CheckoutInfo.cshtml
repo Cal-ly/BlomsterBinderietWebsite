@@ -1,5 +1,5 @@
 ﻿@page
-@model HttpWebshopCookie.Pages.Basket.CombinedCheckout
+@model HttpWebshopCookie.Pages.Basket.CheckoutInfoModel
 
 <h1>Checkout</h1>
 
@@ -51,7 +51,6 @@
         <form method="post">
             <input type="hidden" name="userWrapperId" value="@Model.UserWrapper!.Id" />
             <button type="submit" class="btn btn-success">Place Order</button>
-            <button type="button" class="btn btn-primary" id="editButton">Edit</button>
         </form>
     </div>
 }
@@ -94,6 +93,7 @@
             <input asp-for="Address.Country" class="form-control" />
             <span asp-validation-for="Address.Country" class="text-danger"></span>
         </div>
+        <input type="hidden" name="userWrapperId" value="@Model.UserWrapper!.Id" />
         <button type="submit" class="btn btn-primary">Place Order</button>
     </form>
 }
@@ -102,16 +102,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        document.getElementById('editButton').addEventListener('click', function() {
-            document.querySelector('input[name="Guest.FirstName"]').value = '@Model.UserWrapper.FirstName';
-            document.querySelector('input[name="Guest.LastName"]').value = '@Model.UserWrapper.LastName';
-            document.querySelector('input[name="Guest.Email"]').value = '@Model.UserWrapper.Email';
-            document.querySelector('input[name="Guest.PhoneNumber"]').value = '@Model.UserWrapper.PhoneNumber';
-            document.querySelector('input[name="Address.Street"]').value = '@Model.UserWrapper.Address.Street';
-            document.querySelector('input[name="Address.City"]').value = '@Model.UserWrapper.Address.City';
-            document.querySelector('input[name="Address.PostalCode"]').value = '@Model.UserWrapper.Address.PostalCode';
-            document.querySelector('input[name="Address.Country"]').value = '@Model.UserWrapper.Address.Country';
-        });
-    </script>
 }
+
