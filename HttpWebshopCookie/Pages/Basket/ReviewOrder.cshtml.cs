@@ -26,4 +26,8 @@ public class ReviewOrderModel(BasketService basketService) : PageModel
     {
         return RedirectToPage("ReviewInfo");
     }
+    public IActionResult OnPostContinueShopping()
+    {
+        return RedirectToPage("/Products/Index");
+    }
 }

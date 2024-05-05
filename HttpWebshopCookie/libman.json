@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.3.3",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "bootswatch@5.3.3",
+      "destination": "wwwroot/lib/bootswatch/",
+      "files": [
+        "minty/bootstrap.css",
+        "minty/bootstrap.min.css",
+        "minty/bootstrap.min.css.map",
+        "minty/bootstrap.rtl.css",
+        "minty/bootstrap.rtl.min.css",
+        "minty/bootstrap.rtl.min.css.map"
+      ]
+    }
+  ]
+}

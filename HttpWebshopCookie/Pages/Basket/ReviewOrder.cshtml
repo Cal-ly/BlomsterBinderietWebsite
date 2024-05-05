@@ -3,30 +3,76 @@
 
 <h1>Review Your Order</h1>
 
-<form method="post" asp-page-handler="UpdateBasket">
-    <table>
+@* <div style="text-align: left;"> *@
+<form method="post">
+    <table class="table table-hover">
         <thead>
             <tr>
-                <th>Product</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Line Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Basket.Items)
+            {
+                <tr class="table-active">
+                    <th scope="row">@item.ProductInBasket?.Name</th>
+@*                     <td>
+                        <input type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
+                    </td> *@
+                    <td>@(item.Quantity)</td>
+                    <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
+                    <td>@(item.LinePrice().ToString("C"))</td>
+                </tr>
+            }
+            <tr>
+                <th class="table-active">Total:</th>
+                <td></td>
+                <td></td>
+                <td>@Model.Basket.TotalPrice().ToString("C")</td>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        <button class="btn btn-primary" type="submit" asp-page-handler="ProceedToCheckout">Proceed with Order</button>
+        <button class="btn btn-secondary" type="submit" asp-page-handler="ContinueShopping">Continue Shopping</button>
+    </div>
+</form>
+@* </div> *@
+
+@* <div style="text-align: left;">
+    <table style="width: auto;">
+        <thead>
+            <tr>
+                <th>Item Name</th>
                 <th>Quantity</th>
                 <th>Price</th>
-                <th>Line Total</th>
+                <th>Line Price</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model.Basket.Items)
             {
                 <tr>
-                    <td>@item.ProductInBasket?.Name</td>
-                    <td>
-                        <input type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
-                    </td>
+                    <td>@(item.ProductInBasket?.Name)</td>
+                    <td>@item.Quantity</td>
                     <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
                     <td>@(item.LinePrice().ToString("C"))</td>
                 </tr>
             }
+            <tr>
+                <td>Total:</td>
+                <td></td>
+                <td></td>
+                <td>@Model.Basket.TotalPrice().ToString("C")</td>
+            </tr>
         </tbody>
     </table>
-    <button type="submit">Update Basket</button>
-    <button type="submit" asp-page-handler="ProceedToCheckout">Proceed to Checkout</button>
-</form>
+</div>
+
+<div>
+    <a asp-page="ReviewOrder" class="btn btn-primary">Proceed to Checkout</a>
+    <a asp-page="/Products/Index" class="btn btn-secondary">Continue Shopping</a>
+</div> *@

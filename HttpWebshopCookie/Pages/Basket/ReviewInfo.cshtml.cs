@@ -64,11 +64,6 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
 
     public IActionResult OnPost()
     {
-        //if (!ModelState.IsValid && !IsCustomer && !IsEmployee)
-        //{
-        //    return Page();
-        //}
-
         if (!ModelState.IsValid)
         {
             return Page();
