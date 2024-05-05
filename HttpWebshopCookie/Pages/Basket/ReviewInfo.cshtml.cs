@@ -62,7 +62,7 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
         }
     }
 
-    public IActionResult OnPost()
+    public IActionResult OnPostSubmitOrder()
     {
         if (!ModelState.IsValid)
         {
@@ -96,5 +96,9 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
         var order = basketService.PlaceOrder(UserWrapper);
 
         return RedirectToPage("OrderSuccess", new { orderId = order.Id });
+    }
+    public IActionResult OnPostCancel()
+    {
+        return RedirectToPage("/Products/Index");
     }
 }

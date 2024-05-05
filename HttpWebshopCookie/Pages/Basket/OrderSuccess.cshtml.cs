@@ -22,7 +22,7 @@ public class OrderSuccessModel(ApplicationDbContext context, OrderService orderS
 
         OrderItems = [.. orderService.GetOrderItems(order!)];
 
-        TotalString = order.TotalPrice.ToString();
+        TotalString = order.TotalPrice.ToString("C");
 
         return Page();
     }

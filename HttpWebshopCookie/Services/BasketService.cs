@@ -80,14 +80,26 @@ public class BasketService
         await _context.SaveChangesAsync();
         await LogBasketActivity(basket.Id, productId, "Add", item?.Quantity);
     }
-
-    public async Task<int> GetQuantityInBasket(string productId)
+    public async Task<bool> IsInBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.First(i => i.ProductId == productId);
-        int itemQuantity = item?.Quantity ?? 0;
-        return await Task.FromResult(itemQuantity);
+        return await Task.FromResult(basket.Items.Any(i => i.ProductId == productId));
     }
+
+    public async Task<int?> GetQuantityInBasket(string productId)
+    {
+        var basket = GetOrCreateBasket();
+        var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
+
+        // Handle case where product isn't in the basket
+        if (item == null)
+        {
+            return 0; // Return a default quantity of 0 if not found
+        }
+
+        return await Task.FromResult(item.Quantity);
+    }
+
 
     public async Task<Dictionary<string, int>> GetAllQuantitiesInBasket()
     {
@@ -130,11 +142,11 @@ public class BasketService
     public async Task RemoveFromBasket(string productId)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.First(i => i.ProductId == productId);
+        var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
 
         if (item == null)
         {
-            throw new InvalidOperationException("Product not in basket.");
+            return;
         }
 
         if (item.Quantity > 1)
@@ -149,6 +161,7 @@ public class BasketService
         await _context.SaveChangesAsync();
         await LogBasketActivity(basket.Id, productId, "Remove", item?.Quantity);
     }
+
 
     public async Task ClearBasket()
     {

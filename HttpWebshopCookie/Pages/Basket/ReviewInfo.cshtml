@@ -1,124 +1,139 @@
 ﻿@page
 @model HttpWebshopCookie.Pages.Basket.ReviewInfoModel
 
-<h1>Checkout Information</h1>
 
-<form method="post">
-    @if (User?.Identity?.IsAuthenticated ?? false)
-    {
-        <div>
-            <label for="FirstName">First Name:</label>
-            <input type="text" asp-for="ReviewInfo.FirstName" id="FirstName" readonly />
-            <span asp-validation-for="ReviewInfo.FirstName"></span>
-        </div>
+<div class="container-sm w-50 align-self-lg-center bg-primary-subtle pb-2">
+    <h1>Checkout Information</h1>
+    <form method="post" asp-page-handler="SubmitOrder">
+        @if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            <div class="form-group">
+                <label for="FirstName">First Name:</label>
+                <input class="form-control" type=" text" asp-for="ReviewInfo.FirstName" id="FirstName" readonly />
+                <span asp-validation-for="ReviewInfo.FirstName"></span>
+            </div>
 
-        <div>
-            <label for="LastName">Last Name:</label>
-            <input type="text" asp-for="ReviewInfo.LastName" id="LastName" readonly />
-            <span asp-validation-for="ReviewInfo.LastName"></span>
-        </div>
+            <div class="form-group">
+                <label for="LastName">Last Name:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.LastName" id="LastName" readonly />
+                <span asp-validation-for="ReviewInfo.LastName"></span>
+            </div>
 
-        <div>
-            <label for="Email">Email:</label>
-            <input type="email" asp-for="ReviewInfo.Email" id="Email" readonly />
-            <span asp-validation-for="ReviewInfo.Email"></span>
-        </div>
+            <div class="form-group">
+                <label for="Email">Email:</label>
+                <input class="form-control" type="email" asp-for="ReviewInfo.Email" id="Email" readonly />
+                <span asp-validation-for="ReviewInfo.Email"></span>
+            </div>
 
-        <div>
-            <label for="PhoneNumber">Phone Number:</label>
-            <input type="tel" asp-for="ReviewInfo.PhoneNumber" id="PhoneNumber" readonly />
-            <span asp-validation-for="ReviewInfo.PhoneNumber"></span>
-        </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Phone Number:</label>
+                <input class="form-control" type="tel" asp-for="ReviewInfo.PhoneNumber" id="PhoneNumber" readonly />
+                <span asp-validation-for="ReviewInfo.PhoneNumber"></span>
+            </div>
 
-        <div>
-            <label for="Resident">Resident:</label>
-            <input type="text" asp-for="ReviewInfo.Resident" id="Resident" readonly />
-            <span asp-validation-for="ReviewInfo.Resident"></span>
-        </div>
+            <div class="form-group">
+                <label for="Resident">Resident:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Resident" id="Resident" readonly />
+                <span asp-validation-for="ReviewInfo.Resident"></span>
+            </div>
 
-        <div>
-            <label for="Street">Street:</label>
-            <input type="text" asp-for="ReviewInfo.Street" id="Resident" readonly />
-            <span asp-validation-for="ReviewInfo.Street"></span>
-        </div>
+            <div class="form-group">
+                <label for="Street">Street:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Street" id="Resident" readonly />
+                <span asp-validation-for="ReviewInfo.Street"></span>
+            </div>
 
-        <div>
-            <label for="PostalCode">Postal Code:</label>
-            <input type="text" asp-for="ReviewInfo.PostalCode" id="PostalCode" readonly/>
-            <span asp-validation-for="ReviewInfo.PostalCode"></span>
-        </div>
+            <div class="row">
+                <div class="col-4">
+                    <label for="PostalCode">Postal Code:</label>
+                    <input class="form-control" type="text" asp-for="ReviewInfo.PostalCode" id="PostalCode" readonly />
+                    <span asp-validation-for="ReviewInfo.PostalCode"></span>
+                </div>
 
-        <div>
-            <label for="City">City:</label>
-            <input type="text" asp-for="ReviewInfo.City" id="City" readonly />
-            <span asp-validation-for="ReviewInfo.City"></span>
-        </div>
-    
-        <div>
-            <label for="Country">Country:</label>
-            <input type="text" asp-for="ReviewInfo.Country" id="Country" readonly/>
-            <span asp-validation-for="ReviewInfo.Country"></span>
-        </div>
-    }
-    else
-    {
-        <div>
-            <label for="FirstName">First Name:</label>
-            <input type="text" asp-for="ReviewInfo.FirstName" id="FirstName" />
-            <span asp-validation-for="ReviewInfo.FirstName"></span>
-        </div>
+                <div class="col-8">
+                    <label for="City">City:</label>
+                    <input class="form-control" type="text" asp-for="ReviewInfo.City" id="City" readonly />
+                    <span asp-validation-for="ReviewInfo.City"></span>
+                </div>
+            </div>
 
-        <div>
-            <label for="LastName">Last Name:</label>
-            <input type="text" asp-for="ReviewInfo.LastName" id="LastName" />
-            <span asp-validation-for="ReviewInfo.LastName"></span>
-        </div>
+            <div class="form-group">
+                <label for="Country">Country:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Country" id="Country" readonly />
+                <span asp-validation-for="ReviewInfo.Country"></span>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label for="FirstName">First Name:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.FirstName" id="FirstName" />
+                <span asp-validation-for="ReviewInfo.FirstName"></span>
+            </div>
 
-        <div>
-            <label for="Email">Email:</label>
-            <input type="email" asp-for="ReviewInfo.Email" id="Email" />
-            <span asp-validation-for="ReviewInfo.Email"></span>
-        </div>
+            <div class="form-group">
+                <label for="LastName">Last Name:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.LastName" id="LastName" />
+                <span asp-validation-for="ReviewInfo.LastName"></span>
+            </div>
 
-        <div>
-            <label for="PhoneNumber">Phone Number:</label>
-            <input type="tel" asp-for="ReviewInfo.PhoneNumber" id="PhoneNumber" />
-            <span asp-validation-for="ReviewInfo.PhoneNumber"></span>
-        </div>
+            <div class="form-group">
+                <label for="Email">Email:</label>
+                <input class="form-control" type="email" asp-for="ReviewInfo.Email" id="Email" />
+                <span asp-validation-for="ReviewInfo.Email"></span>
+            </div>
 
-        <div>
-            <label for="Resident">Resident:</label>
-            <input type="text" asp-for="ReviewInfo.Street" id="Resident" />
-            <span asp-validation-for="ReviewInfo.Street"></span>
-        </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Phone Number:</label>
+                <input class="form-control" type="tel" asp-for="ReviewInfo.PhoneNumber" id="PhoneNumber" />
+                <span asp-validation-for="ReviewInfo.PhoneNumber"></span>
+            </div>
 
-        <div>
-            <label for="Street">Street:</label>
-            <input type="text" asp-for="ReviewInfo.Street" id="Resident" />
-            <span asp-validation-for="ReviewInfo.Street"></span>
-        </div>
+            <div class="form-group">
+                <label for="Resident">Resident:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Street" id="Resident" />
+                <span asp-validation-for="ReviewInfo.Street"></span>
+            </div>
 
-        <div>
-            <label for="PostalCode">Postal Code:</label>
-            <input type="text" asp-for="ReviewInfo.PostalCode" id="PostalCode" />
-            <span asp-validation-for="ReviewInfo.PostalCode"></span>
-        </div>
+            <div class="form-group">
+                <label for="Street">Street:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Street" id="Resident" />
+                <span asp-validation-for="ReviewInfo.Street"></span>
+            </div>
 
-        <div>
-            <label for="City">City:</label>
-            <input type="text" asp-for="ReviewInfo.City" id="City" />
-            <span asp-validation-for="ReviewInfo.City"></span>
-        </div>
+            <div class="row">
+                <div class="col-4">
+                    <label for="PostalCode">Postal Code:</label>
+                    <input class="form-control" type="text" asp-for="ReviewInfo.PostalCode" id="PostalCode" />
+                    <span asp-validation-for="ReviewInfo.PostalCode"></span>
+                </div>
 
-        <div>
-            <label for="Country">Country:</label>
-            <input type="text" asp-for="ReviewInfo.Country" id="Country" />
-            <span asp-validation-for="ReviewInfo.Country"></span>
-        </div>
+                <div class="col-8">
+                    <label for="City">City:</label>
+                    <input class="form-control" type="text" asp-for="ReviewInfo.City" id="City" />
+                    <span asp-validation-for="ReviewInfo.City"></span>
+                </div>
+            </div>
 
-    }
-    <button type="submit">Submit Order!</button>
-</form>
+            <div class="form-group">
+                <label for="Country">Country:</label>
+                <input class="form-control" type="text" asp-for="ReviewInfo.Country" id="Country" />
+                <span asp-validation-for="ReviewInfo.Country"></span>
+            </div>
+
+        }
+        <div class="container mt-2">
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary" asp-page-handler="Cancel">Cancel</button>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Submit Order!</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 @* <form method="post">
 <div>

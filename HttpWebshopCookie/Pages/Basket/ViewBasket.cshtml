@@ -1,41 +1,50 @@
 ﻿@page
 @model HttpWebshopCookie.Pages.Basket.ViewBasketModel
 
-<h1>View Basket</h1>
-
-<form method="post" asp-page-handler="UpdateBasket">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Product</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-                <th scope="col">Line Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Basket.Items)
-            {
-                <tr class="table-active">
-                    <th scope="row">@item.ProductInBasket?.Name</th>
-                    <td>
-                        <input type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
-                    </td>
-                    <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
-                    <td>@(item.LinePrice().ToString("C"))</td>
+<div class="container w-75 align-self-lg-center">
+    <h1>View Basket</h1>
+    <form method="post" asp-page-handler="UpdateBasket">
+        <table class="table table-hover table-striped table-condensed">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col" class="col-sm">Product</th>
+                    <th scope="col" class="col-sm">Quantity</th>
+                    <th scope="col" class="col-sm">Price</th>
+                    <th scope="col" class="col-sm">Line Total</th>
                 </tr>
-            }
-            <tr>
-                <th class="table-active">Total:</th>
-                <td></td>
-                <td></td>
-                <td>@Model.Basket.TotalPrice().ToString("C")</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="container">
-        <button class="btn btn-primary" type="button">Update Basket</button>
-        <button class="btn btn-primary" type="button" asp-page-handler="ProceedToCheckout">Proceed to Checkout</button>
-        <button class="btn btn-secondary" type="button" asp-page-handler="ContinueShopping">Continue Shopping</button>
-    </div>
-</form>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Basket.Items)
+                {
+                    <tr>
+                        <td scope="row">@item.ProductInBasket?.Name</td>
+                        <td>
+                            <input type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
+                        </td>
+                        <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
+                        <td>@(item.LinePrice().ToString("C"))</td>
+                    </tr>
+                }
+                <tr>
+                    <th>Total:</th>
+                    <td></td>
+                    <td></td>
+                    <td class="text-decoration-underline">@Model.Basket.TotalPrice().ToString("C")</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="container mt-2">
+            <div class="row justify-content-end">
+                <div class="col-auto">
+                    <button class="btn btn-outline-primary" type="submit" asp-page-handler="ContinueShopping">Continue Shopping</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Update Basket</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit" asp-page-handler="ProceedToCheckout">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

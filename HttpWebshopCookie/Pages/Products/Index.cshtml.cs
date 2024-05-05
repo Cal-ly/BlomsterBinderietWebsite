@@ -4,14 +4,14 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
 {
     [BindProperty]
     public List<Product> ProductList { get; set; } = default!;
-    [BindProperty]
-    public Dictionary<string, int> ProductQuantities { get; set; } = [];
+
+    public Dictionary<string, int> ProductQuantities { get; set; } = new Dictionary<string, int>();
 
     public async Task OnGetAsync()
     {
         ProductList = await context.Products.OrderBy(p => p.Name).ToListAsync();
-        var basket = basketService.GetOrCreateBasket();
-        ProductQuantities = await basketService.GetAllQuantitiesInBasket();
+        var basketQuantities = await basketService.GetAllQuantitiesInBasket();
+        ProductQuantities = ProductList.ToDictionary(p => p.Id, p => basketQuantities.ContainsKey(p.Id) ? basketQuantities[p.Id] : 0);
     }
 
     public async Task<IActionResult> OnPostAddToBasket(string id)
@@ -22,7 +22,6 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
         }
 
         await basketService.AddToBasket(id);
-        ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
         return RedirectToPage();
     }
 
@@ -32,9 +31,7 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
         {
             return NotFound();
         }
-
         await basketService.RemoveFromBasket(id);
-        ProductQuantities[id] = await basketService.GetQuantityInBasket(id);
 
         return RedirectToPage();
     }
