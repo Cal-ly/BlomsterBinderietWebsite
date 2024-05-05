@@ -32,10 +32,10 @@
                             @{
                                 int quantity = Model.ProductQuantities.ContainsKey(product.Id) ? Model.ProductQuantities[product.Id] : 0;
                             }
-                            <span class="mr-2">@quantity</span>
-                            <form method="post" class="d-inline">
+                            <span class="p-1">@quantity</span>
+                            <form method="post" class="d-inline p-0">
                                 <input type="hidden" name="id" value="@product.Id" />
-                                <button type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" data-toggle="tooltip" title="Add to Basket" class="btn btn-link p-0 mr-2">
+                                <button type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" data-toggle="tooltip" title="Add to Basket" class="btn btn-link p-0">
                                     <i class="fas fa-cart-plus"></i>
                                 </button>
                                 @if (quantity > 0)
@@ -54,13 +54,13 @@
                         </div>
                     </td>
                     <td class="btn-group">
-                        <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" title="View Details" class="btn btn-link p-0">
+                        <a asp-page="./Details" asp-route-id="@product.Id" data-toggle="tooltip" title="View Details" class="btn btn-link">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" title="Edit Product" class="btn btn-link p-0">
+                        <a asp-page="./Edit" asp-route-id="@product.Id" data-toggle="tooltip" title="Edit Product" class="btn btn-link">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a asp-page="./Delete" asp-route-id="@product.Id" data-toggle="tooltip" title="Delete Product" class="btn btn-link p-0">
+                        <a asp-page="./Delete" asp-route-id="@product.Id" data-toggle="tooltip" title="Delete Product" class="btn btn-link">
                             <i class="fas fa-trash-alt"></i>
                         </a>
                     </td>
