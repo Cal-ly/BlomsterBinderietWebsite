@@ -5,6 +5,7 @@ global using HttpWebshopCookie.Data.MockData;
 global using HttpWebshopCookie.Interfaces;
 global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.Users;
+global using HttpWebshopCookie.Models.ViewModels;
 global using HttpWebshopCookie.Services;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -39,9 +40,10 @@ builder.Services.AddIdentityCore<Employee>()
     .AddSignInManager<SignInManager<Employee>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
+builder.Services.AddRazorPages()
+                    .AddSessionStateTempDataProvider();
+//builder.Services.AddControllersWithViews()
+//                    .AddSessionStateTempDataProvider();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization(options =>
@@ -110,8 +112,8 @@ else
 }
 
 //app.UseHttpsRedirection();
-app.UseSession();
 app.UseStaticFiles();
+app.UseSession();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

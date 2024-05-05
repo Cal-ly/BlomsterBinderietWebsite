@@ -14,12 +14,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.CompletionDate)
             .HasColumnType("datetime");
         builder.Property(o => o.Status)
-            .HasDefaultValue(OrderStatus.Received)
-            .HasConversion<string>();
+            .HasDefaultValue(OrderStatus.Received);
         builder.Property(o => o.TotalPrice)
             .HasColumnType("decimal(18,2)");
-        //builder.Property(o => o.TotalPrice)
-        //       .HasComputedColumnSql("SELECT SUM(UnitPrice * Quantity) FROM OrderItems WHERE OrderId = Id", stored: true);
 
         builder.HasOne(o => o.Customer)
             .WithMany(c => c.Orders)

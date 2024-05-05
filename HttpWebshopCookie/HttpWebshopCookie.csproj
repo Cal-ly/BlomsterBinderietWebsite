@@ -9,11 +9,13 @@
 
   <ItemGroup>
     <Compile Remove="Pages\Basket\Checkout.cshtml.cs" />
+    <Compile Remove="Pages\Basket\CheckoutInfo.cshtml.cs" />
     <Compile Remove="Pages\Basket\ConfirmOrder.cshtml.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="Pages\Basket\Checkout.cshtml" />
+    <Content Remove="Pages\Basket\CheckoutInfo.cshtml" />
     <Content Remove="Pages\Basket\ConfirmOrder.cshtml" />
   </ItemGroup>
 
@@ -31,7 +33,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="Models\ViewModels\" />
   </ItemGroup>
 
 </Project>

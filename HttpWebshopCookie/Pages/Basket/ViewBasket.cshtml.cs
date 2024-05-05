@@ -1,7 +1,3 @@
-using HttpWebshopCookie.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
 namespace HttpWebshopCookie.Pages.Basket;
 
 public class ViewBasketModel(BasketService basketService) : PageModel

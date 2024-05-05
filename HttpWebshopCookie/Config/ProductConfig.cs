@@ -23,8 +23,6 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
 {
     public void Configure(EntityTypeBuilder<Tag> builder)
     {
-        //builder.HasKey(t => t.Id);
-        //builder.Property(t => t.Id).ValueGeneratedOnAdd();
         builder.ToTable("Tags");
 
         builder.Property(t => t.Category).IsRequired();
@@ -45,9 +43,6 @@ public class ProductTagConfiguration : IEntityTypeConfiguration<ProductTag>
         builder.HasKey(pt => new {pt.ProductId, pt.TagId});
         builder.ToTable("ProductTags");
 
-        //builder.Property(pt => pt.ProductId).IsRequired();
-        //builder.Property(pt => pt.TagId).IsRequired();
-
         builder.HasOne(pt => pt.Product)
             .WithMany(p => p.ProductTags)
             .HasForeignKey(pt => pt.ProductId)
@@ -57,6 +52,5 @@ public class ProductTagConfiguration : IEntityTypeConfiguration<ProductTag>
             .WithMany(t => t.ProductTags)
             .HasForeignKey(pt => pt.TagId)
             .OnDelete(DeleteBehavior.Restrict);
-
     }
 }

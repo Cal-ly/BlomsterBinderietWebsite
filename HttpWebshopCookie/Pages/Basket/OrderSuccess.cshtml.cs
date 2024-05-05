@@ -1,12 +1,12 @@
 namespace HttpWebshopCookie.Pages.Basket;
 
-public class OrderSuccessModel(ApplicationDbContext context) : PageModel
+public class OrderSuccessModel(ApplicationDbContext context, OrderService orderService) : PageModel
 {
     public string? OrderId { get; set; }
     public List<OrderItemView>? OrderItems { get; set; } = [];
     public string? TotalString { get; set; }
 
-    public void OnGet(string orderId)
+    public IActionResult OnGet(string orderId)
     {
         var order = context.Orders
             .Include(o => o.OrderItems)
@@ -15,24 +15,15 @@ public class OrderSuccessModel(ApplicationDbContext context) : PageModel
 
         if (order == null)
         {
-            RedirectToPage("/Error");
+            return RedirectToPage("/Error");
         }
 
         OrderId = orderId;
-        OrderItems = order!.OrderItems.Select(oi => new OrderItemView
-        {
-            ProductName = oi.ProductItem?.Name,
-            Quantity = oi.Quantity,
-            Price = oi.ProductItem?.Price
-        }).ToList();
 
-        TotalString = order?.TotalPrice.ToString("C2");
-    }
+        OrderItems = [.. orderService.GetOrderItems(order!)];
 
-    public class OrderItemView
-    {
-        public string? ProductName { get; set; }
-        public int? Quantity { get; set; }
-        public decimal? Price { get; set; }
+        TotalString = order.TotalPrice.ToString();
+
+        return Page();
     }
 }

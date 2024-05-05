@@ -1,7 +1,88 @@
+using HttpWebshopCookie.Models;
+
 namespace HttpWebshopCookie.Services;
 
 public class OrderService(ApplicationDbContext context)
 {
+    public Order GetOrder(string orderId)
+    {
+        return context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.ProductItem)
+            .SingleOrDefault(o => o.Id == orderId)!;
+    }
+
+    public OrderItemView[] GetOrderItems(Order order)
+    {
+        return order.OrderItems.Select(oi => new OrderItemView
+        {
+            ProductName = oi.ProductItem?.Name,
+            Quantity = oi.Quantity,
+            Price = oi.ProductItem?.Price
+        }).ToArray();
+    }
+
+    public string GetTotalPriceString(Order order)
+    {
+        return order.TotalPrice.ToString("C2");
+    }
+
+    public void UpdateOrderStatus(string orderId, OrderStatus newStatus)
+    {
+        var order = context.Orders.Find(orderId);
+        if (order == null)
+        {
+            throw new InvalidOperationException("Order not found.");
+        }
+
+        order.Status = newStatus;
+        context.SaveChanges();
+    }
+
+    public void UpdateOrder(Order order)
+    {
+        context.Orders.Update(order);
+        context.SaveChanges();
+    }
+
+    public void DeleteOrder(string orderId)
+    {
+        var order = context.Orders.Find(orderId);
+        if (order == null)
+        {
+            throw new InvalidOperationException("Order not found.");
+        }
+
+        context.Orders.Remove(order);
+        context.SaveChanges();
+    }
+
+    public List<UserWrapper> GetOrderInvolved(Order order)
+    {
+        List<UserWrapper> involvedEntities = new();
+
+        // Add any other entities involved with the order
+        if (order.Guest != null)
+        {
+            var guestWrapper = new UserWrapper(order.Guest);
+            involvedEntities.Add(guestWrapper);
+        }
+
+        if (order.Customer != null)
+        {
+            var customerWrapper = new UserWrapper(order.Customer);
+            involvedEntities.Add(customerWrapper);
+        }
+
+        if (order.Employee != null)
+        {
+            var employeeWrapper = new UserWrapper(order.Employee);
+            involvedEntities.Add(employeeWrapper);
+        }
+
+        return involvedEntities;
+    }
+
     public Order CreateOrderFromBasket(Basket basket, UserWrapper userWrapper)
     {
         var order = new Order
@@ -16,7 +97,7 @@ public class OrderService(ApplicationDbContext context)
             var orderItem = new OrderItem
             {
                 ProductItem = basketItem.ProductInBasket,
-                ProductId = basketItem.ProductId,
+                ProductId = basketItem.ProductId!,
                 Quantity = basketItem.Quantity ?? 0,
                 UnitPrice = basketItem.ProductInBasket?.Price ?? 0
             };

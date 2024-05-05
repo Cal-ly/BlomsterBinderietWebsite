@@ -12,11 +12,16 @@ public class Order
     public string? GuestId { get; set; }
     public Employee? Employee { get; set; }
     public string? EmployeeId { get; set; }
-    public ICollection<OrderItem> OrderItems { get; set; } = [];
+    public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public decimal TotalPrice
     {
-        get { return TotalPrice; }
-        set { TotalPrice = OrderItems?.Sum(item => item.UnitPrice * item.Quantity) ?? 0; }
+        get { return GetTotalPrice(); }
+        private set { }
+    }
+
+    public decimal GetTotalPrice()
+    {
+        return OrderItems?.Sum(item => item.UnitPrice * item.Quantity) ?? 0;
     }
 }
 
