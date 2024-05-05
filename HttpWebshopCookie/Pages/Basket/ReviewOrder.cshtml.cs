@@ -4,14 +4,21 @@ public class ReviewOrderModel(BasketService basketService) : PageModel
 {
     public Models.Basket Basket { get; set; } = default!;
 
+    [BindProperty]
+    public Dictionary<string, int> Quantities { get; set; } = new Dictionary<string, int>();
+
     public void OnGet()
     {
         Basket = basketService.GetOrCreateBasket();
     }
 
-    public IActionResult OnPostUpdateBasket(string productId, int quantity)
+    public IActionResult OnPostUpdateBasket()
     {
-        basketService.UpdateBasketItemQuantity(productId, quantity).Wait();
+        foreach (var entry in Quantities)
+        {
+            basketService.UpdateBasketItemQuantity(entry.Key, entry.Value).Wait();
+        }
+
         return RedirectToPage();
     }
 
