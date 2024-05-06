@@ -15,8 +15,12 @@
         </select>
     </div>
     <div>
-        <label for="CustomerName">Customer Name:</label>
+        <label for="CustomerName">Customer/Guest Name:</label>
         <input type="text" id="CustomerName" name="customerName" value="@Model.CustomerName" />
+    </div>
+    <div>
+        <label for="EmployeeName">Employee Name:</label>
+        <input type="text" id="EmployeeName" name="employeeName" value="@Model.EmployeeName" />
     </div>
     <button type="submit">Filter</button>
 </form>
@@ -27,6 +31,7 @@
             <th>Order ID</th>
             <th>Order Date</th>
             <th>Customer</th>
+            <th>Employee</th>
             <th>Status</th>
             <th>Total</th>
             <th>Details</th>
@@ -38,7 +43,14 @@
             <tr>
                 <td>@order.Id</td>
                 <td>@order.OrderDate.ToShortDateString()</td>
-                <td>@(order.Customer?.FirstName + " " + order.Customer?.LastName)</td>
+                <td>
+                    @{
+                        var customerName = order.Customer != null ? $"{order.Customer.FirstName} {order.Customer.LastName}" : $"{order.Guest?.FirstName} {order.Guest?.LastName}";
+                        var isGuest = order.Guest != null;
+                    }
+                    @customerName @(isGuest ? "(unregistered)" : "")
+                </td>
+                <td>@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
                 <td>@order.Status</td>
                 <td>@order.TotalPrice.ToString("C")</td>
                 <td><a asp-page="OrderDetails" asp-route-id="@order.Id">Details</a></td>

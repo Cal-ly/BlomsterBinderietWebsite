@@ -1,21 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace HttpWebshopCookie.Pages.Orders;
 
-public class OrderListingsModel : PageModel
+public class OrderListingsModel(ApplicationDbContext context) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-
-    public OrderListingsModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public List<Order> Orders { get; set; } = new List<Order>();
     public OrderStatus? FilterStatus { get; set; }
     public string? CustomerName { get; set; }
+    public string? EmployeeName { get; set; }
 
-    public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName) //TODO also implement for Guest / GuestUsers
+    public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName, string? employeeName)
     {
-        var ordersQuery = _context.Orders.Include(o => o.Customer).Include(o => o.OrderItems).AsQueryable();
+        var ordersQuery = context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Guest)
+            .Include(o => o.Employee)
+            .Include(o => o.OrderItems)
+            .AsQueryable();
 
         if (filterStatus.HasValue)
         {
@@ -24,16 +25,23 @@ public class OrderListingsModel : PageModel
 
         if (!string.IsNullOrEmpty(customerName))
         {
-            ordersQuery = ordersQuery.Where(o => o.Customer != null &&
-                                                (o.Customer.FirstName + " " + o.Customer.LastName)
-                                                 .Contains(customerName));
+            ordersQuery = ordersQuery.Where(o =>
+                (o.Customer != null && (o.Customer.FirstName + " " + o.Customer.LastName).Contains(customerName)) ||
+                (o.Guest != null && (o.Guest.FirstName + " " + o.Guest.LastName).Contains(customerName)));
+        }
+
+        if (!string.IsNullOrEmpty(employeeName))
+        {
+            ordersQuery = ordersQuery.Where(o => o.Employee != null &&
+                                                (o.Employee.FirstName + " " + o.Employee.LastName)
+                                                .Contains(employeeName));
         }
 
         Orders = await ordersQuery.OrderByDescending(o => o.OrderDate).ToListAsync();
     }
 
-    public IActionResult OnPostSearch(OrderStatus? filterStatus, string? customerName)
+    public IActionResult OnPostSearch(OrderStatus? filterStatus, string? customerName, string? employeeName)
     {
-        return RedirectToPage(new { filterStatus, customerName });
+        return RedirectToPage(new { filterStatus, customerName, employeeName });
     }
 }

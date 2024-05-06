@@ -2,21 +2,14 @@ using System.Security.Claims;
 
 namespace HttpWebshopCookie.Pages.Orders;
 
-public class OrderDetailsModel : PageModel
+public class OrderDetailsModel(ApplicationDbContext context) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-
-    public OrderDetailsModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public Order? Order { get; set; }
     public string? Message { get; set; }
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        Order = await _context.Orders
+        Order = await context.Orders
             .Include(o => o.Customer)
             .Include(o => o.Employee)
             .Include(o => o.OrderItems)
@@ -34,7 +27,7 @@ public class OrderDetailsModel : PageModel
 
     public async Task<IActionResult> OnPostAssignToSelfAsync(string id)
     {
-        var order = await _context.Orders.FindAsync(id);
+        var order = await context.Orders.FindAsync(id);
 
         if (order == null)
         {
@@ -52,14 +45,14 @@ public class OrderDetailsModel : PageModel
 
         order.EmployeeId = employeeId;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return RedirectToPage(new { id });
     }
 
     public async Task<IActionResult> OnPostUpdateStatusAsync(string id, OrderStatus status)
     {
-        var order = await _context.Orders.FindAsync(id);
+        var order = await context.Orders.FindAsync(id);
 
         if (order == null)
         {
@@ -68,7 +61,7 @@ public class OrderDetailsModel : PageModel
         }
 
         order.Status = status;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return RedirectToPage(new { id });
     }

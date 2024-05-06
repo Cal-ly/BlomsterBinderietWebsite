@@ -14,7 +14,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.CompletionDate)
             .HasColumnType("datetime");
         builder.Property(o => o.Status)
-            .HasDefaultValue(OrderStatus.Received);
+            .HasDefaultValue(OrderStatus.Pending);
         builder.Property(o => o.TotalPrice)
             .HasColumnType("decimal(18,2)");
 
