@@ -49,7 +49,8 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 JobTitle = EmployeeRoles[i],
                 Salary = decimal.Parse(random.Next(170000, 500000).ToString()),
                 EnrollmentDate = DateTime.UtcNow,
-                AddressId = employeeAddress.Id
+                AddressId = employeeAddress.Id,
+                Address = employeeAddress
             };
             EmployeeIdList?.Add(employeeUser.Id);
             employeeAddressList.Add(employeeAddress);
@@ -106,6 +107,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 FirstName = randomName[0],
                 LastName = randomName[1],
                 AddressId = companyAddress.Id,
+                Address = companyAddress,
                 Title = "Owner",
                 BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70)),
                 CompanyId = company.Id
@@ -153,7 +155,8 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 PhoneNumber = randomPhone,
                 FirstName = randomName[0],
                 LastName = randomName[1],
-                AddressId = customerAddress.Id,
+                AddressId = customerAddress.Id, //implement address property
+                Address = customerAddress,
                 Title = "Mr/Mrs/Ms",
                 BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70)) 
             };
@@ -195,6 +198,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
             FirstName = randomName[0],
             LastName = randomName[1],
             AddressId = customerAddress.Id,
+            Address = customerAddress,
             Title = "DevOps",
             BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70))
         };

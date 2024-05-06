@@ -31,6 +31,11 @@ public class CustomerConfiguration : UserConfiguration<Customer>
             .HasForeignKey(o => o.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(u => u.Address)
+            .WithOne()
+            .HasForeignKey<Customer>(u => u.AddressId)
+            .OnDelete(DeleteBehavior.ClientCascade);
+
         builder.HasOne(c => c.Company)
             .WithMany(c => c.Representatives)
             .HasForeignKey(c => c.CompanyId)
@@ -45,10 +50,16 @@ public class EmployeeConfiguration : UserConfiguration<Employee>
         builder.ToTable("Employees");
         builder.Property(e => e.Salary).HasColumnType("decimal(18,2)");
         builder.Property(e => e.TerminationDate).HasColumnType("datetime");
+
         builder.HasMany(e => e.Orders)
             .WithOne(e => e.Employee)
             .HasForeignKey(o => o.EmployeeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(u => u.Address)
+            .WithOne()
+            .HasForeignKey<Employee>(u => u.AddressId)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }
 
@@ -69,6 +80,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
             .WithOne(o => o.Guest)
             .HasForeignKey(o => o.GuestId)
             .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(g => g.Address)
             .WithOne()
             .HasForeignKey<Guest>(g => g.AddressId)

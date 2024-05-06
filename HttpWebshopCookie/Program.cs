@@ -40,12 +40,16 @@ builder.Services.AddIdentityCore<Employee>()
     .AddSignInManager<SignInManager<Employee>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddRazorPages()
-                    .AddSessionStateTempDataProvider();
-//builder.Services.AddControllersWithViews()
-//                    .AddSessionStateTempDataProvider();
-
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".HttpWebshopCookie.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("admin", policy => policy.RequireRole("admin"));
@@ -54,13 +58,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("assistant", policy => policy.RequireRole("assistant"));
     options.AddPolicy("companyrep", policy => policy.RequireRole("companyrep"));
     options.AddPolicy("customer", policy => policy.RequireRole("customer"));
-});
-
-builder.Services.AddSession(options =>
-{
-    options.Cookie.Name = ".HttpWebshopCookie.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(20);
-    options.Cookie.IsEssential = true;
 });
 
 builder.Services.Configure<IdentityOptions>(options =>
