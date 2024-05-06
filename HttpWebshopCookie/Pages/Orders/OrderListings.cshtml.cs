@@ -13,7 +13,7 @@ public class OrderListingsModel : PageModel
     public OrderStatus? FilterStatus { get; set; }
     public string? CustomerName { get; set; }
 
-    public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName)
+    public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName) //TODO also implement for Guest / GuestUsers
     {
         var ordersQuery = _context.Orders.Include(o => o.Customer).Include(o => o.OrderItems).AsQueryable();
 
