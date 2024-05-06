@@ -1,0 +1,61 @@
+﻿@page "{id}"
+@model HttpWebshopCookie.Pages.Orders.OrderDetailsModel
+
+<h1>Order Details</h1>
+
+@if (Model.Message != null)
+{
+    <div>@Model.Message</div>
+}
+
+@if (Model.Order != null)
+{
+    <div>
+        <h2>Order Information</h2>
+        <p>Order ID: @Model.Order.Id</p>
+        <p>Order Date: @Model.Order.OrderDate.ToShortDateString()</p>
+        <p>Customer: @(Model.Order.Customer?.FirstName + " " + Model.Order.Customer?.LastName)</p>
+        <p>Assigned Employee: @Model.Order.Employee?.FirstName</p>
+        <p>Status: @Model.Order.Status</p>
+        <form method="post" asp-page-handler="AssignToSelf">
+            <input type="hidden" name="id" value="@Model.Order.Id" />
+            <button type="submit">Assign to Me</button>
+        </form>
+
+        <form method="post" asp-page-handler="UpdateStatus">
+            <input type="hidden" name="id" value="@Model.Order.Id" />
+            <select name="status">
+                @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
+                {
+                    <option value="@status" selected="@(Model.Order.Status == status)">@status</option>
+                }
+            </select>
+            <button type="submit">Update Status</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Order Items</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.ProductItem?.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
