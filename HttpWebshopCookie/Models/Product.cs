@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using HttpWebshopCookie.Data.IndexTables;
-
-namespace HttpWebshopCookie.Models;
+﻿namespace HttpWebshopCookie.Models;
 
 public class Product
 {
@@ -12,5 +9,5 @@ public class Product
     public bool IsDeleted { get; set; }
     public string? ImageUrl { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public virtual ICollection<ProductTag> ProductTags { get; set; } = [];
+    public virtual ICollection<IXProductTag> ProductTags { get; set; } = [];
 }

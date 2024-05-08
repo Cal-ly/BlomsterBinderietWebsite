@@ -29,16 +29,16 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
 
         builder.HasMany(t => t.ProductTags)
             .WithOne(pt => pt.Tag)
-            .HasForeignKey(pt => pt.ProductId)
+            .HasForeignKey(pt => pt.TagId) // Corrected from ProductId to TagId
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(t => new { t.Occasion, t.Category, t.SubCategory }).IsUnique(); // Unique constraint on and indexed by hierarchy of Occasion, Category, SubCategory.
     }
 }
 
-public class ProductTagConfiguration : IEntityTypeConfiguration<ProductTag>
+public class ProductTagConfiguration : IEntityTypeConfiguration<IXProductTag>
 {
-    public void Configure(EntityTypeBuilder<ProductTag> builder)
+    public void Configure(EntityTypeBuilder<IXProductTag> builder)
     {
         builder.HasKey(pt => new {pt.ProductId, pt.TagId});
         builder.ToTable("ProductTags");

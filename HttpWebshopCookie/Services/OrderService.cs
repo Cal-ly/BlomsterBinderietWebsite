@@ -1,3 +1,6 @@
+using HttpWebshopCookie.Utilities;
+using HttpWebshopCookie.ViewModels;
+
 namespace HttpWebshopCookie.Services;
 
 public class OrderService(ApplicationDbContext context)
@@ -89,20 +92,6 @@ public class OrderService(ApplicationDbContext context)
             Status = OrderStatus.Pending,
         };
 
-        // Add each basket item to the order as order items
-        foreach (var basketItem in basket.Items)
-        {
-            var orderItem = new OrderItem
-            {
-                ProductItem = basketItem.ProductInBasket,
-                ProductId = basketItem.ProductId!,
-                Quantity = basketItem.Quantity ?? 0,
-                UnitPrice = basketItem.ProductInBasket?.Price ?? 0
-            };
-
-            order.OrderItems.Add(orderItem);
-        }
-
         // Set the user-related information on the order based on user type
         switch (userWrapper.GetUserType())
         {
@@ -124,9 +113,22 @@ public class OrderService(ApplicationDbContext context)
                 throw new ArgumentException("Valid user type must be provided");
         }
 
+        // Add each basket item to the order as order items
+        foreach (var basketItem in basket.Items)
+        {
+            var orderItem = new OrderItem
+            {
+                ProductItem = basketItem.ProductInBasket,
+                ProductId = basketItem.ProductId!,
+                Quantity = basketItem.Quantity ?? 0,
+                UnitPrice = basketItem.ProductInBasket?.Price ?? 0
+            };
+
+            order.OrderItems.Add(orderItem);
+        }
+
         context.Orders.Add(order);
         context.SaveChanges();
-
         return order;
     }
 }

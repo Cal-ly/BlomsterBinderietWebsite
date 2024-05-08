@@ -1,4 +1,4 @@
-﻿namespace HttpWebshopCookie.Models.ViewModels;
+﻿namespace HttpWebshopCookie.ViewModels;
 
 public class ReviewInfoViewModel
 {

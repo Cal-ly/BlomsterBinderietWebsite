@@ -1,6 +1,6 @@
-﻿namespace HttpWebshopCookie.Data.IndexTables;
+﻿namespace HttpWebshopCookie.Utilities;
 
-public class ProductTag
+public class IXProductTag
 {
     public virtual Product? Product { get; set; }
     public string? ProductId { get; set; }

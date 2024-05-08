@@ -1,268 +1,17 @@
-﻿using HttpWebshopCookie.Data.IndexTables;
-using HttpWebshopCookie.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System;
-
-namespace HttpWebshopCookie.Data.MockData;
+﻿namespace HttpWebshopCookie.Data.MockData;
 
 public class SeedData()
 {
-    private static readonly PasswordHasher<ApplicationUser> hasher = new();
-    private static readonly Random random = new();
-    private const string Password = "Test.1234";
-
-    private static readonly string[] RoleIds = [Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString()];
-    private static readonly string[] EmployeeIds = [Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), Guid.NewGuid().ToString()];
-
     public static List<string>? CompanyRepIdList;
     public static List<string>? CustomerIdList;
     public static List<string>? GuestIdList;
     public static List<string>? ProductIdList;
     public static List<string>? TagIdList;
 
-    //public static void SeedRoles(ModelBuilder modelBuilder)
-    //{
-    //    string[] RoleNames = ["Admin", "Manager", "Staff", "Assistant", "CompanyRep", "Registered"];
-    //    modelBuilder.Entity<IdentityRole>().HasData(
-    //        new IdentityRole { Id = RoleIds[0], Name = RoleNames[0], NormalizedName = RoleNames[0].ToUpper() },
-    //        new IdentityRole { Id = RoleIds[1], Name = RoleNames[1], NormalizedName = RoleNames[1].ToUpper() },
-    //        new IdentityRole { Id = RoleIds[2], Name = RoleNames[2], NormalizedName = RoleNames[2].ToUpper() },
-    //        new IdentityRole { Id = RoleIds[3], Name = RoleNames[3], NormalizedName = RoleNames[3].ToUpper() },
-    //        new IdentityRole { Id = RoleIds[4], Name = RoleNames[4], NormalizedName = RoleNames[4].ToUpper() },
-    //        new IdentityRole { Id = RoleIds[5], Name = RoleNames[5], NormalizedName = RoleNames[5].ToUpper() }
-    //    );
-    //}
-
-    //public static void SeedEmployees(ModelBuilder modelBuilder)
-    //{
-    //    string[] EmployeeNames = ["Admin", "Manager", "Staff", "Assistant"];
-    //    Employee adminUser = new()
-    //    {
-    //        Id = EmployeeIds[0],
-    //        UserName = EmployeeNames[0],
-    //        NormalizedUserName = EmployeeNames[0].ToUpper(),
-    //        Email = $"{EmployeeNames[0]}@test.com",
-    //        NormalizedEmail = $"{EmployeeNames[0]}@test.com".ToUpper(),
-    //        EmailConfirmed = true,
-    //        PhoneNumber = random.Next(10000000, 99999999).ToString(),
-    //        PhoneNumberConfirmed = true,
-    //        PasswordHash = hasher.HashPassword(null!, Password),
-    //        SecurityStamp = string.Empty,
-    //        FirstName = "Admin",
-    //        LastName = "Admin",
-    //        JobTitle = "CEO",
-    //        Salary = 100000,
-    //        EnrollmentDate = DateTime.UtcNow,
-    //    };
-    //    Employee managerUser = new()
-    //    {
-    //        Id = EmployeeIds[1],
-    //        UserName = EmployeeNames[1],
-    //        NormalizedUserName = EmployeeNames[1].ToUpper(),
-    //        Email = $"{EmployeeNames[1]}@test.com",
-    //        NormalizedEmail = $"{EmployeeNames[1]}@test.com".ToUpper(),
-    //        EmailConfirmed = true,
-    //        PhoneNumber = random.Next(10000000, 99999999).ToString(),
-    //        PhoneNumberConfirmed = true,
-    //        PasswordHash = hasher.HashPassword(null!, Password),
-    //        SecurityStamp = string.Empty,
-    //        FirstName = "Manager",
-    //        LastName = "Manager",
-    //        JobTitle = "Manager",
-    //        Salary = 50000,
-    //        EnrollmentDate = DateTime.UtcNow,
-    //    };
-    //    Employee staffUser = new()
-    //    {
-    //        Id = EmployeeIds[2],
-    //        UserName = EmployeeNames[2],
-    //        NormalizedUserName = EmployeeNames[2].ToUpper(),
-    //        Email = $"{EmployeeNames[2]}@test.com",
-    //        NormalizedEmail = $"{EmployeeNames[2]}@test.com".ToUpper(),
-    //        EmailConfirmed = true,
-    //        PhoneNumber = random.Next(10000000, 99999999).ToString(),
-    //        PhoneNumberConfirmed = true,
-    //        PasswordHash = hasher.HashPassword(null!, Password),
-    //        SecurityStamp = string.Empty,
-    //        FirstName = "Staff",
-    //        LastName = "Staff",
-    //        JobTitle = "Staff",
-    //        Salary = 30000,
-    //        EnrollmentDate = DateTime.UtcNow,
-    //    };
-    //    Employee assistantUser = new()
-    //    {
-    //        Id = EmployeeIds[3],
-    //        UserName = EmployeeNames[3],
-    //        NormalizedUserName = EmployeeNames[3].ToUpper(),
-    //        Email = $"{EmployeeNames[3]}@test.com",
-    //        NormalizedEmail = $"{EmployeeNames[3]}@test.com".ToUpper(),
-    //        EmailConfirmed = true,
-    //        PhoneNumber = random.Next(10000000, 99999999).ToString(),
-    //        PhoneNumberConfirmed = true,
-    //        PasswordHash = hasher.HashPassword(null!, Password),
-    //        SecurityStamp = string.Empty,
-    //        FirstName = "Assistant",
-    //        LastName = "Assistant",
-    //        JobTitle = "Assistant",
-    //        Salary = 20000,
-    //        EnrollmentDate = DateTime.UtcNow,
-    //    };
-    //    //TODO: Add AddressId to Employee and seed addresses
-    //    //TODO: Add RoleId to Employee and seed roles
-    //    //TODO: Add FirstName, LastName from RandomNameGenerator
-
-    //    context.Employees.Add(adminUser, managerUser, staffUser, assistantUser);
-    //    userManager.AddToRoleAsync(adminUser, "Admin").Wait();
-    //    userManager.AddToRoleAsync(managerUser, "Manager").Wait();
-    //    userManager.AddToRoleAsync(staffUser, "Staff").Wait();
-    //    userManager.AddToRoleAsync(assistantUser, "Assistant").Wait();
-    //    //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = EmployeeIds[0], RoleId = RoleIds[0] });
-    //    //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = EmployeeIds[1], RoleId = RoleIds[1] });
-    //    //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = EmployeeIds[2], RoleId = RoleIds[2] });
-    //    //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = EmployeeIds[3], RoleId = RoleIds[3] });
-    //}
-
-    //public static void SeedCompanies(ModelBuilder modelBuilder)
-    //{
-    //    CompanyRepIdList = [];
-    //    List<Address> companyAddresses = new();
-    //    List<Company> companies = new();
-    //    List<Customer> companyReps = new();
-    //    for(int i = 0; i < 6; i++)
-    //    {
-    //        string randomCVR = random.Next(10000000, 99999999).ToString();
-    //        string randomPhone = random.Next(10000000, 99999999).ToString();
-    //        string[] randomAddress = GenerateRandomAddress(random);
-    //        Address companyAddress = new Address
-    //        {
-    //            Resident = $"Company {i}",
-    //            Street = $"{randomAddress[0]}",
-    //            PostalCode = $"{randomAddress[1]}",
-    //            City = $"{randomAddress[2]}",
-    //        };
-    //        companyAddresses.Add(companyAddress);
-    //        Company company = new()
-    //        {
-    //            CVR = randomCVR,
-    //            Name = $"Company {i}",
-    //            PhoneNumber = randomPhone,
-    //            AddressId = companyAddress.Id
-    //        };
-    //        companies.Add(company);
-    //        string[] randomName = GenerateRandomName(random);
-    //        Customer companyRep = new()
-    //        {
-    //            UserName = $"CompanyRep{i}",
-    //            NormalizedUserName = $"CompanyRep{i}".ToUpper(),
-    //            Email = $"companyrep{i}@rep.com",
-    //            NormalizedEmail = $"companyrep{i}@test.com".ToUpper(),
-    //            EmailConfirmed = true,
-    //            PasswordHash = hasher.HashPassword(null!, Password),
-    //            SecurityStamp = string.Empty,
-    //            Title = "Owner",
-    //            FirstName = randomName[0],
-    //            LastName = randomName[1],
-    //            PhoneNumber = randomPhone,
-    //            AddressId = company.AddressId
-    //        };
-    //        CompanyRepIdList.Add(companyRep.Id);
-    //    }
-    //    modelBuilder.Entity<Address>().HasData([.. companyAddresses]);
-    //    modelBuilder.Entity<Company>().HasData([.. companies]);
-    //    modelBuilder.Entity<Customer>().HasData([.. companyReps]);
-    //    foreach (var companyRep in companyReps)
-    //    {
-    //        userManager.AddToRoleAsync(companyRep, "CompanyRep").Wait();
-    //        //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = companyRep.Id, RoleId = RoleIds[4] });
-    //    }
-    //}
-
-    //public static void SeedCustomers(ModelBuilder modelBuilder)
-    //{
-    //    CustomerIdList = [];
-    //    List<Address> customerAddresses = [];
-    //    List<Customer> customers = [];
-    //    for (int i = 0; i < 10; i++)
-    //    {
-    //        string[] randomAddress = GenerateRandomAddress(random);
-    //        string randomPhone = random.Next(10000000, 99999999).ToString();
-    //        Address customerAddress = new()
-    //        {
-    //            Resident = $"Customer {i}",
-    //            Street = $"{randomAddress[0]}",
-    //            PostalCode = $"{randomAddress[1]}",
-    //            City = $"{randomAddress[2]}",
-    //        };
-    //        customerAddresses.Add(customerAddress);
-    //        string[] randomName = GenerateRandomName(random);
-    //        Customer customer = new()
-    //        {
-    //            UserName = $"Customer{i}",
-    //            NormalizedUserName = $"Customer{i}".ToUpper(),
-    //            Email = $"customer{i}@test.com",
-    //            NormalizedEmail = $"customer{i}@test.com".ToUpper(),
-    //            PhoneNumber = randomPhone,
-    //            EmailConfirmed = true,
-    //            PasswordHash = hasher.HashPassword(null!, Password),
-    //            SecurityStamp = string.Empty,
-    //            Title = "Mr",
-    //            FirstName = randomName[0],
-    //            LastName = randomName[1],
-    //            AddressId = customerAddress.Id
-    //        };
-    //        customers.Add(customer);
-    //        CustomerIdList.Add(customer.Id);
-    //    }
-
-    //    modelBuilder.Entity<Address>().HasData([.. customerAddresses]);
-    //    modelBuilder.Entity<Customer>().HasData([.. customers]);
-    //    foreach (var customer in customers)
-    //    {
-    //        userManager.AddToRoleAsync(customer, "Registered").Wait();
-    //        //modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string> { UserId = customer.Id, RoleId = RoleIds[5] });
-    //    }
-    //}
-
-    //public static void SeedGuests(ModelBuilder modelBuilder)
-    //{
-    //    GuestIdList = [];
-    //    string[] names = GenerateRandomName(random);
-    //    List<Address> guestAddresses = [];
-    //    List<Guest> guests = [];
-    //    for(int i = 0; i < 10; i++)
-    //    {
-    //        string[] randomAddress = GenerateRandomAddress(random);
-    //        string randomPhone = random.Next(10000000, 99999999).ToString();
-    //        Address guestAddress = new()
-    //        {
-    //            Resident = names[0] + names[1],
-    //            Street = $"{randomAddress[0]}",
-    //            PostalCode = $"{randomAddress[1]}",
-    //            City = $"{randomAddress[2]}",
-    //        };
-    //        guestAddresses.Add(guestAddress);
-    //        Guest guest = new()
-    //        {
-    //            FirstName = names[0],
-    //            LastName = names[1],
-    //            Email = $"{names[0]}{names[1]}{random.Next(1, 99)}@test.com",
-    //            PhoneNumber = randomPhone,
-    //            AddressId = guestAddress.Id
-    //        };
-    //        guests.Add(guest);
-    //        GuestIdList.Add(guest.Id);
-    //    }
-    //    modelBuilder.Entity<Address>().HasData([.. guestAddresses]);
-    //    modelBuilder.Entity<Guest>().HasData([.. guests]);
-    //}
-
     public static void SeedTags(ModelBuilder modelBuilder)
     {
         TagIdList = [];
         List<Tag> tags = new();
-
         Dictionary<string, List<(string Category, List<string> SubCategories)>> categoriesByOccasion = new Dictionary<string, List<(string, List<string>)>>
         {
             ["Begravelse"] = new List<(string, List<string>)>
@@ -369,6 +118,7 @@ public class SeedData()
                         Category = category.Category,
                         SubCategory = subCategory
                     };
+                    tags.Add(tag);
                     TagIdList.Add(tag.Id);
                 }
             }
@@ -528,80 +278,29 @@ public class SeedData()
         if (TagIdList is null)
             return;
 
-        //modelBuilder.Entity<ProductTag>().HasData(
-        //    new ProductTag { ProductId = ProductIdList[0], TagId = TagIdList[0] },
-        //    new ProductTag { ProductId = ProductIdList[0], TagId = TagIdList[165] },
-        //    new ProductTag { ProductId = ProductIdList[0], TagId = TagIdList[166] },
-        //    new ProductTag { ProductId = ProductIdList[1], TagId = TagIdList[4] },
-        //    new ProductTag { ProductId = ProductIdList[1], TagId = TagIdList[7] },
-        //    new ProductTag { ProductId = ProductIdList[2], TagId = TagIdList[15] },
-        //    new ProductTag { ProductId = ProductIdList[3], TagId = TagIdList[102] },
-        //    new ProductTag { ProductId = ProductIdList[3], TagId = TagIdList[163] },
-        //    new ProductTag { ProductId = ProductIdList[4], TagId = TagIdList[124] },
-        //    new ProductTag { ProductId = ProductIdList[4], TagId = TagIdList[128] },
-        //    new ProductTag { ProductId = ProductIdList[4], TagId = TagIdList[169] },
-        //    new ProductTag { ProductId = ProductIdList[5], TagId = TagIdList[63] },
-        //    new ProductTag { ProductId = ProductIdList[6], TagId = TagIdList[66] },
-        //    new ProductTag { ProductId = ProductIdList[7], TagId = TagIdList[114] },
-        //    new ProductTag { ProductId = ProductIdList[8], TagId = TagIdList[55] },
-        //    new ProductTag { ProductId = ProductIdList[9], TagId = TagIdList[158] },
-        //    new ProductTag { ProductId = ProductIdList[10], TagId = TagIdList[161] },
-        //    new ProductTag { ProductId = ProductIdList[11], TagId = TagIdList[155] },
-        //    new ProductTag { ProductId = ProductIdList[12], TagId = TagIdList[36] },
-        //    new ProductTag { ProductId = ProductIdList[13], TagId = TagIdList[75] },
-        //    new ProductTag { ProductId = ProductIdList[13], TagId = TagIdList[77] },
-        //    new ProductTag { ProductId = ProductIdList[14], TagId = TagIdList[126] }
-        //);
-    }
-
-    public static string[] GenerateRandomName(Random random)
-    {
-        string[] firstNames = ["Hans", "Jens", "Lone", "John", "Emma", "Michael", "Sophia", "William", "Olivia", "Kristian"];
-        int indexFirst = random.Next(firstNames.Length);
-
-        string[] lastNames = ["Hansen", "Jensen", "Johnson", "Gormsen", "Michaelson", "Kristiansdottir", "Wilson", "Olivera"];
-        int indexLast = random.Next(lastNames.Length);
-
-        return [firstNames[indexFirst], lastNames[indexLast]];
-    }
-
-    public static string[] GenerateRandomAddress(Random random)
-    {
-        string[] streets = ["Hovedgade", "Bakkevej", "Skovvej", "Strandvej", "Søndergade", "Nørregade", "Vestergade", "Østergade"];
-        int indexStreet = random.Next(streets.Length);
-
-        string streetCombine;
-        string streetNumber = random.Next(1, 99).ToString();
-        if (random.Next(1, 3) == 1)
-        {
-            string streetLetter = Convert.ToChar(random.Next(65, 91)).ToString();
-            string streetFloor = random.Next(1, 5).ToString();
-            string streetSide = random.Next(1, 3) == 1 ? "tv" : "th";
-            streetCombine = $"{streetNumber}{streetLetter}, {streetFloor}{streetSide}";
-        }
-        else
-        {
-            streetCombine = streetNumber;
-        }
-
-        string streetLongAddress = $"{streets[indexStreet]} {streetCombine}";
-
-        string[] postalCodes = ["1000", "2000", "3000", "4000", "5000", "6000", "7000", "8000"];
-        int indexPostal = random.Next(postalCodes.Length);
-
-        Dictionary<string, string> cities = new()
-        {
-            ["1000"] = "København",
-            ["2000"] = "Frederiksberg",
-            ["3000"] = "Helsingør",
-            ["4000"] = "Roskilde",
-            ["5000"] = "Odense",
-            ["6000"] = "Kolding",
-            ["7000"] = "Esbjerg",
-            ["8000"] = "Aarhus",
-            ["9000"] = "Aalborg"
-        };
-
-        return [streetLongAddress, postalCodes[indexPostal], cities[postalCodes[indexPostal]]];
+        modelBuilder.Entity<IXProductTag>().HasData(
+            new IXProductTag { ProductId = ProductIdList[0], TagId = TagIdList[0] },
+            new IXProductTag { ProductId = ProductIdList[0], TagId = TagIdList[165] },
+            new IXProductTag { ProductId = ProductIdList[0], TagId = TagIdList[166] },
+            new IXProductTag { ProductId = ProductIdList[1], TagId = TagIdList[4] },
+            new IXProductTag { ProductId = ProductIdList[1], TagId = TagIdList[7] },
+            new IXProductTag { ProductId = ProductIdList[2], TagId = TagIdList[15] },
+            new IXProductTag { ProductId = ProductIdList[3], TagId = TagIdList[102] },
+            new IXProductTag { ProductId = ProductIdList[3], TagId = TagIdList[163] },
+            new IXProductTag { ProductId = ProductIdList[4], TagId = TagIdList[124] },
+            new IXProductTag { ProductId = ProductIdList[4], TagId = TagIdList[128] },
+            new IXProductTag { ProductId = ProductIdList[4], TagId = TagIdList[169] },
+            new IXProductTag { ProductId = ProductIdList[5], TagId = TagIdList[63] },
+            new IXProductTag { ProductId = ProductIdList[6], TagId = TagIdList[66] },
+            new IXProductTag { ProductId = ProductIdList[7], TagId = TagIdList[114] },
+            new IXProductTag { ProductId = ProductIdList[8], TagId = TagIdList[55] },
+            new IXProductTag { ProductId = ProductIdList[9], TagId = TagIdList[158] },
+            new IXProductTag { ProductId = ProductIdList[10], TagId = TagIdList[161] },
+            new IXProductTag { ProductId = ProductIdList[11], TagId = TagIdList[155] },
+            new IXProductTag { ProductId = ProductIdList[12], TagId = TagIdList[36] },
+            new IXProductTag { ProductId = ProductIdList[13], TagId = TagIdList[75] },
+            new IXProductTag { ProductId = ProductIdList[13], TagId = TagIdList[77] },
+            new IXProductTag { ProductId = ProductIdList[14], TagId = TagIdList[126] }
+        );
     }
 }

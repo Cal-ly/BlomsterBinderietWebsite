@@ -1,4 +1,6 @@
-﻿namespace HttpWebshopCookie.Interfaces;
+﻿using HttpWebshopCookie.Utilities;
+
+namespace HttpWebshopCookie.Interfaces;
 
 public interface IOrderCreator
 {

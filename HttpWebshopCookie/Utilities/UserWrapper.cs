@@ -1,4 +1,4 @@
-namespace HttpWebshopCookie.Interfaces;
+namespace HttpWebshopCookie.Utilities;
 
 public class UserWrapper
 {

@@ -1,4 +1,6 @@
-﻿namespace HttpWebshopCookie.Data;
+﻿using HttpWebshopCookie.Utilities;
+
+namespace HttpWebshopCookie.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
@@ -15,7 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<BasketActivity> BasketActivities { get; set; }
     public DbSet<Tag> Tags { get; set; }
-    public DbSet<ProductTag> ProductTags { get; set; }
+    public DbSet<IXProductTag> ProductTags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

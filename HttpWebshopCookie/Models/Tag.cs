@@ -6,5 +6,5 @@ public class Tag
     public string? Occasion { get; set; }
     public string? Category { get; set; }
     public string? SubCategory { get; set; }
-    public List<ProductTag> ProductTags { get; set; } = [];
+    public List<IXProductTag> ProductTags { get; set; } = [];
 }

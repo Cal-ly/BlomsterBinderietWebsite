@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using HttpWebshopCookie.Utilities;
 
 namespace HttpWebshopCookie.Services;
 
@@ -61,7 +61,11 @@ public class BasketService
         var basket = GetOrCreateBasket();
         var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
 
-        if (item == null)
+        if (item != null)
+        {
+            item.Quantity++;
+        }
+        else
         {
             Product? product = await _context.Products.FindAsync(productId) ?? throw new InvalidOperationException("Product not found.");
             item = new BasketItem
@@ -71,10 +75,6 @@ public class BasketService
                 ProductInBasket = product
             };
             basket.Items.Add(item);
-        }
-        else
-        {
-            item.Quantity++;
         }
 
         await _context.SaveChangesAsync();
