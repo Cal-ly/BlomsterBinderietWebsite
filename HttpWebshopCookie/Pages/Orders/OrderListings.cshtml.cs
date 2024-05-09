@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace HttpWebshopCookie.Pages.Orders;
 
 public class OrderListingsModel(ApplicationDbContext context) : PageModel

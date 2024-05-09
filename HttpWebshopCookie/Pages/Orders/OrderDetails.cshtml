@@ -5,12 +5,12 @@
 
 @if (Model.Message != null)
 {
-    <div>@Model.Message</div>
+    <div class="container">@Model.Message</div>
 }
 
 @if (Model.Order != null)
 {
-    <div>
+    <div class ="container">
         <h2>Order Information</h2>
         <p>Order ID: @Model.Order.Id</p>
         <p>Order Date: @Model.Order.OrderDate.ToShortDateString()</p>

@@ -3,10 +3,10 @@
 
 <h1>Order Listings</h1>
 
-<form method="post" asp-page-handler="Search">
-    <div>
+<form method="post" asp-page-handler="Search" class="p-1 bg-primary-subtle d-flex justify-content-between">
+    <div class="d-flex justify-content-evenly">
         <label for="FilterStatus">Order Status:</label>
-        <select id="FilterStatus" name="filterStatus" asp-for="FilterStatus">
+        <select id="FilterStatus" name="filterStatus" asp-for="FilterStatus" class="form-select form-control-sm">
             <option value="">All</option>
             @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
             {

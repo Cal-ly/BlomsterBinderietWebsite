@@ -12,7 +12,7 @@
     <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
         <div class="d-flex justify-content-evenly">
             <label class="col-form-label-lg pe-2 ps-2">Sort by</label>
-            <div class="col-auto m-1">
+            <div class="col-auto m-1">  
                 <select class="form-select form-control-sm" name="sortBy" id="sortBy" aria-label="Sort by ..">
                     <option value="Name" selected="@((Model.SortBy == "Name").ToString().ToLower())">Name</option>
                     <option value="Price" selected="@((Model.SortBy == "Price").ToString().ToLower())">Price</option>

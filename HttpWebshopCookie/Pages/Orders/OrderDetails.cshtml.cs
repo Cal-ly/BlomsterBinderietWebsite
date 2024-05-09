@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 namespace HttpWebshopCookie.Pages.Orders;
 
 public class OrderDetailsModel(ApplicationDbContext context) : PageModel

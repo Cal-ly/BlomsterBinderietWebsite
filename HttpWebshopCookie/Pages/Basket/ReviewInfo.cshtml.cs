@@ -1,7 +1,3 @@
-using System.Security.Claims;
-using HttpWebshopCookie.Utilities;
-using HttpWebshopCookie.ViewModels;
-
 namespace HttpWebshopCookie.Pages.Basket;
 
 public class ReviewInfoModel(BasketService basketService, ApplicationDbContext context) : PageModel
