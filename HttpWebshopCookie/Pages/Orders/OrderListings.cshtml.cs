@@ -6,6 +6,11 @@ public class OrderListingsModel(ApplicationDbContext context) : PageModel
     public OrderStatus? FilterStatus { get; set; }
     public string? CustomerName { get; set; }
     public string? EmployeeName { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public DateTime? StartDate { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public DateTime? EndDate { get; set; }
+
 
     public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName, string? employeeName)
     {
@@ -26,6 +31,15 @@ public class OrderListingsModel(ApplicationDbContext context) : PageModel
             ordersQuery = ordersQuery.Where(o =>
                 (o.Customer != null && (o.Customer.FirstName + " " + o.Customer.LastName).Contains(customerName)) ||
                 (o.Guest != null && (o.Guest.FirstName + " " + o.Guest.LastName).Contains(customerName)));
+        }
+
+        if (StartDate.HasValue)
+        {
+            ordersQuery = ordersQuery.Where(o => o.OrderDate >= StartDate.Value);
+        }
+        if (EndDate.HasValue)
+        {
+            ordersQuery = ordersQuery.Where(o => o.OrderDate <= EndDate.Value);
         }
 
         if (!string.IsNullOrEmpty(employeeName))

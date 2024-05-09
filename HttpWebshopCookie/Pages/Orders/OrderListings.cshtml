@@ -1,60 +1,77 @@
 ﻿@page
 @model HttpWebshopCookie.Pages.Orders.OrderListingsModel
 
-<h1>Order Listings</h1>
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
 
-<form method="post" asp-page-handler="Search" class="p-1 bg-primary-subtle d-flex justify-content-between">
-    <div class="d-flex justify-content-evenly">
-        <label for="FilterStatus">Order Status:</label>
-        <select id="FilterStatus" name="filterStatus" asp-for="FilterStatus" class="form-select form-control-sm">
-            <option value="">All</option>
-            @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
-            {
-                <option value="@status" selected="@(Model.FilterStatus == status)">@status</option>
-            }
-        </select>
-    </div>
-    <div>
-        <label for="CustomerName">Customer/Guest Name:</label>
-        <input type="text" id="CustomerName" name="customerName" value="@Model.CustomerName" />
-    </div>
-    <div>
-        <label for="EmployeeName">Employee Name:</label>
-        <input type="text" id="EmployeeName" name="employeeName" value="@Model.EmployeeName" />
-    </div>
-    <button type="submit">Filter</button>
-</form>
-
-<table>
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Customer</th>
-            <th>Employee</th>
-            <th>Status</th>
-            <th>Total</th>
-            <th>Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model.Orders)
-        {
+<div class="container mt-4">
+    <h1>Order Listings</h1>
+    <form method="get" asp-page-handler="Search" class="bg-primary-subtle">
+        <div class="container pt-2 pb-2">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-sm-6 justify-content-evenly align-items-center">
+                <div class="col">
+                    <label for="FilterStatus" class="form-label">Order Status:</label>
+                    <select id="FilterStatus" name="filterStatus" asp-for="FilterStatus" class="form-select form-select-sm">
+                        <option value="">All</option>
+                        @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
+                        {
+                            <option value="@status" selected="@(Model.FilterStatus == status)">@status</option>
+                        }
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="CustomerName" class="form-label">Customer/Guest:</label>
+                    <input type="text" id="CustomerName" name="customerName" class="form-control form-control-sm" placeholder="Name Nameson" value="@Model.CustomerName" />
+                </div>
+                <div class="col">
+                    <label for="EmployeeName" class="form-label">Employee:</label>
+                    <input type="text" id="EmployeeName" name="employeeName" class="form-control form-control-sm" placeholder="Name Nameson" value="@Model.EmployeeName" />
+                </div>
+                <div class="col">
+                    <label for="StartDate" class="form-label">Start Date:</label>
+                    <input type="date" id="StartDate" name="startDate" class="form-control form-control-sm" value="@(Model.StartDate?.ToString("yyyy-MM-dd"))">
+                </div>
+                <div class="col">
+                    <label for="EndDate" class="form-label">End Date:</label>
+                    <input type="date" id="EndDate" name="endDate" class="form-control form-control-sm" value="@(Model.EndDate?.ToString("yyyy-MM-dd"))">
+                </div>
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-outline-primary">Filter</button>
+                    <button type="submit" class="btn btn-outline-danger" href="@Url.Page("/Orders/OrderListings")">Reset</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table table-hover table-striped">
+        <thead class="table-primary">
             <tr>
-                <td>@order.Id</td>
-                <td>@order.OrderDate.ToShortDateString()</td>
-                <td>
-                    @{
-                        var customerName = order.Customer != null ? $"{order.Customer.FirstName} {order.Customer.LastName}" : $"{order.Guest?.FirstName} {order.Guest?.LastName}";
-                        var isGuest = order.Guest != null;
-                    }
-                    @customerName @(isGuest ? "(unregistered)" : "")
-                </td>
-                <td>@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
-                <td>@order.Status</td>
-                <td>@order.TotalPrice.ToString("C")</td>
-                <td><a asp-page="OrderDetails" asp-route-id="@order.Id">Details</a></td>
+                <th>Order Date</th>
+                <th>Customer</th>
+                <th>Assigned</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.OrderDate.ToString("dd-MM-yy HH:mm:ss")</td>
+                    <td>
+                        @{
+                            var customerName = order.Customer != null ? $"{order.Customer.FirstName} {order.Customer.LastName}" : $"{order.Guest?.FirstName} {order.Guest?.LastName}";
+                            var isGuest = order.Guest != null;
+                        }
+                        @customerName @(isGuest ? "(unregistered)" : "")
+                    </td>
+                    <td>@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
+                    <td>@order.Status</td>
+                    <td>@order.TotalPrice.ToString("C")</td>
+                    <td><a asp-page="/Orders/OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-info border rounded"><i class="fa-solid fa-magnifying-glass"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

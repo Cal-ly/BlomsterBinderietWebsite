@@ -85,8 +85,6 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
             .WithOne()
             .HasForeignKey<Guest>(g => g.AddressId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(g => g.Email).IsUnique();
     }
 }
 

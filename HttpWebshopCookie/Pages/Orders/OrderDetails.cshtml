@@ -52,7 +52,7 @@
                         <td>@item.ProductItem?.Name</td>
                         <td>@item.Quantity</td>
                         <td>@item.UnitPrice.ToString("C")</td>
-                        <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
+                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
                     </tr>
                 }
             </tbody>
