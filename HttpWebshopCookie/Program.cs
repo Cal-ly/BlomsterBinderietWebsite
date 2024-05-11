@@ -1,3 +1,4 @@
+global using HttpWebshopCookie.ViewComponents;
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
 global using HttpWebshopCookie.Data.MockData;

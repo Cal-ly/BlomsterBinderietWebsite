@@ -1,6 +1,4 @@
-﻿using HttpWebshopCookie.Utilities;
-
-namespace HttpWebshopCookie.Services;
+﻿namespace HttpWebshopCookie.Services;
 
 public class BasketService
 {

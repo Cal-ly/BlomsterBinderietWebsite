@@ -11,7 +11,7 @@ public class OrderListingsModel(ApplicationDbContext context) : PageModel
     [BindProperty(SupportsGet = true)]
     public DateTime? EndDate { get; set; }
 
-
+    //TODO - colormarking to show status
     public async Task OnGetAsync(OrderStatus? filterStatus, string? customerName, string? employeeName)
     {
         var ordersQuery = context.Orders

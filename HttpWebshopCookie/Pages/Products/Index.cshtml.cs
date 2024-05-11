@@ -73,20 +73,30 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
     {
         if (!await context.Products.AnyAsync(p => p.Id == id))
         {
-            return NotFound();
+            TempData["Message"] = "Error: Product not found.";
+            TempData["ProductId"] = id;
+            return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
         }
 
         await basketService.AddToBasket(id);
-        return RedirectToPage();
+        TempData["Message"] = "Item successfully added to basket!";
+        TempData["ProductId"] = id;
+        return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
     }
 
     public async Task<IActionResult> OnPostRemoveFromBasket(string id)
     {
         if (!await context.Products.AnyAsync(p => p.Id == id))
         {
-            return NotFound();
+            TempData["Message"] = "Error: Product not found.";
+            TempData["ProductId"] = id;
+            return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
         }
+
         await basketService.RemoveFromBasket(id);
-        return RedirectToPage();
+        TempData["Message"] = "Item successfully removed from basket!";
+        TempData["ProductId"] = id;
+        return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
     }
+
 }

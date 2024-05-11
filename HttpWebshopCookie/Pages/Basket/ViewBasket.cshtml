@@ -19,7 +19,7 @@
                     <tr>
                         <td scope="row">@item.ProductInBasket?.Name</td>
                         <td>
-                            <input type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
+                            <input class="bg-transparent border border-0" type="number" name="Quantities[@item.ProductId]" value="@item.Quantity" min="0" max="99" />
                         </td>
                         <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
                         <td>@(item.LinePrice().ToString("C"))</td>
@@ -33,18 +33,22 @@
                 </tr>
             </tbody>
         </table>
-        <div class="container mt-2">
-            <div class="row justify-content-end">
-                <div class="col-auto">
-                    <button class="btn btn-outline-primary" type="submit" asp-page-handler="ContinueShopping">Continue Shopping</button>
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" type="submit">Update Basket</button>
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" type="submit" asp-page-handler="ProceedToCheckout">Proceed to Checkout</button>
+        <div class="container text-end">
+            <div class="mt-2 justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button class="btn btn-outline-success" type="submit" title="Continue Shopping" asp-page-handler="ContinueShopping">
+                        <i class="fa-solid fa-left-long"></i>
+                    </button>
+                    <button class="btn btn-outline-success" type="submit" title="Update Basket">
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                    <button class="btn btn-outline-success" type="submit" title="Proceed to Checkout" asp-page-handler="ProceedToCheckout">
+                        <i class="fa-solid fa-right-long"></i>
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </form>
 </div>
+

@@ -61,12 +61,10 @@
             <span asp-validation-for="ReviewInfo.Country"></span>
         </div>
 
-        <div class="container mt-2">
-            <div class="row justify-content-end">
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-outline-primary" asp-page-handler="Cancel">Cancel</button>
-                </div>
-                <div class="col-auto">
+        <div class="container text-end">
+            <div class="mt-2 justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="submit" class="btn btn-secondary" asp-page-handler="Cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary">Submit Order!</button>
                 </div>
             </div>

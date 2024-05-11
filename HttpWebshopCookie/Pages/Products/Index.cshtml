@@ -66,6 +66,12 @@
                         {
                             <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
                         }
+                        @if (TempData["Message"] != null && TempData["ProductId"] as string == product.Id)
+                        {
+                            <div class="alert alert-info" role="alert">
+                                @TempData["Message"]
+                            </div>
+                        }
                     </td>
                     <td class="col-auto">
                         <div class="btn-group">

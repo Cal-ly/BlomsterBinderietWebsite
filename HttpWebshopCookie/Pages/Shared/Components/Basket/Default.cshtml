@@ -1,0 +1,11 @@
+﻿@model HttpWebshopCookie.Models.Basket
+
+@if(Model.Items.Any())
+{
+    <a href="/Basket/ViewBasket" class="btn btn-lg btn-primary position-relative p-0 m-0 ps-2" title="@Model.TotalItems() items in basket">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="position-relative translate-middle badge rounded-pill p-1 text-bg-secondary">
+            @Model.TotalItems()
+        </span>
+    </a>
+}

@@ -5,7 +5,7 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
+<div class="container mt-4"> 
     <h1>Order Listings</h1>
     <form method="get" asp-page-handler="Search" class="bg-primary-subtle">
         <div class="container pt-2 pb-2">
@@ -46,30 +46,30 @@
     <table class="table table-hover table-striped">
         <thead class="table-primary">
             <tr>
-                <th>Order Date</th>
-                <th>Customer</th>
-                <th>Assigned</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Actions</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Assigned</th>
+                <th scope="col">Total</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var order in Model.Orders)
             {
                 <tr>
-                    <td>@order.OrderDate.ToString("dd-MM-yy HH:mm:ss")</td>
-                    <td>
+                    <td class="col-auto">@order.OrderDate.ToString("dd-MM-yy HH:mm:ss")</td>
+                    <td class="col-auto">@order.Status</td>
+                    <td class="col-auto">
                         @{
                             var customerName = order.Customer != null ? $"{order.Customer.FirstName} {order.Customer.LastName}" : $"{order.Guest?.FirstName} {order.Guest?.LastName}";
                             var isGuest = order.Guest != null;
                         }
                         @customerName @(isGuest ? "(unregistered)" : "")
                     </td>
-                    <td>@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
-                    <td>@order.Status</td>
-                    <td>@order.TotalPrice.ToString("C")</td>
-                    <td><a asp-page="/Orders/OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-info border rounded"><i class="fa-solid fa-magnifying-glass"></i></a></td>
+                    <td class="col-auto">@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
+                    <td class="col-auto">@order.TotalPrice.ToString("C")</td>
+                    <td class="col-auto"><a asp-page="/Orders/OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-info border rounded"><i class="fa-solid fa-magnifying-glass"></i></a></td>
                 </tr>
             }
         </tbody>

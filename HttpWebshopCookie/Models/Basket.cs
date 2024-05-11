@@ -8,4 +8,8 @@ public class Basket
     {
         return Items.Sum(item => item.LinePrice());
     }
+    public int TotalItems()
+    {
+        return Items.Sum(item => item.Quantity) ?? 0;
+    }
 }
