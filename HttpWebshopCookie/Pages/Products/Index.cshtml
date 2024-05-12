@@ -7,39 +7,47 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
 <div class="container">
     <h1>Products</h1>
-    <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
+        <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
         <div class="d-flex justify-content-evenly">
             <label class="col-form-label-lg pe-2 ps-2">Sort by</label>
-            <div class="col-auto m-1">  
-                <select class="form-select form-control-sm" name="sortBy" id="sortBy" aria-label="Sort by ..">
-                    <option value="Name" selected="@((Model.SortBy == "Name").ToString().ToLower())">Name</option>
-                    <option value="Price" selected="@((Model.SortBy == "Price").ToString().ToLower())">Price</option>
+            <div class="col-auto m-1">
+                <select class="form-select form-control-sm" name="sortBy" id="sortBy" aria-label="Sort by">
+                    <option value="Name" selected="@((Model.SortBy == "Name") ? "selected" : null)">Name</option>
+                    <option value="Price" selected="@((Model.SortBy == "Price") ? "selected" : null)">Price</option>
                 </select>
             </div>
             <div class="col-auto m-1">
                 <select class="form-select form-control-sm" name="sortOrder" id="sortOrder" aria-label="Sort by order">
-                    <option value="Ascending" selected="@((Model.SortOrder == "Ascending").ToString().ToLower())">Ascending</option>
-                    <option value="Descending" selected="@((Model.SortOrder == "Descending").ToString().ToLower())">Descending</option>
+                    <option value="Ascending" selected="@((Model.SortOrder == "Ascending") ? "selected" : null)">Ascending</option>
+                    <option value="Descending" selected="@((Model.SortOrder == "Descending") ? "selected" : null)">Descending</option>
                 </select>
             </div>
             <div class="col-auto m-1">
                 <select class="form-select form-control-sm" name="pageSize" id="pageSize" aria-label="Products per page">
-                    <option value="12">12 per page</option>
-                    <option value="24">24 per page</option>
-                    <option value="36">36 per page</option>
-                    <option value="48">48 per page</option>
+                    <option value="9" selected="@((Model.PageSize == 9) ? "selected" : null)">9 per page</option>
+                    <option value="18" selected="@((Model.PageSize == 18) ? "selected" : null)">18 per page</option>
+                    <option value="27" selected="@((Model.PageSize == 27) ? "selected" : null)">27 per page</option>
+                    <option value="36" selected="@((Model.PageSize == 36) ? "selected" : null)">36 per page</option>
                 </select>
             </div>
         </div>
         <div class="d-flex justify-content-evenly">
             <div class="col-auto m-1">
                 <input type="text" class="form-control" name="searchTerm" id="searchTerm" placeholder="Search products..." value="@Model.SearchTerm" />
+                <input type="hidden" name="pageIndex" value="@Model.PageIndex" />
             </div>
             <div class="col-auto m-1">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
-                <button class="btn btn-outline-danger" type="reset">Reset</button>
+                <button class="btn btn-outline-danger" type="button" onclick="window.location.href='@Url.Page("/Products/Index")';">Reset</button>
             </div>
         </div>
     </form>
@@ -66,19 +74,13 @@
                         {
                             <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
                         }
-                        @if (TempData["Message"] != null && TempData["ProductId"] as string == product.Id)
-                        {
-                            <div class="alert alert-info" role="alert">
-                                @TempData["Message"]
-                            </div>
-                        }
                     </td>
                     <td class="col-auto">
                         <div class="btn-group">
                             <label class="btn btn-outline-primary btn-sm" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket">
+                                <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" >
                                     <i class="fas fa-cart-plus"></i>
                                 </button>
                             </form>
@@ -94,6 +96,7 @@
             }
         </tbody>
     </table>
+
     <nav aria-label="Product navigation">
         <ul class="pagination justify-content-center">
             <li class="page-item @(Model.PageIndex > 1 ? "" : "disabled")">

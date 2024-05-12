@@ -1,4 +1,7 @@
-﻿namespace HttpWebshopCookie.Pages.Products;
+﻿using HttpWebshopCookie.Services;
+using Microsoft.EntityFrameworkCore;
+
+namespace HttpWebshopCookie.Pages.Products;
 
 public class IndexModel(ApplicationDbContext context, BasketService basketService) : PageModel
 {
@@ -6,44 +9,83 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
     public List<ProductViewModel> ProductList { get; set; } = default!;
     public Dictionary<string, int> ProductQuantities { get; set; } = [];
     public string? SearchTerm { get; set; }
-    public string SortBy { get; set; } = "Name";
-    public string SortOrder { get; set; } = "Ascending";
-    public int PageIndex { get; set; } = 1;
-    public int PageSize { get; set; } = 12;
+    public string? SortBy { get; set; }
+    public string? SortOrder { get; set; }
+    public int PageIndex { get; set; }
+    public int PageSize { get; set; }
     public int TotalPages { get; set; }
 
-    public async Task OnGetAsync(string searchTerm, int pageIndex = 1, int pageSize = 12, string sortBy = "Name", string sortOrder = "Ascending")
+    public async Task OnGetAsync(string searchTerm, int pageIndex, int pageSize, string sortBy, string sortOrder)
     {
-        SearchTerm = searchTerm;
-        PageIndex = pageIndex;
-        PageSize = pageSize;
-        SortBy = sortBy;
-        SortOrder = sortOrder;
+        //TempData["SearchTerm"] = searchTerm;
+        //TempData["PageIndex"] = pageIndex;
+        //TempData["PageSize"] = pageSize;
+        //TempData["SortBy"] = sortBy;
+        //TempData["SortOrder"] = sortOrder;
 
+        SearchTerm = searchTerm ?? string.Empty;
+        PageIndex = pageIndex > 0 ? pageIndex : 1;
+        PageSize = pageSize > 0 ? pageSize : 9;
+        SortBy = !string.IsNullOrEmpty(sortBy) ? sortBy : "Name";
+        SortOrder = !string.IsNullOrEmpty(sortOrder) ? sortOrder : "Ascending";
+
+        var query = BuildProductQuery();
+        TotalPages = await CalculateTotalPages(query);
+        ProductList = await FetchProducts(query);
+        ProductQuantities = await FetchProductQuantities();
+    }
+
+    private RedirectToPageResult RedirectToPageWithCurrentParameters()
+    {
+        return RedirectToPage("./Index", new
+        {
+            searchTerm = SearchTerm,
+            pageIndex = PageIndex,
+            pageSize = PageSize,
+            sortBy = SortBy,
+            sortOrder = SortOrder
+        });
+    }
+
+    private IQueryable<Product> BuildProductQuery()
+    {
         var query = context.Products
-            .Include(p => p.ProductTags)
-            .ThenInclude(pt => pt.Tag)
-            .AsQueryable();
+            .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
+            .AsQueryable()
+            .AsNoTracking();
 
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(SearchTerm))
         {
             query = query.Where(p => p.ProductTags.Any(pt =>
-                EF.Functions.Like(pt.Tag!.Occasion, $"%{searchTerm}%") ||
-                EF.Functions.Like(pt.Tag!.Category, $"%{searchTerm}%") ||
-                EF.Functions.Like(pt.Tag!.SubCategory, $"%{searchTerm}%")));
+                EF.Functions.Like(pt.Tag!.Occasion, $"%{SearchTerm}%") ||
+                EF.Functions.Like(pt.Tag!.Category, $"%{SearchTerm}%") ||
+                EF.Functions.Like(pt.Tag!.SubCategory, $"%{SearchTerm}%")));
         }
 
-        query = (sortBy, sortOrder) switch
+        query = SortProducts(query);
+        return query;
+    }
+
+    private IQueryable<Product> SortProducts(IQueryable<Product> query)
+    {
+        return SortBy switch
         {
-            ("Price", "Descending") => query.OrderByDescending(p => p.Price),
-            ("Price", "Ascending") => query.OrderBy(p => p.Price),
-            ("Name", "Descending") => query.OrderByDescending(p => p.Name),
+            "Price" when SortOrder == "Descending" => query.OrderByDescending(p => p.Price),
+            "Price" => query.OrderBy(p => p.Price),
+            "Name" when SortOrder == "Descending" => query.OrderByDescending(p => p.Name),
             _ => query.OrderBy(p => p.Name),
         };
+    }
 
-        TotalPages = (int)Math.Ceiling(await query.CountAsync() / (double)PageSize);
+    private async Task<int> CalculateTotalPages(IQueryable<Product> query)
+    {
+        int totalItems = await query.CountAsync();
+        return (int)Math.Ceiling(totalItems / (double)PageSize);
+    }
 
-        ProductList = await query
+    private async Task<List<ProductViewModel>> FetchProducts(IQueryable<Product> query)
+    {
+        return await query
             .Skip((PageIndex - 1) * PageSize)
             .Take(PageSize)
             .Select(p => new ProductViewModel
@@ -58,45 +100,55 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
                     Category = pt.Tag!.Category,
                     SubCategory = pt.Tag!.SubCategory
                 })
-                .Distinct() // Ensures unique tags per product
+                .Distinct()
                 .OrderBy(t => t.Category)
                 .ThenBy(t => t.SubCategory)
                 .ToList()
             })
             .ToListAsync();
+    }
 
+    private async Task<Dictionary<string, int>> FetchProductQuantities()
+    {
         var basketQuantities = await basketService.GetAllQuantitiesInBasket();
-        ProductQuantities = ProductList.ToDictionary(p => p.Id!, p => basketQuantities.ContainsKey(p.Id!) ? basketQuantities[p.Id!] : 0);
+        return ProductList.ToDictionary(p => p.Id!, p => basketQuantities.GetValueOrDefault(p.Id!, 0));
     }
 
     public async Task<IActionResult> OnPostAddToBasket(string id)
     {
-        if (!await context.Products.AnyAsync(p => p.Id == id))
+        var productExists = await context.Products.AsNoTracking().AnyAsync(p => p.Id == id);
+
+        if (!productExists)
         {
             TempData["Message"] = "Error: Product not found.";
             TempData["ProductId"] = id;
-            return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
+            //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+            return RedirectToPageWithCurrentParameters();
         }
 
         await basketService.AddToBasket(id);
         TempData["Message"] = "Item successfully added to basket!";
         TempData["ProductId"] = id;
-        return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
+        //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });\
+        return RedirectToPageWithCurrentParameters();
     }
 
     public async Task<IActionResult> OnPostRemoveFromBasket(string id)
     {
-        if (!await context.Products.AnyAsync(p => p.Id == id))
+        var productExists = await context.Products.AsNoTracking().AnyAsync(p => p.Id == id);
+
+        if (!productExists)
         {
             TempData["Message"] = "Error: Product not found.";
             TempData["ProductId"] = id;
-            return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
+            //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+            return RedirectToPageWithCurrentParameters();
         }
 
         await basketService.RemoveFromBasket(id);
         TempData["Message"] = "Item successfully removed from basket!";
         TempData["ProductId"] = id;
-        return RedirectToPage("./Index", new { searchTerm = SearchTerm, pageIndex = PageIndex, pageSize = PageSize, sortBy = SortBy, sortOrder = SortOrder });
+        //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+        return RedirectToPageWithCurrentParameters();
     }
-
 }
