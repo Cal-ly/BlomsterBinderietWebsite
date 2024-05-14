@@ -17,12 +17,6 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
 
     public async Task OnGetAsync(string searchTerm, int pageIndex, int pageSize, string sortBy, string sortOrder)
     {
-        //TempData["SearchTerm"] = searchTerm;
-        //TempData["PageIndex"] = pageIndex;
-        //TempData["PageSize"] = pageSize;
-        //TempData["SortBy"] = sortBy;
-        //TempData["SortOrder"] = sortOrder;
-
         SearchTerm = searchTerm ?? string.Empty;
         PageIndex = pageIndex > 0 ? pageIndex : 1;
         PageSize = pageSize > 0 ? pageSize : 9;
@@ -120,16 +114,14 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
 
         if (!productExists)
         {
-            TempData["Message"] = "Error: Product not found.";
-            TempData["ProductId"] = id;
-            //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+            TempData["ToastMessage"] = "Error: Product not found.";
+            TempData["ToastType"] = "error";
             return RedirectToPageWithCurrentParameters();
         }
 
         await basketService.AddToBasket(id);
-        TempData["Message"] = "Item successfully added to basket!";
-        TempData["ProductId"] = id;
-        //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });\
+        TempData["ToastMessage"] = "Item successfully added to basket!";
+        TempData["ToastType"] = "success";
         return RedirectToPageWithCurrentParameters();
     }
 
@@ -139,16 +131,14 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
 
         if (!productExists)
         {
-            TempData["Message"] = "Error: Product not found.";
-            TempData["ProductId"] = id;
-            //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+            TempData["ToastMessage"] = "Error: Product not found.";
+            TempData["ToastType"] = "error";
             return RedirectToPageWithCurrentParameters();
         }
 
         await basketService.RemoveFromBasket(id);
-        TempData["Message"] = "Item successfully removed from basket!";
-        TempData["ProductId"] = id;
-        //return RedirectToPage("./Index", new { searchTerm = TempData["SearchTerm"], pageIndex = TempData["PageIndex"], pageSize = TempData["PageSize"], sortBy = TempData["SortBy"], sortOrder = TempData["SortOrder"] });
+        TempData["ToastMessage"] = "Item successfully removed from basket!";
+        TempData["ToastType"] = "warning";
         return RedirectToPageWithCurrentParameters();
     }
 }

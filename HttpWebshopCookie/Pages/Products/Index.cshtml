@@ -7,13 +7,6 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-@if (!string.IsNullOrEmpty(TempData["Message"] as string))
-{
-    <div class="alert alert-success">
-        @TempData["Message"]
-    </div>
-}
-
 <div class="container">
     <h1>Products</h1>
         <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
@@ -70,23 +63,41 @@
                     <td class="col-auto">@product.Price</td>
                     <td class="col-auto">@product.Description</td>
                     <td class="col-auto">
-                        @foreach (var tag in product.Tags)
-                        {
-                            <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
-                        }
+                        <div>
+                            @if (product.Tags.Count > 2)
+                            {
+                                <span class="badge bg-primary">@product.Tags.Take(1).Select(tag => tag.Category + " - " + tag.SubCategory).Aggregate((current, next) => current + ", " + next)</span>
+                                <a href="#" class="expand-tags" data-product-id="@product.Id"><i class="fa-regular fa-square-caret-down"></i></a>
+                            }
+                            else
+                            {
+                                @foreach (var tag in product.Tags)
+                                {
+                                    <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
+                                }
+                            }
+                        </div>
+                        <div class="tags-full-list" id="tags-@product.Id" style="display: none;">
+                            @foreach (var tag in product.Tags.Skip(1))
+                            {
+                                <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
+                            }
+                        </div>
                     </td>
+
                     <td class="col-auto">
                         <div class="btn-group">
                             <label class="btn btn-outline-primary btn-sm" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" >
+                                <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" id="toastbtn" onclick="showToast('Product has been added to the basket.')">
                                     <i class="fas fa-cart-plus"></i>
                                 </button>
                             </form>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">
+
+                                <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" id="toastbtn" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)" onclick="showToast('Product has been removed from the basket.')">
                                     <i class="fas fa-minus-circle"></i>
                                 </button>
                             </form>
@@ -128,3 +139,78 @@
         </div>
     </div>
 </div>
+
+@{
+    TempData.TryGetValue("ToastType", out var toastTypeOut);
+    string toastType = toastTypeOut?.ToString() ?? string.Empty;
+
+    TempData.TryGetValue("ToastMessage", out var toastMessageOut);
+    string toastMessage = toastMessageOut?.ToString() ?? string.Empty;
+
+    if (!string.IsNullOrEmpty(toastType) && toastType == "success")
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div class="toast text-black bg-primary-subtle" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="1500">
+                <div class="toast-header bg-success-subtle">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @if (!string.IsNullOrEmpty(toastMessage))
+                    {
+                        <p>@toastMessage</p>
+                    }
+                    else
+                    {
+                        <p>Hello there!</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(toastType) && toastType == "warning")
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div class="toast text-black bg-warning-subtle" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="1500">
+                <div class="toast-header bg-warning-subtle">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @if (!string.IsNullOrEmpty(toastMessage))
+                    {
+                        <p>@toastMessage</p>
+                    }
+                    else
+                    {
+                        <p>Hello there!</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var toastEl = document.getElementById('toast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, {
+                    autohide: true,
+                    delay: 1500
+                });
+                toast.show();
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.expand-tags').click(function (e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                $('#tags-' + productId).toggle();
+            });
+        });
+    </script>
+}

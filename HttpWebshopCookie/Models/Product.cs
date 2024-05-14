@@ -9,5 +9,6 @@ public class Product
     public bool IsDeleted { get; set; }
     public string? ImageUrl { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public virtual ICollection<ProductImage> Images { get; set; } = [];
     public virtual ICollection<IXProductTag> ProductTags { get; set; } = [];
 }
