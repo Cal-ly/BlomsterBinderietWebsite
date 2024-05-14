@@ -68,12 +68,23 @@ builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("admin", policy => policy.RequireRole("admin"));
-    options.AddPolicy("manager", policy => policy.RequireRole("manager"));
-    options.AddPolicy("staff", policy => policy.RequireRole("staff"));
-    options.AddPolicy("assistant", policy => policy.RequireRole("assistant"));
-    options.AddPolicy("companyrep", policy => policy.RequireRole("companyrep"));
-    options.AddPolicy("customer", policy => policy.RequireRole("customer"));
+    // Admin can do what managers, staff, assistants, company reps, and customers can
+    options.AddPolicy("AdminAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant", "companyrep", "customer"));
+
+    // Manager can do what staff, assistants, company reps, and customers can
+    options.AddPolicy("ManagerAccess", policy => policy.RequireRole("manager", "staff", "assistant", "companyrep", "customer"));
+
+    // Staff can do what assistants, company reps, and customers can
+    options.AddPolicy("StaffAccess", policy => policy.RequireRole("staff", "assistant", "companyrep", "customer"));
+
+    // Assistant can do what company reps and customers can
+    options.AddPolicy("AssistantAccess", policy => policy.RequireRole("assistant", "companyrep", "customer"));
+
+    // Company rep can do what customers can
+    options.AddPolicy("CompanyRepAccess", policy => policy.RequireRole("companyrep", "customer"));
+
+    // Customer has only customer privileges
+    options.AddPolicy("CustomerAccess", policy => policy.RequireRole("customer"));
 });
 
 builder.Services.Configure<IdentityOptions>(options =>

@@ -1,53 +1,76 @@
-﻿namespace HttpWebshopCookie.Pages.Products
-{
-    public class DeleteModel : PageModel
-    {
-        private readonly HttpWebshopCookie.Data.ApplicationDbContext _context;
+﻿namespace HttpWebshopCookie.Pages.Products;
 
-        public DeleteModel(HttpWebshopCookie.Data.ApplicationDbContext context)
+public class DeleteModel : PageModel
+{
+    private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _environment;
+
+    public DeleteModel(ApplicationDbContext context, IWebHostEnvironment environment)
+    {
+        _context = context;
+        _environment = environment;
+    }
+
+    [BindProperty]
+    public Product Product { get; set; } = default!;
+
+    [BindProperty]
+    public bool PerformTrueDelete { get; set; } = false;
+
+    public async Task<IActionResult> OnGetAsync(string id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [BindProperty]
-        public Product Product { get; set; } = default!;
+        Product? product = await _context.Products
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync(m => m.Id == id);
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        if (product == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+        }
+        Product = product;
+        return Page();
+    }
 
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
+    public async Task<IActionResult> OnPostAsync(string id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-            if (product == null)
+        var productToDelete = await _context.Products.FindAsync(id);
+        if (productToDelete != null)
+        {
+            // True delete functionality
+            if (User.IsInRole("Manager") && PerformTrueDelete)
             {
-                return NotFound();
+                if (!string.IsNullOrWhiteSpace(productToDelete.ImageUrl) && !productToDelete.ImageUrl.Contains("default.jpg"))
+                {
+                    var imagePath = Path.Combine(_environment.WebRootPath, productToDelete.ImageUrl);
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+                _context.Products.Remove(productToDelete);
+                await _context.SaveChangesAsync();
             }
             else
             {
-                Product = product;
-            }
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                Product = product;
-                _context.Products.Remove(Product);
+                // Soft delete functionality
+                productToDelete.IsDeleted = !productToDelete.IsDeleted;
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            _context.Products.Remove(productToDelete);
+            await _context.SaveChangesAsync();
         }
+
+        return RedirectToPage("./Index");
     }
 }

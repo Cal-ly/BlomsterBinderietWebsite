@@ -64,7 +64,7 @@
                     <td class="col-auto">@product.Description</td>
                     <td class="col-auto">
                         <div>
-                            @if (product.Tags.Count > 2)
+                            @if (product.Tags.Count >= 1)
                             {
                                 <span class="badge bg-primary">@product.Tags.Take(1).Select(tag => tag.Category + " - " + tag.SubCategory).Aggregate((current, next) => current + ", " + next)</span>
                                 <a href="#" class="expand-tags" data-product-id="@product.Id"><i class="fa-regular fa-square-caret-down"></i></a>
@@ -96,9 +96,14 @@
                             </form>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@product.Id" />
-
                                 <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" id="toastbtn" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)" onclick="showToast('Product has been removed from the basket.')">
                                     <i class="fas fa-minus-circle"></i>
+                                </button>
+                            </form>
+                            <form method="get" class="d-inline">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <button class="btn btn-primary btn-sm" type="submit" asp-page="/Products/Details" asp-route-id="@product.Id" title="Product Details">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
                             </form>
                         </div>

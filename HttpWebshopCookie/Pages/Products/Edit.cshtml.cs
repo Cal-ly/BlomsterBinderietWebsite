@@ -1,66 +1,95 @@
-﻿namespace HttpWebshopCookie.Pages.Products
-{
-    public class EditModel : PageModel
-    {
-        private readonly HttpWebshopCookie.Data.ApplicationDbContext _context;
+﻿using Microsoft.EntityFrameworkCore;
 
-        public EditModel(HttpWebshopCookie.Data.ApplicationDbContext context)
+namespace HttpWebshopCookie.Pages.Products;
+
+public class EditModel(ApplicationDbContext context, IWebHostEnvironment environment) : PageModel
+{
+    [BindProperty]
+    public Product Product { get; set; } = null!;
+
+    [BindProperty]
+    public IFormFile? UploadFile { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(string id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        [BindProperty]
-        public Product Product { get; set; } = default!;
+        Product? getProduct = await context.Products.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        if (getProduct == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            return NotFound();
+        }
 
-            var product =  await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            Product = product;
+        Product = getProduct;
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(string id)
+    {
+        if (!ModelState.IsValid)
+        {
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        var productToUpdate = await context.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+        if (productToUpdate == null)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            return NotFound();
+        }
 
-            _context.Attach(Product).State = EntityState.Modified;
-
-            try
+        if (UploadFile != null && IsValidImageFile(UploadFile))
+        {
+            // Handle image replacement, including deletion of the old image
+            if (!string.IsNullOrWhiteSpace(productToUpdate.ImageUrl) && !productToUpdate.ImageUrl.Contains("default.jpg"))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(Product.Id))
+                var oldImagePath = Path.Combine(environment.WebRootPath, productToUpdate.ImageUrl);
+                if (System.IO.File.Exists(oldImagePath))
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    System.IO.File.Delete(oldImagePath);
                 }
             }
 
+            // Save new image
+            var uniqueFileName = $"{Guid.NewGuid()}-{UploadFile.FileName}";
+            var filePath = Path.Combine(environment.WebRootPath, "images", "products", uniqueFileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await UploadFile.CopyToAsync(stream);
+            }
+
+            productToUpdate.ImageUrl = Path.Combine("images", "products", uniqueFileName);
+        }
+
+        // Update only the fields that are intended to be updated to prevent overposting
+        if (await TryUpdateModelAsync<Product>(
+            productToUpdate,
+            "Product", // Be sure this matches the prefix used in the form or remove it if not used
+            p => p.Name, p => p.Description, p => p.Price, p => p.IsDeleted, p => p.ImageUrl))
+        {
+            await context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
 
-        private bool ProductExists(string id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
+        // If concurrency error is caught, check if the product still exists
+        return !ProductExists(productToUpdate.Id) ? NotFound() : Page();
+    }
+
+    private bool IsValidImageFile(IFormFile file)
+    {
+        var allowedExtensions = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        var allowedMimeTypes = new HashSet<string> { "image/jpeg", "image/png", "image/gif", "image/bmp" };
+        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        return allowedExtensions.Contains(fileExtension) && allowedMimeTypes.Contains(file.ContentType.ToLowerInvariant());
+    }
+
+    private bool ProductExists(string id)
+    {
+        return context.Products.Any(e => e.Id == id);
     }
 }
