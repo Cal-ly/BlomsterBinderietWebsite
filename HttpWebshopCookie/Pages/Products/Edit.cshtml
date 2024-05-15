@@ -34,11 +34,9 @@
                 <span asp-validation-for="Product.Price" class="text-danger"></span>
             </div>
 
-            <div class="form-group form-check">
-                <input class="form-check-input" asp-for="Product.IsDeleted" />
-                <label class="form-check-label" for="Product.IsDeleted">
-                    @Html.DisplayNameFor(model => model.Product.IsDeleted)
-                </label>
+            <div class="form-group">
+                <label for="CurrentImage" class="control-label">Current Image</label>
+                <img id="CurrentImage" src="/@Model.Product.ImageUrl?.Replace("\\", "/")" onerror="this.src='/images/products/default.jpg';" alt="Current Product Image" style="max-width: 75%; height: auto;" />
             </div>
 
             <div class="form-group">
@@ -47,15 +45,13 @@
                 <span asp-validation-for="UploadFile" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group btn-group">
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a class="btn btn-secondary" asp-page="./Index">Back to List</a>
             </div>
+
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {

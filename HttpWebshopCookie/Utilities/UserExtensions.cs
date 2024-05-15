@@ -9,7 +9,7 @@ public static class UserExtensions
         { "staff", new HashSet<string> { "staff", "assistant", "companyrep", "customer" } },
         { "assistant", new HashSet<string> { "assistant", "companyrep", "customer" } },
         { "companyrep", new HashSet<string> { "companyrep", "customer" } },
-        { "customer", new HashSet<string> { "customer" } } // Lowest level; has access only to customer level privileges
+        { "customer", new HashSet<string> { "customer" } }
     };
 
     public static bool IsAtLeast(this ClaimsPrincipal user, string role)

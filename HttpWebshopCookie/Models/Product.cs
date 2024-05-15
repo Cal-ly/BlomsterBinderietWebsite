@@ -7,7 +7,7 @@ public class Product
     public string? Description { get; set; }
     public decimal Price { get; set; } = 0;
     public bool IsDeleted { get; set; }
-    public string? ImageUrl { get; set; }
+    public string? ImageUrl { get; set; } = "/images/products/default.jpg";
     public DateTime? UpdatedAt { get; set; }
     public virtual ICollection<IXProductTag> ProductTags { get; set; } = [];
 }

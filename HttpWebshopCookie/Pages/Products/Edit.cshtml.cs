@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace HttpWebshopCookie.Pages.Products;
 
-namespace HttpWebshopCookie.Pages.Products;
 
+[Authorize(Policy = "staffAccess")]
 public class EditModel(ApplicationDbContext context, IWebHostEnvironment environment) : PageModel
 {
     [BindProperty]
@@ -63,19 +63,17 @@ public class EditModel(ApplicationDbContext context, IWebHostEnvironment environ
             }
 
             productToUpdate.ImageUrl = Path.Combine("images", "products", uniqueFileName);
+            productToUpdate.ImageUrl = productToUpdate.ImageUrl.Replace("\\", "/");
+            productToUpdate.UpdatedAt = DateTime.Now;
+
         }
 
-        // Update only the fields that are intended to be updated to prevent overposting
-        if (await TryUpdateModelAsync<Product>(
-            productToUpdate,
-            "Product", // Be sure this matches the prefix used in the form or remove it if not used
-            p => p.Name, p => p.Description, p => p.Price, p => p.IsDeleted, p => p.ImageUrl))
+        if (await TryUpdateModelAsync<Product>(productToUpdate, "Product", p => p.Name, p => p.Description, p => p.Price, p => p.IsDeleted, p => p.ImageUrl))
         {
             await context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
 
-        // If concurrency error is caught, check if the product still exists
         return !ProductExists(productToUpdate.Id) ? NotFound() : Page();
     }
 

@@ -1,5 +1,6 @@
 ﻿namespace HttpWebshopCookie.Pages.Products;
 
+[Authorize(Policy = "staffAccess")]
 public class DeleteModel : PageModel
 {
     private readonly ApplicationDbContext _context;
@@ -47,7 +48,7 @@ public class DeleteModel : PageModel
         if (productToDelete != null)
         {
             // True delete functionality
-            if (User.IsInRole("Manager") && PerformTrueDelete)
+            if ((User.IsInRole("manager") || User.IsInRole("admin") || User.IsInRole("staff")) && PerformTrueDelete)
             {
                 if (!string.IsNullOrWhiteSpace(productToDelete.ImageUrl) && !productToDelete.ImageUrl.Contains("default.jpg"))
                 {
