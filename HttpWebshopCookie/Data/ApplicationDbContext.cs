@@ -39,10 +39,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
 
-        //SeedData.SeedEmployees(modelBuilder);
-        //SeedData.SeedCompanies(modelBuilder);
-        //SeedData.SeedCustomers(modelBuilder);
-        //SeedData.SeedGuests(modelBuilder);
         SeedData.SeedProducts(modelBuilder);
     }
 }

@@ -10,12 +10,10 @@ public class SeedUsers(IServiceProvider serviceProvider)
     private static readonly Random random = new();
     private const string Password = "Tester";
 
-    public List<string>? EmployeeIdList = [];
+    public List<string>? EmployeeIdList = [];   
     public List<string>? CompanyRepIdList = [];
     public List<string>? CustomerIdList = [];
     public List<string>? GuestIdList = [];
-    //public List<string>? ProductIdList = [];
-    //public List<string>? TagIdList = [];
 
     public void SeedEmployee()
     {
@@ -172,7 +170,47 @@ public class SeedUsers(IServiceProvider serviceProvider)
             userManager.AddToRoleAsync(customer, "customer").Wait();
         }
     }
-    public void SeedTester()
+
+    public void SeedTestAdmin()
+    {
+        string uniqueEmail = "admin@admin.com";
+        string[] randomName = ["Admin", "Adminson"];
+        string[] randomAddress = GenerateRandomAddress(random);
+        string randomPhone = random.Next(10000000, 99999999).ToString();
+        Address adminAddress = new()
+        {
+            Resident = "Admin Adminson",
+            Street = $"{randomAddress[0]}",
+            PostalCode = $"{randomAddress[1]}",
+            City = $"{randomAddress[2]}",
+        };
+
+        Employee admin = new()
+        {
+            UserName = "admin@admin.com",
+            NormalizedUserName = uniqueEmail.ToUpper(),
+            Email = uniqueEmail,
+            NormalizedEmail = uniqueEmail.ToUpper(),
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            PhoneNumber = randomPhone,
+            FirstName = randomName[0],
+            LastName = randomName[1],
+            JobTitle = "TestAdmin",
+            Salary = decimal.Parse(random.Next(170000, 500000).ToString()),
+            EnrollmentDate = DateTime.UtcNow,
+            AddressId = adminAddress.Id,
+            Address = adminAddress,
+        };
+        EmployeeIdList?.Add(admin.Id);
+
+        context.Addresses.Add(adminAddress);
+        context.SaveChanges();
+        userManager.CreateAsync(admin, Password).Wait();
+        userManager.AddToRoleAsync(admin, "admin").Wait();
+    }
+
+    public void SeedTestCustomer()
     {
         string uniqueEmail = "test@test.com";
         string[] randomName = ["Test", "Tester"];

@@ -14,10 +14,10 @@ public static class UserExtensions
 
     public static bool IsAtLeast(this ClaimsPrincipal user, string role)
     {
-        if (roleHierarchy.ContainsKey(role))
+        if (roleHierarchy.TryGetValue(role, out List<string>? value))
         {
-            var rolesAtOrAbove = roleHierarchy[role];
-            return rolesAtOrAbove.Any(userRole => user.IsInRole(userRole));
+            var rolesAtOrAbove = value;
+            return rolesAtOrAbove.Any(user.IsInRole);
         }
 
         return false;
