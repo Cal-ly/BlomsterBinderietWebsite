@@ -1,0 +1,36 @@
+﻿@page
+@inject UserManager<Employee> userManager
+@model IndexModel
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<h2>Employees</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var employee in Model.Employees)
+    {
+        <tr>
+            <td>@employee.FirstName @employee.LastName</td>
+            <td>@employee.Email</td>
+            <td>@string.Join(", ", await userManager.GetRolesAsync(employee))</td>
+            <td>
+                <a asp-page="/Admin/Employees/Details" asp-route-id="@employee.Id" class="btn btn-info">Details</a>
+                <a asp-page="/Admin/Employees/Edit" asp-route-id="@employee.Id" class="btn btn-primary">Edit</a>
+                <a asp-page="/Admin/Employees/Delete" asp-route-id="@employee.Id" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-page="/Admin/Employees/Create" class="btn btn-success">Create New Employee</a>

@@ -1,0 +1,60 @@
+﻿@page
+@inject UserManager<Employee> userManager
+@model HttpWebshopCookie.Pages.Admin.Employees.DetailsModel
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<h2>Employee Details</h2>
+
+<div>
+    <h4>@Model.EmployeeDetails.FirstName @Model.EmployeeDetails.LastName</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Email
+        </dt>
+        <dd class="col-sm-10">
+            @Model.EmployeeDetails.Email
+        </dd>
+        <dt class="col-sm-2">
+            Role
+        </dt>
+        <dd class="col-sm-10">
+            @string.Join(", ", await userManager.GetRolesAsync(Model.EmployeeDetails))
+        </dd>
+        <dt class="col-sm-2">
+            Job Title
+        </dt>
+        <dd class="col-sm-10">
+            @Model.EmployeeDetails.JobTitle
+        </dd>
+        <dt class="col-sm-2">
+            Salary
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var salary = Model.EmployeeDetails.Salary.ToString();
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Hire Date
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                Model.EmployeeDetails.EnrollmentDate.ToString();
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Termination Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.EmployeeDetails.TerminationDate?.ToShortDateString() ?? "N/A"
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.EmployeeDetails.Id" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,6 +1,3 @@
-using HttpWebshopCookie.Utilities;
-using HttpWebshopCookie.ViewModels;
-
 namespace HttpWebshopCookie.Services;
 
 public class OrderService(ApplicationDbContext context)
