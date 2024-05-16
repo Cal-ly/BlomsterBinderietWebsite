@@ -11,7 +11,7 @@ public class EditModel : PageModel
     }
 
     [BindProperty]
-    public EditInputModel Input { get; set; }
+    public EditInputModel Input { get; set; } = null!;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
@@ -43,7 +43,7 @@ public class EditModel : PageModel
             return Page();
         }
 
-        var user = await _userManager.FindByIdAsync(Input.Id);
+        var user = await _userManager.FindByIdAsync(Input.Id!);
         if (user == null)
         {
             return NotFound();
@@ -72,11 +72,11 @@ public class EditModel : PageModel
 
     public class EditInputModel
     {
-        public string Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string JobTitle { get; set; }
+        public string? Id { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? JobTitle { get; set; }
         public decimal Salary { get; set; }
         public DateTime EnrollmentDate { get; set; }
         public DateTime? TerminationDate { get; set; }

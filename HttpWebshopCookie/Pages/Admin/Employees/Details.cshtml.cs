@@ -10,7 +10,7 @@ public class DetailsModel : PageModel
         _userManager = userManager;
     }
 
-    public Employee EmployeeDetails { get; set; }
+    public Employee EmployeeDetails { get; set; } = null!;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {

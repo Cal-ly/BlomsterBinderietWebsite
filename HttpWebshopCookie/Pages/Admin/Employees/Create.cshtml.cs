@@ -13,7 +13,7 @@ public class CreateModel : PageModel
     }
 
     [BindProperty]
-    public RegisterModel Input { get; set; }
+    public RegisterModel Input { get; set; } = null!;
 
     public void OnGet()
     {
@@ -24,10 +24,10 @@ public class CreateModel : PageModel
         if (ModelState.IsValid)
         {
             var user = new Employee { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, JobTitle = Input.JobTitle, Salary = Input.Salary, EnrollmentDate = Input.EnrollmentDate };
-            var result = await _userManager.CreateAsync(user, Input.Password);
+            var result = await _userManager.CreateAsync(user, Input.Password!);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, Input.Role);
+                await _userManager.AddToRoleAsync(user, Input.Role!);
                 return RedirectToPage("Index");
             }
             foreach (var error in result.Errors)
@@ -40,12 +40,12 @@ public class CreateModel : PageModel
 
     public class RegisterModel
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-        public string JobTitle { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
+        public string? Role { get; set; }
+        public string? JobTitle { get; set; }
         public decimal Salary { get; set; }
         public DateTime EnrollmentDate { get; set; }
     }

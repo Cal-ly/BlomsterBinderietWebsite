@@ -11,15 +11,17 @@ public class DeleteModel : PageModel
     }
 
     [BindProperty]
-    public Employee UserToDelete { get; set; }
+    public Employee UserToDelete { get; set; } = null!;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        UserToDelete = await _userManager.FindByIdAsync(id);
-        if (UserToDelete == null)
+        Employee? userToDelete = await _userManager.FindByIdAsync(id);
+        if (userToDelete == null)
         {
             return NotFound();
         }
+        UserToDelete = userToDelete;
+
         return Page();
     }
 
