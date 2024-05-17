@@ -1,0 +1,48 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Companies.IndexModel
+@{
+    ViewData["Title"] = "Companies";
+}
+
+@{
+    ViewData["Title"] = "Companies";
+}
+
+<h2>Companies</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>CVR</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Representatives</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var company in Model.Companies)
+        {
+            <tr>
+                <td>@company.Name</td>
+                <td>@company.CVR</td>
+                <td>@company.PhoneNumber</td>
+                <td>@company.Address!.FullAddress()</td>
+                <td>
+                    @foreach (var rep in company.Representatives)
+                    {
+                        <div>@rep.FirstName @rep.LastName (@rep.Email)</div>
+                    }
+                </td>
+                <td>
+                    <a asp-page="/Admin/Companies/Details" asp-route-id="@company.Id" class="btn btn-info">Details</a>
+                    <a asp-page="/Admin/Companies/Edit" asp-route-id="@company.Id" class="btn btn-primary">Edit</a>
+                    <a asp-page="/Admin/Companies/Delete" asp-route-id="@company.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-page="/Admin/Companies/Create" class="btn btn-success">Create New Company</a>

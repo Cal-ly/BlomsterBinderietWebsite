@@ -1,0 +1,42 @@
+﻿@page
+@inject UserManager<Customer> userManager
+@model HttpWebshopCookie.Pages.Admin.Customers.IndexModel
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<h2>Customers</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Title</th>
+            <th>Birthday</th>
+            <th>Company</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+            <tr>
+                <td>@customer.FirstName @customer.LastName</td>
+                <td>@customer.Email</td>
+                <td>@string.Join(", ", await userManager.GetRolesAsync(customer))</td>
+                <td>@customer.Title</td>
+                <td>@customer.BirthDate</td>
+                <td>@(customer.CompanyId != null ? customer.CompanyId : "N/A")</td>
+                <td>
+                    <a asp-page="/Admin/Customers/Details" asp-route-id="@customer.Id" class="btn btn-info">Details</a>
+                    <a asp-page="/Admin/Customers/Edit" asp-route-id="@customer.Id" class="btn btn-primary">Edit</a>
+                    <a asp-page="/Admin/Customers/Delete" asp-route-id="@customer.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-page="/Admin/Customers/Create" class="btn btn-success">Create New Customer</a>

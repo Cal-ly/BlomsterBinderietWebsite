@@ -1,21 +1,22 @@
-namespace HttpWebshopCookie.Pages.Admin.Employees;
+namespace HttpWebshopCookie.Pages.Admin.Customers;
 
 [Authorize(Policy = "managerAccess")]
 public class EditModel : PageModel
 {
-    private readonly UserManager<Employee> _userManager;
-    private readonly UserManager<ApplicationUser> _applicationUserManager;
+    private readonly UserManager<Customer> _userManager;
+    private readonly ApplicationDbContext _context;
 
-    public EditModel(UserManager<Employee> userManager, UserManager<ApplicationUser> applicationUserManager)
+    public EditModel(UserManager<Customer> userManager, ApplicationDbContext context)
     {
         _userManager = userManager;
-        _applicationUserManager = applicationUserManager;
+        _context = context;
     }
 
     [BindProperty]
-    public EditInputModel Input { get; set; } = null!;
+    public EditInputModel Input { get; set; } = new EditInputModel();
 
-    public List<string> AvailableRoles { get; set; } = new();
+    public List<string> AvailableRoles { get; set; } = new List<string>();
+    public List<Company> Companies { get; set; } = new List<Company>();
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
@@ -31,28 +32,12 @@ public class EditModel : PageModel
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
-            JobTitle = user.JobTitle,
-            Salary = user.Salary,
-            EnrollmentDate = user.EnrollmentDate,
-            TerminationDate = user.TerminationDate
+            BirthDate = user.BirthDate,
+            CompanyId = user.CompanyId
         };
 
-        var currentUser = await _applicationUserManager.GetUserAsync(User);
-        var currentUserRoles = await _applicationUserManager.GetRolesAsync(currentUser!);
-
-        if (currentUserRoles.Contains("admin"))
-        {
-            AvailableRoles = new List<string> { "admin", "manager", "staff", "assistant" };
-        }
-        else if (currentUserRoles.Contains("manager"))
-        {
-            AvailableRoles = new List<string> { "manager", "staff", "assistant" };
-        }
-        else
-        {
-            AvailableRoles = new List<string>();
-        }
-
+        AvailableRoles = new List<string> { "customer", "companyrep" };
+        Companies = await _context.Companies.ToListAsync();
         Input.Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
 
         return Page();
@@ -75,10 +60,8 @@ public class EditModel : PageModel
         user.LastName = Input.LastName;
         user.Email = Input.Email;
         user.UserName = Input.Email;
-        user.JobTitle = Input.JobTitle;
-        user.Salary = Input.Salary;
-        user.EnrollmentDate = Input.EnrollmentDate;
-        user.TerminationDate = Input.TerminationDate;
+        user.BirthDate = Input.BirthDate;
+        user.CompanyId = Input.CompanyId;
 
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
@@ -93,6 +76,8 @@ public class EditModel : PageModel
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
+
+        Companies = await _context.Companies.ToListAsync();
         return Page();
     }
 
@@ -103,9 +88,7 @@ public class EditModel : PageModel
         public string? LastName { get; set; }
         public string? Email { get; set; }
         public string? Role { get; set; }
-        public string? JobTitle { get; set; }
-        public decimal? Salary { get; set; }
-        public DateTime? EnrollmentDate { get; set; }
-        public DateTime? TerminationDate { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public string? CompanyId { get; set; }
     }
 }

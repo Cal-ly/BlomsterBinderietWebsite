@@ -1,0 +1,23 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Customers.DeleteModel
+@{
+    ViewData["Title"] = "Delete Customer";
+}
+
+<h2>Delete Customer</h2>
+
+<h3>Are you sure you want to delete this customer?</h3>
+
+<div>
+    <h4>@Model.UserToDelete.FirstName @Model.UserToDelete.LastName</h4>
+    <div>
+        <label>Email:</label>
+        <span>@Model.UserToDelete.Email</span>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="UserToDelete.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>

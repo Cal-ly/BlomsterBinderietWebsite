@@ -24,6 +24,16 @@
         <span asp-validation-for="Input.Email" class="text-danger"></span>
     </div>
     <div class="form-group">
+        <label asp-for="Input.Role"></label>
+        <select asp-for="Input.Role" class="form-control">
+            @foreach (var role in Model.AvailableRoles)
+            {
+                <option value="@role" selected="@(role == Model.Input.Role)">@role</option>
+            }
+        </select>
+        <span asp-validation-for="Input.Role" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <label asp-for="Input.JobTitle"></label>
         <input asp-for="Input.JobTitle" class="form-control" />
         <span asp-validation-for="Input.JobTitle" class="text-danger"></span>

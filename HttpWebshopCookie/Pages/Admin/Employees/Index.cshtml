@@ -13,6 +13,9 @@
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Job title</th>
+            <th>Salary</th>
+            <th>Hire date</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -23,6 +26,9 @@
             <td>@employee.FirstName @employee.LastName</td>
             <td>@employee.Email</td>
             <td>@string.Join(", ", await userManager.GetRolesAsync(employee))</td>
+            <td>@employee.JobTitle</td>
+            <td>@employee.Salary</td>
+            <td>@employee.EnrollmentDate</td>
             <td>
                 <a asp-page="/Admin/Employees/Details" asp-route-id="@employee.Id" class="btn btn-info">Details</a>
                 <a asp-page="/Admin/Employees/Edit" asp-route-id="@employee.Id" class="btn btn-primary">Edit</a>
