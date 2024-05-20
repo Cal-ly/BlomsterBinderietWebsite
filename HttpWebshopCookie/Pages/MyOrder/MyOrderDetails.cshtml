@@ -1,5 +1,5 @@
-﻿@page "{id:string}"
-@model HttpWebshopCookie.Pages.Customer.MyOrderDetailsModel
+﻿@page "{id}"
+@model HttpWebshopCookie.Pages.MyOrder.MyOrderDetailsModel
 @{
     ViewData["Title"] = "Order Details";
 }
@@ -12,7 +12,6 @@
         <h2>Order ID: @Model.Order.Id</h2>
         <p>Date: @Model.Order.OrderDate.ToString("yyyy-MM-dd")</p>
         <p>Status: @Model.Order.Status</p>
-        <p>Total: @Model.Order.GetTotalPrice().ToString("C")</p>
 
         <h3>Order Items</h3>
         <table class="table">
@@ -21,7 +20,7 @@
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Total</th>
+                    <th>Sum</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,9 +30,15 @@
                         <td>@item.ProductItem!.Name</td>
                         <td>@item.Quantity</td>
                         <td>@item.UnitPrice.ToString("C")</td>
-                        <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
+                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
                     </tr>
                 }
+                <tr>
+                    <td>Order Total</td>
+                    <td></td>
+                    <td></td>
+                    <td>@Model.Order.GetTotalPrice().ToString("C")</td>
+                </tr>
             </tbody>
         </table>
     </div>

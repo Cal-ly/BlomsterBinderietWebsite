@@ -1,4 +1,3 @@
-global using HttpWebshopCookie.ViewComponents;
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
 global using HttpWebshopCookie.Data.MockData;
@@ -152,7 +151,6 @@ using (var scope = app.Services.CreateScope())
     SeedRoles.SeedTheRoles(services);
     SeedUsers seedUsers = new(services);
     seedUsers.SeedEmployee();
-    //seedUsers.SeedTestAdmin();
     seedUsers.SeedCompanies();
     seedUsers.SeedCustomers();
     seedUsers.SeedTestCustomer();

@@ -37,6 +37,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Basket/ViewBasket">Basket</a>
                         </li>
+                        @if (User.IsInRole("comapnyrep") || User.IsInRole("customer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/MyOrder/MyOrderListing">My Orders</a>
+                            </li>
+                        }
                         @if (User.IsInRole("manager") || User.IsInRole("admin"))
                         {
                             <li class="nav-item">

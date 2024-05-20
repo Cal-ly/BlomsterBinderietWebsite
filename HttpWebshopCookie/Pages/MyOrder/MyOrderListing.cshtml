@@ -1,5 +1,5 @@
 ﻿@page
-@model HttpWebshopCookie.Pages.Customer.MyOrderListingModel
+@model HttpWebshopCookie.Pages.MyOrder.MyOrderListingModel
 @{
     ViewData["Title"] = "My Orders";
 }
@@ -15,7 +15,7 @@
                 <th>Date</th>
                 <th>Status</th>
                 <th>Total</th>
-                <th>Actions</th>
+                <th>Details</th>
             </tr>
         </thead>
         <tbody>
@@ -27,7 +27,9 @@
                     <td>@order.Status</td>
                     <td>@order.GetTotalPrice().ToString("C")</td>
                     <td>
-                        <a asp-page="/Customer/MyOrderDetails" asp-route-id="@order.Id">Details</a>
+                        <a class="btn btn-primary btn-sm" asp-page="/MyOrder/MyOrderDetails" asp-route-id="@order.Id">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </a>
                     </td>
                 </tr>
             }

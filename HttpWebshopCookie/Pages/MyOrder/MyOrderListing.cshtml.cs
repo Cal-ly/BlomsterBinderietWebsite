@@ -1,12 +1,12 @@
-namespace HttpWebshopCookie.Pages.Customer;
+namespace HttpWebshopCookie.Pages.MyOrder;
 
 [Authorize]
 public class MyOrderListingModel : PageModel
 {
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<Models.Users.Customer> _userManager;
+    private readonly UserManager<Customer> _userManager;
 
-    public MyOrderListingModel(ApplicationDbContext context, UserManager<Models.Users.Customer> userManager)
+    public MyOrderListingModel(ApplicationDbContext context, UserManager<Customer> userManager)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -25,7 +25,7 @@ public class MyOrderListingModel : PageModel
         Orders = await GetOrdersForUserAsync(user);
     }
 
-    private async Task<List<Order>> GetOrdersForUserAsync(Models.Users.Customer user)
+    private async Task<List<Order>> GetOrdersForUserAsync(Customer user)
     {
         if (await _userManager.IsInRoleAsync(user, "companyrep"))
         {
