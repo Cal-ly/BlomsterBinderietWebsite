@@ -10,7 +10,7 @@ public class DetailsModel : PageModel
         _userManager = userManager;
     }
 
-    public Customer CustomerDetails { get; set; } = new();
+    public Customer CustomerDetails { get; set; } = new Customer();
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
@@ -21,11 +21,6 @@ public class DetailsModel : PageModel
         }
 
         CustomerDetails = user;
-        if (CustomerDetails == null)
-        {
-            return NotFound();
-        }
-
         return Page();
     }
 }

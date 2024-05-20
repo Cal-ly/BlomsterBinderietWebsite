@@ -11,36 +11,37 @@ public class DeleteModel : PageModel
     }
 
     [BindProperty]
-    public Customer UserToDelete { get; set; } = new();
+    public Customer CustomerToDelete { get; set; } = new Customer();
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        Customer? userToDelete = await _userManager.FindByIdAsync(id);
-        if (userToDelete == null)
+        Customer? customer = await _userManager.FindByIdAsync(id);
+        if (customer == null)
         {
             return NotFound();
         }
-        UserToDelete = userToDelete;
-
+        CustomerToDelete = customer;
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (UserToDelete == null)
+        if (CustomerToDelete == null)
         {
             return NotFound();
         }
 
-        var result = await _userManager.DeleteAsync(UserToDelete);
+        var result = await _userManager.DeleteAsync(CustomerToDelete);
         if (result.Succeeded)
         {
             return RedirectToPage("Index");
         }
+
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
+
         return Page();
     }
 }

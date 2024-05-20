@@ -39,6 +39,8 @@ public enum OrderStatus
     Ready = 4,
     [Display(Name = "Delivered")]
     Delivered = 5,
+    [Display(Name = "Completed")]
+    Completed = 6,
     [Display(Name = "Cancelled")]
-    Cancelled = 6
+    Cancelled = 7
 }

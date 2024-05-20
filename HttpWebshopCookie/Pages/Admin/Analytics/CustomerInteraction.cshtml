@@ -1,0 +1,75 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.CustomerInteractionModel
+@{
+    ViewData["Title"] = "Customer Interaction Metrics";
+}
+
+<h1>Customer Interaction Metrics</h1>
+
+<div class="form-group">
+    <label for="periodSelect">Select Period:</label>
+    <select id="periodSelect" class="form-control" asp-for="Period">
+        <option value="Day">Day</option>
+        <option value="Month">Month</option>
+        <option value="Year">Year</option>
+    </select>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Customer Growth</h5>
+                <canvas id="customerGrowthChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Basket Activity Summary</h5>
+                <canvas id="basketActivityChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.getElementById('periodSelect').addEventListener('change', function () {
+            var selectedPeriod = this.value;
+            window.location.href = '/Admin/Analytics/CustomerInteraction?period=' + selectedPeriod;
+        });
+
+        var customerGrowthCtx = document.getElementById('customerGrowthChart').getContext('2d');
+        var customerGrowthChart = new Chart(customerGrowthCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data.CustomerGrowth.Select(x => x.Period).ToList())),
+                datasets: [{
+                    label: 'New Customers',
+                    data: @Html.Raw(Json.Serialize(Model.Data.CustomerGrowth.Select(x => x.NewCustomers).ToList())),
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        var basketActivityCtx = document.getElementById('basketActivityChart').getContext('2d');
+        var basketActivityChart = new Chart(basketActivityCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data.BasketActivitySummary.Select(x => x.ActivityType).ToList())),
+                datasets: [{
+                    label: 'Quantity Changed',
+                    data: @Html.Raw(Json.Serialize(Model.Data.BasketActivitySummary.Select(x => x.TotalQuantityChanged).ToList())),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
+}

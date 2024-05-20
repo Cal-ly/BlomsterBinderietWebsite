@@ -13,8 +13,6 @@
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Title</th>
-            <th>Birthday</th>
             <th>Company</th>
             <th>Actions</th>
         </tr>
@@ -26,9 +24,7 @@
                 <td>@customer.FirstName @customer.LastName</td>
                 <td>@customer.Email</td>
                 <td>@string.Join(", ", await userManager.GetRolesAsync(customer))</td>
-                <td>@customer.Title</td>
-                <td>@customer.BirthDate</td>
-                <td>@(customer.CompanyId != null ? customer.CompanyId : "N/A")</td>
+                <td>@customer.Company?.Name</td>
                 <td>
                     <a asp-page="/Admin/Customers/Details" asp-route-id="@customer.Id" class="btn btn-info">Details</a>
                     <a asp-page="/Admin/Customers/Edit" asp-route-id="@customer.Id" class="btn btn-primary">Edit</a>

@@ -3,21 +3,19 @@ namespace HttpWebshopCookie.Pages.Admin.Customers;
 [Authorize(Policy = "managerAccess")]
 public class IndexModel : PageModel
 {
-    private readonly UserManager<Customer> _userManager;
+    private readonly ApplicationDbContext _context;
 
-    public IndexModel(UserManager<Customer> userManager)
+    public IndexModel(ApplicationDbContext context)
     {
-        _userManager = userManager;
+        _context = context;
     }
 
-    public List<Customer> Customers { get; set; } = new();
+    public List<Customer> Customers { get; set; } = new List<Customer>();
 
     public async Task OnGetAsync()
     {
-        Customers =
-        [
-            .. await _userManager.GetUsersInRoleAsync("customer"),
-            .. await _userManager.GetUsersInRoleAsync("companyrep"),
-        ];
+        Customers = await _context.Users.OfType<Customer>()
+                                        .Include(c => c.Company)
+                                        .ToListAsync();
     }
 }

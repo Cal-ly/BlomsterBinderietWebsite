@@ -53,6 +53,9 @@
             @foreach (var rep in Model.CompanyDetails.Representatives)
             {
                 <div>@rep.FirstName @rep.LastName (@rep.Email)</div>
+                <div>
+                    <a asp-page="../Customer/Details" asp-route-id="@rep.Id" class="btn btn-primary">View Representative</a>
+                </div>
             }
         </dd>
     </dl>

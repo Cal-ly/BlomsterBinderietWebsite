@@ -1,0 +1,83 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.ProductsOrdersModel
+@{
+    ViewData["Title"] = "Product and Order Metrics";
+}
+
+<h1>Product and Order Metrics</h1>
+
+<div class="form-group">
+    <label for="periodSelect">Select Period:</label>
+    <select id="periodSelect" class="form-control" asp-for="Period">
+        <option value="Day">Day</option>
+        <option value="Month">Month</option>
+        <option value="Year">Year</option>
+    </select>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Top Products</h5>
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Order Status Breakdown</h5>
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Average Time to Fulfill Orders</h5>
+                <p>@Model.Data.AvgTimeToFulfillOrders days</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.getElementById('periodSelect').addEventListener('change', function () {
+            var selectedPeriod = this.value;
+            window.location.href = '/Admin/Analytics/ProductsOrders?period=' + selectedPeriod;
+        });
+
+        var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        var topProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data.TopProducts.Select(x => x.ProductName).ToList())),
+                datasets: [{
+                    label: 'Sales',
+                    data: @Html.Raw(Json.Serialize(Model.Data.TopProducts.Select(x => x.Sales).ToList())),
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        var orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+        var orderStatusChart = new Chart(orderStatusCtx, {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data.OrderStatusBreakdown.Select(x => x.Status).ToList())),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model.Data.OrderStatusBreakdown.Select(x => x.Count).ToList())),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            }
+        });
+    </script>
+}

@@ -9,15 +9,15 @@
 <h3>Are you sure you want to delete this customer?</h3>
 
 <div>
-    <h4>@Model.UserToDelete.FirstName @Model.UserToDelete.LastName</h4>
+    <h4>@Model.CustomerToDelete.FirstName @Model.CustomerToDelete.LastName</h4>
     <div>
         <label>Email:</label>
-        <span>@Model.UserToDelete.Email</span>
+        <span>@Model.CustomerToDelete.Email</span>
     </div>
 </div>
 
 <form method="post">
-    <input type="hidden" asp-for="UserToDelete.Id" />
+    <input type="hidden" asp-for="CustomerToDelete.Id" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
 </form>

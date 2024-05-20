@@ -1,0 +1,46 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.SalesModel
+@{
+    ViewData["Title"] = "Sales Metrics";
+}
+
+<h1>Sales Metrics</h1>
+
+<div class="form-group">
+    <label for="periodSelect">Select Period:</label>
+    <select id="periodSelect" class="form-control" asp-for="Period">
+        <option value="Day">Day</option>
+        <option value="Month">Month</option>
+        <option value="Year">Year</option>
+    </select>
+</div>
+
+<div class="card-deck">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Total Sales</h5>
+            <p class="card-text">@Model.Data.TotalSales.ToString("C")</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Total Orders</h5>
+            <p class="card-text">@Model.Data.TotalOrders</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Average Order Value</h5>
+            <p class="card-text">@Model.Data.AverageOrderValue.ToString("C")</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('periodSelect').addEventListener('change', function () {
+            var selectedPeriod = this.value;
+            window.location.href = '/Admin/Analytics/Sales?period=' + selectedPeriod;
+        });
+    </script>
+}

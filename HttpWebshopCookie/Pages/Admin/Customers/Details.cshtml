@@ -30,10 +30,10 @@
             @Model.CustomerDetails.BirthDate
         </dd>
         <dt class="col-sm-2">
-            Company ID
+            Company
         </dt>
         <dd class="col-sm-10">
-            @Model.CustomerDetails.CompanyId?.ToString() ?? "N/A"
+            @Model.CustomerDetails.Company?.Name ?? "N/A"
         </dd>
     </dl>
 </div>
