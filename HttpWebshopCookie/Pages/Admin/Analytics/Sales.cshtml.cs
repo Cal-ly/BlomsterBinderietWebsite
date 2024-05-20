@@ -13,7 +13,7 @@ public class SalesModel : PageModel
     }
 
     public SalesData Data { get; set; } = new SalesData();
-    public string Period { get; set; } = "Month";
+    public string? Period { get; set; } = "Month";
 
     public async Task OnGetAsync(string period = "Month")
     {

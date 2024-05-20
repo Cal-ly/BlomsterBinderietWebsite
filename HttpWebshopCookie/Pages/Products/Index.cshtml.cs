@@ -1,7 +1,6 @@
-﻿using HttpWebshopCookie.Services;
-using Microsoft.EntityFrameworkCore;
+﻿namespace HttpWebshopCookie.Pages.Products;
 
-namespace HttpWebshopCookie.Pages.Products;
+//TODO - Refactor table, let the number of columns be dynamic, divide into action butttons and information
 
 public class IndexModel(ApplicationDbContext context, BasketService basketService) : PageModel
 {

@@ -1,0 +1,17 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.IndexModel
+@{
+    ViewData ["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<p>Welcome to the Admin Dashboard.</p>
+
+<div class="list-group">
+    <a href="/Orders/OrderListings" class="list-group-item list-group-item-action">Orders</a>
+    <a href="/Admin/Analytics/Index" class="list-group-item list-group-item-action">Analytics</a>
+    <a href="/Admin/Companies/Index" class="list-group-item list-group-item-action">Companies</a>
+    <a href="/Admin/Customers/Index" class="list-group-item list-group-item-action">Customers</a>
+    <a href="/Admin/Employees/Index" class="list-group-item list-group-item-action">Employees</a>
+</div>

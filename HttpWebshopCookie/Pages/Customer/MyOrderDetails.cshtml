@@ -1,0 +1,44 @@
+﻿@page "{id:string}"
+@model HttpWebshopCookie.Pages.Customer.MyOrderDetailsModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+
+@if (Model.Order != null)
+{
+    <div>
+        <h2>Order ID: @Model.Order.Id</h2>
+        <p>Date: @Model.Order.OrderDate.ToString("yyyy-MM-dd")</p>
+        <p>Status: @Model.Order.Status</p>
+        <p>Total: @Model.Order.GetTotalPrice().ToString("C")</p>
+
+        <h3>Order Items</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.ProductItem!.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>Order not found.</p>
+}

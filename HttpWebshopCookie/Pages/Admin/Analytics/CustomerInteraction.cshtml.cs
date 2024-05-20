@@ -27,7 +27,7 @@ public class CustomerInteractionModel : PageModel
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching customer interaction data.");
-            // Consider redirecting to an error page or setting a flag to display an error message in the view
+            RedirectToPage("/Error");
         }
     }
 
