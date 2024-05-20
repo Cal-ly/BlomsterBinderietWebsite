@@ -4,72 +4,66 @@ namespace HttpWebshopCookie.Pages.Admin.Analytics;
 public class SalesModel : PageModel
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<SalesModel> _logger;
 
-    public SalesModel(ApplicationDbContext context)
+    public SalesModel(ApplicationDbContext context, ILogger<SalesModel> logger)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public SalesData Data { get; set; }
-    public string Period { get; set; }
+    public SalesData Data { get; set; } = new SalesData();
+    public string Period { get; set; } = "Month";
 
     public async Task OnGetAsync(string period = "Month")
     {
-        Period = period;
-        Data = new SalesData
+        Period = period ?? "Month";
+
+        try
         {
-            TotalSales = await GetTotalSalesAsync(period),
-            TotalOrders = await GetTotalOrdersAsync(period),
-            AverageOrderValue = await GetAverageOrderValueAsync(period)
+            Data.TotalSales = await GetTotalSalesAsync(Period);
+            Data.TotalOrders = await GetTotalOrdersAsync(Period);
+            Data.AverageOrderValue = await GetAverageOrderValueAsync(Period);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching sales data.");
+            RedirectToPage("/Error");
+        }
+    }
+
+    private IQueryable<Order> FilterOrdersByPeriod(IQueryable<Order> query, string period)
+    {
+        var now = DateTime.UtcNow;
+
+        return period switch
+        {
+            "Day" => query.Where(o => o.OrderDate.Date == now.Date),
+            "Month" => query.Where(o => o.OrderDate.Month == now.Month && o.OrderDate.Year == now.Year),
+            "Year" => query.Where(o => o.OrderDate.Year == now.Year),
+            _ => query
         };
     }
 
     private async Task<decimal> GetTotalSalesAsync(string period)
     {
         var query = _context.Orders.Where(o => o.Status == OrderStatus.Completed);
-        switch (period)
-        {
-            case "Day":
-                return await query.Where(o => o.OrderDate.Date == DateTime.UtcNow.Date).SumAsync(o => o.GetTotalPrice());
-            case "Month":
-                return await query.Where(o => o.OrderDate.Month == DateTime.UtcNow.Month && o.OrderDate.Year == DateTime.UtcNow.Year).SumAsync(o => o.GetTotalPrice());
-            case "Year":
-                return await query.Where(o => o.OrderDate.Year == DateTime.UtcNow.Year).SumAsync(o => o.GetTotalPrice());
-            default:
-                return await query.SumAsync(o => o.GetTotalPrice());
-        }
+        query = FilterOrdersByPeriod(query, period);
+        return await query.SumAsync(o => o.GetTotalPrice());
     }
 
     private async Task<int> GetTotalOrdersAsync(string period)
     {
-        var query = _context.Orders;
-        switch (period)
-        {
-            case "Day":
-                return await query.Where(o => o.OrderDate.Date == DateTime.UtcNow.Date).CountAsync();
-            case "Month":
-                return await query.Where(o => o.OrderDate.Month == DateTime.UtcNow.Month && o.OrderDate.Year == DateTime.UtcNow.Year).CountAsync();
-            case "Year":
-                return await query.Where(o => o.OrderDate.Year == DateTime.UtcNow.Year).CountAsync();
-            default:
-                return await query.CountAsync();
-        }
+        IQueryable<Order> query = _context.Orders;
+        query = FilterOrdersByPeriod(query, period);
+        return await query.CountAsync();
     }
 
     private async Task<decimal> GetAverageOrderValueAsync(string period)
     {
-        var query = _context.Orders;
-        switch (period)
-        {
-            case "Day":
-                return await query.Where(o => o.OrderDate.Date == DateTime.UtcNow.Date).AverageAsync(o => o.GetTotalPrice());
-            case "Month":
-                return await query.Where(o => o.OrderDate.Month == DateTime.UtcNow.Month && o.OrderDate.Year == DateTime.UtcNow.Year).AverageAsync(o => o.GetTotalPrice());
-            case "Year":
-                return await query.Where(o => o.OrderDate.Year == DateTime.UtcNow.Year).AverageAsync(o => o.GetTotalPrice());
-            default:
-                return await query.AverageAsync(o => o.GetTotalPrice());
-        }
+        IQueryable<Order> query = _context.Orders;
+        query = FilterOrdersByPeriod(query, period);
+        return await query.AverageAsync(o => o.GetTotalPrice());
     }
 
     public class SalesData

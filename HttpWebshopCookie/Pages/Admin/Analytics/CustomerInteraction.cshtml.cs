@@ -4,98 +4,112 @@ namespace HttpWebshopCookie.Pages.Admin.Analytics;
 public class CustomerInteractionModel : PageModel
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<CustomerInteractionModel> _logger;
 
-    public CustomerInteractionModel(ApplicationDbContext context)
+    public CustomerInteractionModel(ApplicationDbContext context, ILogger<CustomerInteractionModel> logger)
     {
-        _context = context;
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public CustomerInteractionData Data { get; set; }
-    public string Period { get; set; }
+    public CustomerInteractionData Data { get; set; } = new CustomerInteractionData();
+    public string Period { get; set; } = "Month";
 
     public async Task OnGetAsync(string period = "Month")
     {
-        Period = period;
-        Data = new CustomerInteractionData
+        Period = period ?? "Month";
+
+        try
         {
-            CustomerGrowth = await GetCustomerGrowthAsync(period),
-            BasketActivitySummary = await GetBasketActivitySummaryAsync(period)
+            Data.CustomerGrowth = await GetCustomerGrowthAsync(Period);
+            Data.BasketActivitySummary = await GetBasketActivitySummaryAsync(Period);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching customer interaction data.");
+            // Consider redirecting to an error page or setting a flag to display an error message in the view
+        }
+    }
+
+    private IQueryable<Customer> FilterCustomersByPeriod(IQueryable<Customer> query, string period)
+    {
+        var now = DateTime.UtcNow;
+
+        return period switch
+        {
+            "Day" => query.Where(c => c.EnrollmentDate.HasValue && c.EnrollmentDate.Value.Date == now.Date),
+            "Month" => query.Where(c => c.EnrollmentDate.HasValue && c.EnrollmentDate.Value.Year == now.Year && c.EnrollmentDate.Value.Month == now.Month),
+            "Year" => query.Where(c => c.EnrollmentDate.HasValue && c.EnrollmentDate.Value.Year == now.Year),
+            _ => query
         };
     }
 
     private async Task<List<CustomerGrowth>> GetCustomerGrowthAsync(string period)
     {
-        IQueryable<Customer> query = _context.Users.OfType<Customer>();
+        var query = _context.Users.OfType<Customer>();
+        query = FilterCustomersByPeriod(query, period);
 
-        if (period == "Day")
+        var customerGrowth = await query.GroupBy(c =>
+            period == "Day" ? c.EnrollmentDate!.Value.Date.ToString("yyyy-MM-dd") :
+            period == "Month" ? $"{c.EnrollmentDate!.Value.Year}-{c.EnrollmentDate.Value.Month:D2}" :
+            period == "Year" ? c.EnrollmentDate!.Value.Year.ToString() :
+            string.Empty
+        )
+        .Select(g => new CustomerGrowth
         {
-            return await query.Where(c => c.EnrollmentDate.HasValue)
-                              .GroupBy(c => c.EnrollmentDate.Value.Date)
-                              .Select(g => new CustomerGrowth { Period = g.Key.ToString("yyyy-MM-dd"), NewCustomers = g.Count() })
-                              .ToListAsync();
-        }
-        else if (period == "Month")
+            Period = g.Key,
+            NewCustomers = g.Count()
+        })
+        .ToListAsync();
+
+        return customerGrowth;
+    }
+
+    private IQueryable<BasketActivity> FilterBasketActivitiesByPeriod(IQueryable<BasketActivity> query, string period)
+    {
+        var now = DateTime.UtcNow;
+
+        return period switch
         {
-            return await query.Where(c => c.EnrollmentDate.HasValue)
-                              .GroupBy(c => new { c.EnrollmentDate.Value.Year, c.EnrollmentDate.Value.Month })
-                              .Select(g => new CustomerGrowth { Period = $"{g.Key.Year}-{g.Key.Month:D2}", NewCustomers = g.Count() })
-                              .ToListAsync();
-        }
-        else if (period == "Year")
-        {
-            return await query.Where(c => c.EnrollmentDate.HasValue)
-                              .GroupBy(c => c.EnrollmentDate.Value.Year)
-                              .Select(g => new CustomerGrowth { Period = g.Key.ToString(), NewCustomers = g.Count() })
-                              .ToListAsync();
-        }
-        else
-        {
-            return new List<CustomerGrowth>();
-        }
+            "Day" => query.Where(ba => ba.Timestamp.HasValue && ba.Timestamp.Value.Date == now.Date),
+            "Month" => query.Where(ba => ba.Timestamp.HasValue && ba.Timestamp.Value.Year == now.Year && ba.Timestamp.Value.Month == now.Month),
+            "Year" => query.Where(ba => ba.Timestamp.HasValue && ba.Timestamp.Value.Year == now.Year),
+            _ => query
+        };
     }
 
     private async Task<List<BasketActivitySummary>> GetBasketActivitySummaryAsync(string period)
     {
         IQueryable<BasketActivity> query = _context.BasketActivities;
+        query = FilterBasketActivitiesByPeriod(query, period);
 
-        switch (period)
-        {
-            case "Day":
-                query = query.Where(ba => ba.Timestamp.Value.Date == DateTime.UtcNow.Date);
-                break;
-            case "Month":
-                query = query.Where(ba => ba.Timestamp.Value.Month == DateTime.UtcNow.Month && ba.Timestamp.Value.Year == DateTime.UtcNow.Year);
-                break;
-            case "Year":
-                query = query.Where(ba => ba.Timestamp.Value.Year == DateTime.UtcNow.Year);
-                break;
-        }
+        var basketActivitySummary = await query.GroupBy(ba => ba.ActivityType)
+            .Select(g => new BasketActivitySummary
+            {
+                ActivityType = g.Key ?? "Unknown",
+                Count = g.Count(),
+                TotalQuantityChanged = g.Sum(ba => ba.QuantityChanged ?? 0)
+            })
+            .ToListAsync();
 
-        return await query.GroupBy(ba => ba.ActivityType)
-                          .Select(g => new BasketActivitySummary
-                          {
-                              ActivityType = g.Key,
-                              Count = g.Count(),
-                              TotalQuantityChanged = g.Sum(ba => ba.QuantityChanged ?? 0)
-                          })
-                          .ToListAsync();
+        return basketActivitySummary;
     }
 
     public class CustomerInteractionData
     {
-        public List<CustomerGrowth> CustomerGrowth { get; set; }
-        public List<BasketActivitySummary> BasketActivitySummary { get; set; }
+        public List<CustomerGrowth> CustomerGrowth { get; set; } = new List<CustomerGrowth>();
+        public List<BasketActivitySummary> BasketActivitySummary { get; set; } = new List<BasketActivitySummary>();
     }
 
     public class CustomerGrowth
     {
-        public string Period { get; set; }
-        public int NewCustomers { get; set; }
+        public string Period { get; set; } = string.Empty;
+        public int NewCustomers { get; set; } = 0;
     }
 
     public class BasketActivitySummary
     {
-        public string ActivityType { get; set; }
+        public string ActivityType { get; set; } = string.Empty;
         public int Count { get; set; }
         public int TotalQuantityChanged { get; set; }
     }

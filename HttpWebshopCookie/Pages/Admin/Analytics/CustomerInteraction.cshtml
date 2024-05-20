@@ -10,7 +10,7 @@
     <label for="periodSelect">Select Period:</label>
     <select id="periodSelect" class="form-control" asp-for="Period">
         <option value="Day">Day</option>
-        <option value="Month">Month</option>
+        <option value="Month" selected="@(Model.Period == "Month")">Month</option>
         <option value="Year">Year</option>
     </select>
 </div>
@@ -46,7 +46,7 @@
         var customerGrowthChart = new Chart(customerGrowthCtx, {
             type: 'bar',
             data: {
-                labels: @Html.Raw(Json.Serialize(Model.Data.CustomerGrowth.Select(x => x.Period).ToList())),
+                labels: @Html.Raw(Json.Serialize(Model.Data!.CustomerGrowth.Select(x => x.Period).ToList())),
                 datasets: [{
                     label: 'New Customers',
                     data: @Html.Raw(Json.Serialize(Model.Data.CustomerGrowth.Select(x => x.NewCustomers).ToList())),
@@ -61,10 +61,10 @@
         var basketActivityChart = new Chart(basketActivityCtx, {
             type: 'bar',
             data: {
-                labels: @Html.Raw(Json.Serialize(Model.Data.BasketActivitySummary.Select(x => x.ActivityType).ToList())),
+                labels: @Html.Raw(Json.Serialize(Model.Data!.BasketActivitySummary.Select(x => x.ActivityType).ToList())),
                 datasets: [{
                     label: 'Quantity Changed',
-                    data: @Html.Raw(Json.Serialize(Model.Data.BasketActivitySummary.Select(x => x.TotalQuantityChanged).ToList())),
+                    data: @Html.Raw(Json.Serialize(Model.Data!.BasketActivitySummary.Select(x => x.TotalQuantityChanged).ToList())),
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
