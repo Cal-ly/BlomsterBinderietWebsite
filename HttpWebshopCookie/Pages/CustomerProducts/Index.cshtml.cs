@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-namespace HttpWebshopCookie.Pages.CustomerProducts;
+﻿namespace HttpWebshopCookie.Pages.CustomerProducts;
 
 public class IndexModel(ApplicationDbContext context, BasketService basketService) : PageModel
 {
@@ -16,23 +13,9 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
     public int PageSize { get; set; }
     public int TotalPages { get; set; }
 
-    public async Task OnGetAsync(string? occasion)
+    public async Task OnGetAsync(string? occasion, string searchTerm = "", int pageIndex = 1, int pageSize = 9, string sortBy = "Name", string sortOrder = "Ascending")
     {
         Occasion = occasion;
-        IQueryable<Product> productsQuery = context.Products
-            .Include(p => p.ProductTags)
-            .ThenInclude(pt => pt.Tag);
-
-        if (!string.IsNullOrEmpty(occasion))
-        {
-            productsQuery = productsQuery.Where(p => p.ProductTags.Any(pt => pt.Tag!.Occasion == occasion));
-        }
-
-        ProductList = await FetchProducts(productsQuery);
-    }
-
-    public async Task OnGetAsync(string searchTerm, int pageIndex, int pageSize, string sortBy, string sortOrder)
-    {
         SearchTerm = searchTerm ?? string.Empty;
         PageIndex = pageIndex > 0 ? pageIndex : 1;
         PageSize = pageSize > 0 ? pageSize : 9;
@@ -40,6 +23,12 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
         SortOrder = !string.IsNullOrEmpty(sortOrder) ? sortOrder : "Ascending";
 
         var query = BuildProductQuery();
+
+        if (!string.IsNullOrEmpty(occasion))
+        {
+            query = query.Where(p => p.ProductTags.Any(pt => pt.Tag!.Occasion == occasion));
+        }
+
         TotalPages = await CalculateTotalPages(query);
         ProductList = await FetchProducts(query);
         ProductQuantities = await FetchProductQuantities();

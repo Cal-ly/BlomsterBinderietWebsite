@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace HttpWebshopCookie.Services;
+﻿namespace HttpWebshopCookie.Services;
 
 public class TagService(ApplicationDbContext context)
 {
@@ -47,13 +45,12 @@ public class TagService(ApplicationDbContext context)
         await context.SaveChangesAsync();
         return tag;
     }
-    public async Task<ICollection<string>> GetOccasionsAsync()
+    public async Task<List<string?>> GetOccasionsAsync()
     {
-        List<string?> nullableList = await context.Tags
-            .Where(t => t.Occasion != null)
+        return await context.Tags
+            .Where(t => t.Occasion != string.Empty)
             .Select(t => t.Occasion)
             .Distinct()
             .ToListAsync();
-        return nullableList.Where(s => s != null).ToList()!;
     }
 }

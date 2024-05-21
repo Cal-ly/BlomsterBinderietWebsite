@@ -1,18 +1,9 @@
-﻿@model ICollection<string>
+﻿@model List<string>
 
-<a class="nav-link dropdown-toggle text-dark" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Products
-</a>
-<ul class="dropdown-menu" aria-labelledby="productsDropdown">
-    @if (Model.Count > 0)
+@{
+    List<string> occasionList = new(Model);
+    @foreach (var occasion in occasionList)
     {
-        @foreach (var occasion in Model)
-        {
-            <li><a class="dropdown-item" href="@Url.Page("/CustomerProducts/Index", new { occasion = occasion })">@occasion</a></li>
-        }
+        <li><a class="dropdown-item" href="@Url.Page("/CustomerProducts/Index", new { occasion = occasion })">@occasion</a></li>
     }
-    else
-    {
-        <li><a class="dropdown-item" href="@Url.Page("/CustomerProducts/Index")">All</a></li>
-    }
-</ul>
+}
