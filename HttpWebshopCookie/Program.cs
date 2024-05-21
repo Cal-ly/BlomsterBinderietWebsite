@@ -121,6 +121,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<BasketService>();
+builder.Services.AddScoped<TagService>();
 
 var app = builder.Build();
 

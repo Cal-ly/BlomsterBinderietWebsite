@@ -31,12 +31,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Products</a>
+@*                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/CustomerProducts/Index">Products</a>
+                        </li> *@
+                        <li class="nav-item dropdown">
+                            @await Component.InvokeAsync("Occasions")
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Basket/ViewBasket">Basket</a>
-                        </li>
+                        @if (User.IsInRole("admin") || User.IsInRole("manager") || User.IsInRole("staff") || User.IsInRole("assistant"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Product Overview</a>
+                            </li>
+                        }
                         @if (User.IsInRole("comapnyrep") || User.IsInRole("customer"))
                         {
                             <li class="nav-item">

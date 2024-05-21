@@ -9,3 +9,49 @@
         </span>
     </a>
 }
+
+
+<nav class="navbar navbar-expand-lg navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" asp-area="" asp-page="/Index">HttpWebshopCookie</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between pe-1">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                </li>
+                <li class="nav-item dropdown">
+                    @await Component.InvokeAsync("Occasions")
+                </li>
+                @if (User.IsInRole("admin") || User.IsInRole("manager") || User.IsInRole("staff") || User.IsInRole("assistant"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Product Overview</a>
+                    </li>
+                }
+                @if (User.IsInRole("comapnyrep") || User.IsInRole("customer"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/MyOrder/MyOrderListing">My Orders</a>
+                    </li>
+                }
+                @if (User.IsInRole("manager") || User.IsInRole("admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-page="/Admin/Index">Admin</a>
+                    </li>
+                }
+            </ul>
+            <partial name="_LoginPartial" />
+            <div class="p-0 m-0">
+                @await Component.InvokeAsync("Basket")
+            </div>
+        </div>
+    </div>
+</nav>

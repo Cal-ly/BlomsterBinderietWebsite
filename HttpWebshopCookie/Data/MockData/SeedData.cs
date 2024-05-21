@@ -137,7 +137,7 @@ public class SeedData()
                 Name = "Ærefuld Farvel",
                 Description = "En dybfølt og respektfuld buket til at ære en elsket. Traditionelle hvide liljer og roser.",
                 Price = 350,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\honorable-goodbye.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -146,7 +146,7 @@ public class SeedData()
                 Name = "Pastel Kondolence",
                 Description = "Beroligende pastelfarvede blomster til at udtrykke sympati.",
                 Price = 300,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\pastel-condolence.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -155,7 +155,7 @@ public class SeedData()
                 Name = "Sekulær Bisættelse",
                 Description = "Diskret og enkel buket til en sekulær afskedsceremoni.",
                 Price = 350,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\secular-burial.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -164,7 +164,7 @@ public class SeedData()
                 Name = "Romantisk Gestus",
                 Description = "En passioneret rød rosenbuket, der udtrykker dyb kærlighed og hengivenhed.",
                 Price = 450,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\romantic-gesture.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -173,7 +173,7 @@ public class SeedData()
                 Name = "Moderne Elegance",
                 Description = "En stilfuld og moderne arrangement med orkideer og eksotiske blomster.",
                 Price = 500,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\modern-elegance.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -182,7 +182,7 @@ public class SeedData()
                 Name = "Fødselsdagsglæde",
                 Description = "Farverig og festlig buket der lyser op i enhver fødselsdagsfest.",
                 Price = 300,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\birthday-joy.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -191,7 +191,7 @@ public class SeedData()
                 Name = "Nyfødte Lykønskninger",
                 Description = "Sød og blid buket til at fejre ankomsten af et nyt barn.",
                 Price = 350,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\newborn-celebrations.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -200,7 +200,7 @@ public class SeedData()
                 Name = "Stilfuld Forretningsgave",
                 Description = "Eksklusiv plante der tilføjer en professionel atmosfære til ethvert kontor.",
                 Price = 600,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\stylish-businessgift.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -209,7 +209,7 @@ public class SeedData()
                 Name = "Til Konfirmanten",
                 Description = "Friske og unge toner i en buket, der passer perfekt til en stor dag.",
                 Price = 250,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\to-the-konfirmant.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -218,7 +218,7 @@ public class SeedData()
                 Name = "Efterårsharmoni",
                 Description = "Varm og indbydende buket der afspejler efterårets farver.",
                 Price = 375,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\autumn-harmony.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -227,7 +227,7 @@ public class SeedData()
                 Name = "Vintermagi",
                 Description = "En kold og krystalklar buket, der bringer vinterens essens indendørs.",
                 Price = 400,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\wintermagic.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -236,7 +236,7 @@ public class SeedData()
                 Name = "Livlige Sommerblomster",
                 Description = "En sprudlende og energisk buket der fanger sommerens ånd.",
                 Price = 325,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\lively-summerflowers.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -245,7 +245,7 @@ public class SeedData()
                 Name = "Boheme Brudebuket",
                 Description = "Unik og kunstnerisk buket designet til den moderne brud.",
                 Price = 800,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\boheme-bridebouquet.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -254,7 +254,7 @@ public class SeedData()
                 Name = "Klassisk Mors Dags Buket",
                 Description = "Traditionel og tidløs buket for at hylde alle mødre.",
                 Price = 275,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\classical-mothersday.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             },
@@ -263,7 +263,7 @@ public class SeedData()
                 Name = "Haveelskerens Favorit",
                 Description = "Diverse og naturlige blomster valgt til en ægte haveelsker.",
                 Price = 400,
-                ImageUrl = "https://via.placeholder.com/150",
+                ImageUrl = "\\images\\products\\gardenlovers-favorite.png",
                 IsDeleted = false,
                 UpdatedAt = DateTime.Now
             }

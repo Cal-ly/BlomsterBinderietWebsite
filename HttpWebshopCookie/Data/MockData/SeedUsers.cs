@@ -153,7 +153,7 @@ public class SeedUsers(IServiceProvider serviceProvider)
                 PhoneNumber = randomPhone,
                 FirstName = randomName[0],
                 LastName = randomName[1],
-                AddressId = customerAddress.Id, //implement address property
+                AddressId = customerAddress.Id,
                 Address = customerAddress,
                 Title = "Mr/Mrs/Ms",
                 BirthDate = DateTime.UtcNow.AddYears(-random.Next(18, 70)) 

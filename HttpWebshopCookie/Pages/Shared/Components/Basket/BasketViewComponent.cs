@@ -1,6 +1,4 @@
-﻿using HttpWebshopCookie.Services;
-
-namespace HttpWebshopCookie.ViewComponents;
+﻿namespace HttpWebshopCookie.ViewComponents;
 
 public class BasketViewComponent : ViewComponent
 {

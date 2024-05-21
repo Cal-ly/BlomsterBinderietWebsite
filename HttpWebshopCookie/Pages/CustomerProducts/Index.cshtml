@@ -1,14 +1,14 @@
 ﻿@page
 @inject BasketService ThisBasketService
-@model HttpWebshopCookie.Pages.Products.IndexModel
+@model HttpWebshopCookie.Pages.CustomerProducts.IndexModel
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Products";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-
 <div class="container">
     <h1>Products</h1>
-        <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
+    <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
         <div class="d-flex justify-content-evenly">
             <label class="col-form-label-lg pe-2 ps-2">Sort by</label>
             <div class="col-auto m-1">
@@ -39,73 +39,73 @@
             </div>
             <div class="col-auto m-1">
                 <button class="btn btn-outline-primary" type="submit">Search</button>
-                <button class="btn btn-outline-danger" type="button" onclick="window.location.href='@Url.Page("/Products/Index")';">Reset</button>
+                <button class="btn btn-outline-danger" type="button" onclick="window.location.href='@Url.Page("/CustomerProducts/Index")';">Reset</button>
             </div>
         </div>
     </form>
 
-    <table class="table table-hover table-striped">
-        <thead class="table-primary">
-            <tr>
-                <th scope="col">Product</th>
-                <th scope="col">Price</th>
-                <th scope="col">Description</th>
-                <th scope="col">Tags</th>
-                <th scope="col">Quantity</th>
-            </tr>
-        </thead>
-        <tbody>
+
+    <div class="container">
+        <h1>Products</h1>
+        @if (!string.IsNullOrEmpty(Model.Occasion))
+        {
+            <h2>Occasion: @Model.Occasion</h2>
+        }
+        <div class="row">
             @foreach (var product in Model.ProductList)
             {
-                <tr>
-                    <td class="col-auto">@product.Name</td>
-                    <td class="col-auto">@product.Price</td>
-                    <td class="col-auto">@product.Description</td>
-                    <td class="col-auto">
-                        <div>
-                            @if (product.Tags.Count > 0)
-                            {
-                                <span class="badge bg-primary">@product.Tags[0].Occasion</span>
-                                @if (product.Tags.Count > 1)
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Description</p>
+                            <div>
+                                @if (product.Tags.Count > 0)
                                 {
-                                    <a href="#" class="expand-tags" data-product-id="@product.Id"><i class="fa-regular fa-square-caret-down"></i></a>
+                                    <span class="badge bg-primary">@product.Tags[0].Occasion</span>
+                                    @if (product.Tags.Count > 1)
+                                    {
+                                        <a href="#" class="expand-tags" data-product-id="@product.Id"><i class="fa-regular fa-square-caret-down"></i></a>
+                                    }
                                 }
-                            }
+                            </div>
+                            <div class="tags-full-list" id="tags-@product.Id" style="display: none;">
+                                @foreach (var tag in product.Tags)
+                                {
+                                    <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <label class="btn btn-outline-primary btn-sm border-0" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
+                                    <form method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" id="toastbtn" onclick="showToast('Product has been added to the basket.')">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                    <form method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" id="toastbtn" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)" onclick="showToast('Product has been removed from the basket.')">
+                                            <i class="fas fa-minus-circle"></i>
+                                        </button>
+                                    </form>
+                                    <form method="get" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-primary btn-sm" type="submit" asp-page="/CustomerProducts/Details" asp-route-id="@product.Id" title="Product Details">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <small class="text-muted">@product.Price</small>
+                            </div>
                         </div>
-                        <div class="tags-full-list" id="tags-@product.Id" style="display: none;">
-                            @foreach (var tag in product.Tags)
-                            {
-                                <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
-                            }
-                        </div>
-                    </td>
-                    <td class="col-auto">
-                        <div class="btn-group">
-                            <label class="btn btn-outline-primary btn-sm border-0" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
-                            <form method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" id="toastbtn" onclick="showToast('Product has been added to the basket.')">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </form>
-                            <form method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" id="toastbtn" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)" onclick="showToast('Product has been removed from the basket.')">
-                                    <i class="fas fa-minus-circle"></i>
-                                </button>
-                            </form>
-                            <form method="get" class="d-inline">
-                                <input type="hidden" name="id" value="@product.Id" />
-                                <button class="btn btn-primary btn-sm" type="submit" asp-page="/Products/Details" asp-route-id="@product.Id" title="Product Details">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
 
     <nav aria-label="Product navigation">
         <ul class="pagination justify-content-center">
