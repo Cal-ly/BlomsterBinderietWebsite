@@ -29,6 +29,6 @@ public class ViewBasketModel(BasketService basketService) : PageModel
 
     public IActionResult OnPostContinueShopping()
     {
-        return RedirectToPage("/Products/Index");
+        return RedirectToPage("/CustomerProducts/Index");
     }
 }

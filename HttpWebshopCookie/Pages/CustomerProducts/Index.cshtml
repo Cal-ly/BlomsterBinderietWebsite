@@ -6,9 +6,8 @@
     ViewData["Title"] = "Products";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-<div class="container">
-    <h1>Products</h1>
-    <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between">
+<div class="container rounded pb-2">
+    <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between rounded-2">
         <div class="d-flex justify-content-evenly">
             <label class="col-form-label-lg pe-2 ps-2">Sort by</label>
             <div class="col-auto m-1">
@@ -45,8 +44,7 @@
     </form>
 
 
-    <div class="container">
-        <h1>Products</h1>
+    <div class="container p-1">
         @if (!string.IsNullOrEmpty(Model.Occasion))
         {
             <h2>Occasion: @Model.Occasion</h2>
@@ -76,7 +74,7 @@
                                     <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
                                 }
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center pt-1">
                                 <div class="btn-group">
                                     <label class="btn btn-outline-primary btn-sm border-0" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
                                     <form method="post" class="d-inline">

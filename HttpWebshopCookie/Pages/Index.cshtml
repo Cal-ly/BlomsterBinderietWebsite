@@ -3,8 +3,128 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<link rel="stylesheet" href="/css/carousel.css" />
+
+<div class="row mx-auto my-auto justify-content-center">
+    <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner" role="listbox">
+
+            <div class="carousel-item active">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/autumn-harmony.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay fw-blod">Autumn harmony</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/birthday-joy.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay fw-blod">Birthday joy</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/romantic-gesture.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Romatik</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/lively-summerflowers.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Lively summerflowers</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/boheme-bridebouquet.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Boheme brudebuket</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/classical-mothersday.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Mors dag</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/modern-elegance.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Modern Elegance</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-img">
+                            <img src="/images/products/stylish-businessgift.png" class="img-fluid">
+                        </div>
+                        <div class="card-img-overlay">Stylish business</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </a>
+        <a class="carousel-control-next bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+    </div>
+</div>
+
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<script>
+    let items = document.querySelectorAll('.carousel .carousel-item')
+
+    items.forEach((el) => {
+        const minPerSlide = 6
+        let next = el.nextElementSibling
+        for (var i = 1; i < minPerSlide; i++) {
+            if (!next) {
+                next = items[0]
+            }
+            let cloneChild = next.cloneNode(true)
+            el.appendChild(cloneChild.children[0])
+            next = next.nextElementSibling
+        }
+    })
+</script>

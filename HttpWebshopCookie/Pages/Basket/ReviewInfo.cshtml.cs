@@ -125,6 +125,6 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
     }
     public IActionResult OnPostCancel()
     {
-        return RedirectToPage("/Products/Index");
+        return RedirectToPage("/CustomerProducts/Index");
     }
 }
