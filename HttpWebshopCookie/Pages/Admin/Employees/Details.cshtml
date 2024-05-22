@@ -33,23 +33,22 @@
             Salary
         </dt>
         <dd class="col-sm-10">
-            @{
-                var salary = Model.EmployeeDetails.Salary.ToString();
-            }
+            @Model.EmployeeDetails.Salary.ToString() kr
         </dd>
         <dt class="col-sm-2">
             Hire Date
         </dt>
         <dd class="col-sm-10">
-            @{
-                Model.EmployeeDetails.EnrollmentDate.ToString();
-            }
+            @Model.EmployeeDetails.EnrollmentDate.ToString()
         </dd>
         <dt class="col-sm-2">
             Termination Date
         </dt>
         <dd class="col-sm-10">
-            @Model.EmployeeDetails.TerminationDate?.ToShortDateString() ?? "N/A"
+            @{
+                string terminationString = Model.EmployeeDetails.TerminationDate?.ToString() ?? "N/A";
+            }
+            @terminationString
         </dd>
     </dl>
 </div>

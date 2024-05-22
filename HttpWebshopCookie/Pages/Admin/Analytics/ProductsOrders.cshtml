@@ -39,10 +39,17 @@
         <div class="card">
             <div class="card-body">
                 <h5>Average Time to Fulfill Orders</h5>
-                <p>@Model.Data?.AvgTimeToFulfillOrders.ToString("F2") ?? "N/A" days</p>
+                <p>
+                    @{ string fulfillString = $"{Model.Data?.AvgTimeToFulfillOrders.ToString("F2")} days" ?? "N/A"; }  
+                    @fulfillString
+                </p>
             </div>
         </div>
     </div>
+</div>
+
+<div class="btn btn-outline-primary">
+    <a asp-page="/Admin/Analytics/Index">Back to Analytics</a>
 </div>
 
 @section Scripts {

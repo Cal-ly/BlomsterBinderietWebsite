@@ -6,6 +6,7 @@ global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
 global using HttpWebshopCookie.Utilities;
 global using HttpWebshopCookie.ViewModels;
+global using NuGet.Packaging;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;
@@ -149,12 +150,16 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-    SeedRoles.SeedTheRoles(services);
-    SeedUsers seedUsers = new(services);
-    seedUsers.SeedEmployee();
-    seedUsers.SeedCompanies();
-    seedUsers.SeedCustomers();
-    seedUsers.SeedTestCustomer();
+    SeedRole.SeedRoles(services);
+    SeedAllData seedData = new(services);
+    await seedData.SeedEmployeeAsync();
+    await seedData.SeedCompaniesAsync();
+    await seedData.SeedCustomersAsync();
+    await seedData.SeedTestCustomerAsync();
+    await seedData.SeedGuestsAsync();
+    await seedData.SeedProductsAsync();
+    await seedData.SeedOrdersAsync();
+    await seedData.SeedBasketActivityAsync();
 }
 
 app.Run();

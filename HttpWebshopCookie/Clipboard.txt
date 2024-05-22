@@ -3,4 +3,44 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-                
+
+        await seedData.SeedTestAdminAsync();
+
+    public async Task SeedTestAdminAsync()
+    {
+        string uniqueEmail = "admin@admin.com";
+        string[] randomName = ["Admin", "Adminson"];
+        string[] randomAddress = GenerateRandomAddress();
+        string randomPhone = random.Next(10000000, 99999999).ToString();
+        Address adminAddress = new()
+        {
+            Resident = "Admin Adminson",
+            Street = $"{randomAddress[0]}",
+            PostalCode = $"{randomAddress[1]}",
+            City = $"{randomAddress[2]}",
+        };
+
+        Employee admin = new()
+        {
+            UserName = "admin@admin.com",
+            NormalizedUserName = uniqueEmail.ToUpper(),
+            Email = uniqueEmail,
+            NormalizedEmail = uniqueEmail.ToUpper(),
+            EmailConfirmed = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+            PhoneNumber = randomPhone,
+            FirstName = randomName[0],
+            LastName = randomName[1],
+            JobTitle = "TestAdmin",
+            Salary = decimal.Parse(random.Next(170000, 500000).ToString()),
+            EnrollmentDate = DateTime.UtcNow,
+            AddressId = adminAddress.Id,
+            Address = adminAddress,
+        };
+        EmployeeIdList?.Add(admin.Id);
+
+        await context.Addresses.AddAsync(adminAddress);
+        await context.SaveChangesAsync();
+        await userManager.CreateAsync(admin, Password);
+        await userManager.AddToRoleAsync(admin, "admin");
+    }

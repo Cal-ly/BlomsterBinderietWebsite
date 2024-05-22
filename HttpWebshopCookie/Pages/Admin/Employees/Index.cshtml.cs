@@ -14,9 +14,17 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        Employees = new List<Employee>(await _userManager.GetUsersInRoleAsync("manager"));
-        Employees.AddRange(await _userManager.GetUsersInRoleAsync("staff"));
-        Employees.AddRange(await _userManager.GetUsersInRoleAsync("assistant"));
-        Employees.AddRange(await _userManager.GetUsersInRoleAsync("companyrep"));
+        Employees =
+        [
+            .. await _userManager.GetUsersInRoleAsync("manager"),
+            .. await _userManager.GetUsersInRoleAsync("staff"),
+            .. await _userManager.GetUsersInRoleAsync("assistant"),
+            .. await _userManager.GetUsersInRoleAsync("companyrep"),
+        ];
+
+        if(User.IsInRole("admin"))
+        {
+            Employees.AddRange(await _userManager.GetUsersInRoleAsync("admin"));
+        }
     }
 }

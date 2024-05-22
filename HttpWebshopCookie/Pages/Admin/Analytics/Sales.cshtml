@@ -2,6 +2,9 @@
 @model HttpWebshopCookie.Pages.Admin.Analytics.SalesModel
 @{
     ViewData["Title"] = "Sales Metrics";
+    string totalSales = Model.Data?.TotalSales.ToString("C2") ?? "N/A";
+    int totalOrders = Model.Data?.TotalOrders ?? 0;
+    string averageOrderValue = Model.Data?.AverageOrderValue.ToString("C2") ?? "N/A";
 }
 
 <h1>Sales Metrics</h1>
@@ -19,21 +22,25 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Total Sales</h5>
-            <p class="card-text">@Model.Data?.TotalSales.ToString("C") ?? "N/A"</p>
+            <p class="card-text">@totalSales</p>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Total Orders</h5>
-            <p class="card-text">@Model.Data?.TotalOrders ?? 0</p>
+            <p class="card-text">@totalOrders</p>
         </div>
     </div>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Average Order Value</h5>
-            <p class="card-text">@Model.Data?.AverageOrderValue.ToString("C") ?? "N/A"</p>
+            <p class="card-text">@averageOrderValue</p>
         </div>
     </div>
+</div>
+
+<div class="btn btn-outline-primary">
+    <a asp-page="/Admin/Analytics/Index">Back to Analytics</a>
 </div>
 
 @section Scripts {

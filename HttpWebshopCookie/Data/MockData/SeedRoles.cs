@@ -1,9 +1,9 @@
 ﻿namespace HttpWebshopCookie.Data.MockData;
 
-public static class SeedRoles
+public static class SeedRole
 {
     private static string[] RoleNames = ["admin", "manager", "staff", "assistant", "companyrep", "customer"];
-    public static void SeedTheRoles(IServiceProvider serviceProvider)
+    public static void SeedRoles(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 

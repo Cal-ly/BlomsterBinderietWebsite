@@ -38,7 +38,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
 
         modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
-
-        SeedData.SeedProducts(modelBuilder);
     }
 }

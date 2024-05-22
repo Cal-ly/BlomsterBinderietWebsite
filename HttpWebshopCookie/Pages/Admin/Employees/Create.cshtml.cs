@@ -44,7 +44,12 @@ public class CreateModel : PageModel
         if (ModelState.IsValid)
         {
             var user = new Employee { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, JobTitle = Input.JobTitle, Salary = Input.Salary, EnrollmentDate = Input.EnrollmentDate };
-            var result = await _userManager.CreateAsync(user, Input.Password!);
+            if (string.IsNullOrEmpty(Input.Password))
+            {
+                ModelState.AddModelError(string.Empty, "Password cannot be null or empty.");
+                return Page();
+            }
+            var result = await _userManager.CreateAsync(user, Input.Password);
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, Input.Role!);

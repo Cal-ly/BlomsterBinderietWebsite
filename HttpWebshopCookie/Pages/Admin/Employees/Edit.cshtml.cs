@@ -78,7 +78,7 @@ public class EditModel : PageModel
         user.JobTitle = Input.JobTitle;
         user.Salary = Input.Salary;
         user.EnrollmentDate = Input.EnrollmentDate;
-        user.TerminationDate = Input.TerminationDate;
+        user.TerminationDate = Input.TerminationDate ?? null;
 
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
@@ -87,7 +87,7 @@ public class EditModel : PageModel
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
             await _userManager.AddToRoleAsync(user, Input.Role!);
 
-            return RedirectToPage("Index");
+            return RedirectToPage("./Index");
         }
         foreach (var error in result.Errors)
         {
