@@ -6,26 +6,39 @@
 
 <h1>Product and Order Metrics</h1>
 
-<div class="form-group">
+<div class="row p-2 w-25">
     <label for="periodSelect">Select Period:</label>
-    <select id="periodSelect" class="form-control" asp-for="Period">
-        <option value="Day">Day</option>
-        <option value="Month" selected="@(Model.Period == "Month")">Month</option>
-        <option value="Year">Year</option>
-    </select>
+    <div class="form-group">
+        <select id="periodSelect" class="form-control" asp-for="Period">
+            <option value="Day">Day</option>
+            <option value="Month" selected="@(Model.Period == "Month")">Month</option>
+            <option value="Year">Year</option>
+        </select>
+    </div>
 </div>
 
-<div class="row">
+<div class="row p-2">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card h-75">
             <div class="card-body">
                 <h5>Top Products</h5>
                 <canvas id="topProductsChart"></canvas>
             </div>
         </div>
+        <div class="card h-25">
+            <div class="card-body">
+                <h5>Average Time to Fulfill Orders</h5>
+                <p>
+                    @{
+                        string fulfillString = $"{Model.Data?.AvgTimeToFulfillOrders.ToString("F2")} days" ?? "N/A";
+                    }
+                    @fulfillString
+                </p>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5>Order Status Breakdown</h5>
                 <canvas id="orderStatusChart"></canvas>
@@ -34,21 +47,7 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5>Average Time to Fulfill Orders</h5>
-                <p>
-                    @{ string fulfillString = $"{Model.Data?.AvgTimeToFulfillOrders.ToString("F2")} days" ?? "N/A"; }  
-                    @fulfillString
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="btn btn-outline-primary">
+<div class="btn btn-outline-primary p-2">
     <a asp-page="/Admin/Analytics/Index">Back to Analytics</a>
 </div>
 
@@ -76,10 +75,14 @@
 
         var orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
         var orderStatusChart = new Chart(orderStatusCtx, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Status).ToList())),
                 datasets: [{
+                    barPercentage: 0.5,
+                    barThickness: 6,
+                    maxBarThickness: 8,
+                    minBarLength: 2,
                     data: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Count).ToList())),
                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
                 }]
