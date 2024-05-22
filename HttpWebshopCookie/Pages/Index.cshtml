@@ -5,7 +5,12 @@
 }
 <link rel="stylesheet" href="/css/carousel.css" />
 
-<div class="row mx-auto my-auto justify-content-center">
+<div class="text-center pt-6">
+    <img src="/images/logo-no-background.png" class="border-2 w-50"/>
+    <h2><strong>Velkommen til BlomsterBinderiet - hvor blomsterkunst møder passion</strong></h2>
+</div>
+
+<div class="row mx-auto my-auto justify-content-center pt-3">
     <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
         <div class="carousel-inner" role="listbox">
 
@@ -107,16 +112,75 @@
     </div>
 </div>
 
+<div class="container-fluid">
+    <div class="justify-content-center text-center pt-3">
+        <div class="container-fluid">
+            <div class="container text-center w-75">
+                <h4>Om os</h4>
+                <p>
+                    Hos BlomsterBinderiet er vi dedikerede til at skabe smukke blomsterdekorationer og buketter til enhver lejlighed. 
+                    Uanset om du leder efter en farverig buket til en fødselsdag, en elegant blomsterdekoration til et bryllup, 
+                    eller et smukt blomsterarrangement til at mindes en elsket ved en begravelse, har vi det, du søger.
+                </p>
+            </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+            <div class="container text-center w-75">
+                <h4>Til Private</h4>
+                <p>
+                    Vi tilbyder et bredt udvalg af blomster og blomsterrelateret tilbehør til husbrug. 
+                    Du kan nemt bestille dine blomster online og afhente dem i vores butik. 
+                    Vores passionerede team står klar til at hjælpe dig med at vælge de perfekte blomster, der passer til din specifikke anledning.
+                </p>
+            </div>
+
+            <div class="container text-center w-75">
+                <h4>Til Erhverv</h4>
+                <p>
+                    Vi leverer også specialiserede tjenester til lokale erhverv, herunder bedemænd. 
+                    Vi kan hjælpe med at opsætte smukke blomsterarrangementer til begravelser og andre særlige begivenheder. 
+                    Vores mål er at gøre det så nemt som muligt for dig at få den rette blomsterdekoration, uanset hvilken begivenhed du planlægger.
+                </p>
+            </div>
+
+            <div class="container text-left w-75">
+                <h4>Vores Tjenester</h4>
+                <ul class="list-unstyled">
+                    <li><strong>Blomsterbuketter:</strong> Perfekte til fødselsdage, jubilæer og andre specielle lejligheder.</li>
+                    <li><strong>Blomsterdekorationer:</strong> Ideelle til bryllupper, konfirmationer og andre store begivenheder.</li>
+                    <li><strong>Begravelsesblomster:</strong> Smukke og respektfulde blomsterarrangementer til at mindes en elsket.</li>
+                    <li><strong>Blomsteropsætning:</strong> Professionel opsætning af blomster til både private og erhverv.</li>
+                </ul>
+            </div>
+
+            <div class="container text-center w-75">
+                <p>
+                    Vi inviterer dig til at udforske vores webshop og opdage det brede udvalg af blomster, vi har at tilbyde.
+                    Besøg os i butikken, hvor du kan afhente dine bestillinger og få personlig vejledning fra vores erfarne team. 
+                    Hos BlomsterBinderiet er din tilfredshed vores højeste prioritet, og vi ser frem til at hjælpe dig med at gøre dine specielle øjeblikke endnu mere mindeværdige med vores smukke blomster.
+                </p> 
+            </div>
+
+            <div class="container text-center w-75">
+                <h4>Kontakt Os</h4>
+                <p>
+                    Har du spørgsmål eller brug for hjælp med din bestilling?
+                    Du er altid velkommen til at kontakte os. Vi er her for at gøre din oplevelse så problemfri som muligt.
+                </p>
+            </div>
+
+            <div class="container text-center w-75 p-2">
+                <h4><strong></strong></h4>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script>
     let items = document.querySelectorAll('.carousel .carousel-item')
 
     items.forEach((el) => {
-        const minPerSlide = 6
+        const minPerSlide = 4
         let next = el.nextElementSibling
         for (var i = 1; i < minPerSlide; i++) {
             if (!next) {
