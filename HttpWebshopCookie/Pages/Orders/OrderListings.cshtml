@@ -48,6 +48,7 @@
             <tr>
                 <th scope="col">Order Date</th>
                 <th scope="col">Status</th>
+                <th scope="col">SOI</th>
                 <th scope="col">Customer</th>
                 <th scope="col">Assigned</th>
                 <th scope="col">Total</th>
@@ -60,6 +61,16 @@
                 <tr>
                     <td class="col-auto">@order.OrderDate.ToString("dd-MM-yy HH:mm:ss")</td>
                     <td class="col-auto">@order.Status</td>
+                    <td class="col-auto">
+                        @{
+                            string specialInstructions = "No";
+                            if (order.SpecialOrderInstruction != null)
+                            {
+                                specialInstructions = "Yes";
+                            }
+                        }
+                        @specialInstructions 
+                    </td>
                     <td class="col-auto">
                         @{
                             var customerName = order.Customer != null ? $"{order.Customer.FirstName} {order.Customer.LastName}" : $"{order.Guest?.FirstName} {order.Guest?.LastName}";

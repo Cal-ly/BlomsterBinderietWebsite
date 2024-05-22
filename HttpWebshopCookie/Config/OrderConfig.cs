@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace HttpWebshopCookie.Config;
+﻿namespace HttpWebshopCookie.Config;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
@@ -66,7 +64,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasOne(oi => oi.Order)
             .WithMany(o => o.OrderItems)
             .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -78,11 +76,10 @@ public class SpecialOrderInstructionsConfiguration : IEntityTypeConfiguration<Sp
         builder.Property(soi => soi.Id).ValueGeneratedOnAdd();
 
         builder.ToTable("SpecialOrderInstructions");
-        builder.Property(soi => soi.Delivery)
-            .HasDefaultValue(false);
-        builder.Property(soi => soi.Arrangement)
-            .HasDefaultValue(false);
 
-
+        builder.HasOne(soi => soi.Order)
+            .WithOne(o => o.SpecialOrderInstruction)
+            .HasForeignKey<SpecialOrderInstruction>(soi => soi.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

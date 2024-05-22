@@ -8,7 +8,9 @@ public class SeedAllData(IServiceProvider serviceProvider)
     private const string Password = "Tester";
 
     public static List<string>? EmployeeIdList = [];
+    public static List<string>? CompanyIdList = [];
     public static List<string>? CompanyRepIdList = [];
+    public static List<Customer> CompanyRepList = [];
     public static List<string>? CustomerIdList = [];
     public static List<string>? GuestIdList = [];
     public static List<string>? ProductIdList = [];
@@ -92,6 +94,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 AddressId = companyAddress.Id
             };
             companies.Add(company);
+            CompanyIdList?.Add(company.Id);
 
             Customer companyRep = new()
             {
@@ -594,6 +597,57 @@ public class SeedAllData(IServiceProvider serviceProvider)
             order.OrderItems.AddRange(orderItemList);
             orders.Add(order);
         }
+        await context.Orders.AddRangeAsync(orders);
+        await context.SaveChangesAsync();
+    }
+    public async Task SeedCompanyOrdersAsync()
+    {
+        List<Order> orders = new List<Order>();
+        List<SpecialOrderInstruction> soiList = new List<SpecialOrderInstruction>();
+        for (int i = 0; i < CompanyRepList?.Count; i++)
+        {
+            var randomDates = GenerateRandomDates();
+            var randomProduct1 = random.Next(0, ProductList!.Count);
+            var randomProduct2 = random.Next(0, ProductList!.Count - 1);
+
+            if (randomProduct2 >= randomProduct1)
+            {
+                randomProduct2++;
+            }
+
+            List<OrderItem> orderItemList = new List<OrderItem>
+        {
+            new OrderItem { ProductId = ProductList![randomProduct1].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct1].Price },
+            new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct2].Price }
+        };
+
+            var order = new Order
+            {
+                Customer = CompanyRepList![i],
+                CustomerId = CompanyRepList![i].Id,
+                OrderDate = DateTime.Now.AddDays(randomDates[0]),
+                CompletionDate = DateTime.Now.AddDays(randomDates[1]),
+                Status = OrderStatus.Completed,
+                OrderItems = new List<OrderItem>(),
+            };
+            order.OrderItems.AddRange(orderItemList);
+
+            var soi = new SpecialOrderInstruction
+            {
+                OrderId = order.Id,
+                SpecialInstructions = "Opstilling i kappel, Fredag 24/05 kl 1000",
+                Delivery = true,
+                Arrangement = true,
+                SpecialDeliveryAddressId = order.Customer.AddressId,
+                SpecialDeliveryAddress = order.Customer.Address
+            };
+
+            order.SpecialOrderInstruction = soi;
+            order.SpecialOrderInstructionsId = soi.Id;
+            soiList.Add(soi);
+            orders.Add(order);
+        }
+        await context.SpecialOrderInstructions.AddRangeAsync(soiList);
         await context.Orders.AddRangeAsync(orders);
         await context.SaveChangesAsync();
     }

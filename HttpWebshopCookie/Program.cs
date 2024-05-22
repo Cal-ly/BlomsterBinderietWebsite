@@ -159,6 +159,7 @@ using (var scope = app.Services.CreateScope())
     await seedData.SeedGuestsAsync();
     await seedData.SeedProductsAsync();
     await seedData.SeedOrdersAsync();
+    await seedData.SeedCompanyOrdersAsync();
     await seedData.SeedBasketActivityAsync();
 }
 

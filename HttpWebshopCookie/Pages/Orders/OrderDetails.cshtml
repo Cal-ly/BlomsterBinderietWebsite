@@ -17,6 +17,22 @@
         <p>Customer: @(Model.Order.Customer?.FirstName + " " + Model.Order.Customer?.LastName)</p>
         <p>Assigned Employee: @Model.Order.Employee?.FirstName</p>
         <p>Status: @Model.Order.Status</p>
+        @if (Model.Order.SpecialOrderInstruction != null)
+        {
+            <div>
+                <h5>Special Delivery Address:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.SpecialDeliveryAddress!.FullAddress()</p>
+
+                <h5>Special Instructions:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.SpecialInstructions</p>
+
+                <h5>Delivery:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.Delivery ? "Yes" : "No"</p>
+
+                <h5>Arrangement:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.Arrangement ? "Yes" : "No"</p>
+            </div>
+        }
         <form method="post" asp-page-handler="AssignToSelf">
             <input type="hidden" name="id" value="@Model.Order.Id" />
             <button type="submit">Assign to Me</button>
