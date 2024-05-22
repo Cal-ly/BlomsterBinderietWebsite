@@ -544,7 +544,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     public async Task SeedOrdersAsync()
     {
         List<Order> orders = new List<Order>();
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 50; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -569,7 +569,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             order.OrderItems.AddRange(orderItemList);
             orders.Add(order);
         }
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 50; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -604,24 +604,42 @@ public class SeedAllData(IServiceProvider serviceProvider)
 
         for (int i = 0; i < 100; i++)
         {
-            var userId = random.Next(2) == 0 ? CustomerIdList![random.Next(CustomerIdList.Count)] : null;
+            var userId = CustomerIdList![random.Next(CustomerIdList.Count)];
             var isRegisteredUser = userId != null;
-            var sessionId = !isRegisteredUser ? Guid.NewGuid().ToString() : null;
-            var productId = ProductIdList![random.Next(ProductIdList.Count)];
-            var quantityChanged = random.Next(1, 5) * (random.Next(2) == 0 ? 1 : -1);
-            var activityType = quantityChanged > 0 ? "Add" : "Remove";
-            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-180, 0));
-            for (int j = 0; j < random.Next(1, 15); j++)
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-400, 1));
+            for (int j = 0; j < random.Next(4, 10); j++)
             {
+                var productId = ProductIdList![random.Next(ProductIdList.Count)];
+                var quantityChanged = random.Next(1, 2) * (random.Next(2) == 0 ? 1 : -1);
+                var activityType = quantityChanged > 0 ? "Add" : "Remove";
                 BasketActivity activity = new()
                 {
                     ActivityType = activityType,
                     QuantityChanged = quantityChanged,
                     UserId = userId,
                     IsRegisteredUser = isRegisteredUser,
+                    ProductId = productId,
+                    Timestamp = dateTime.AddSeconds(random.Next(5, 20))
+                };
+                basketActivities.Add(activity);
+            }
+        }
+        for (int i = 0; i < 100; i++)
+        {
+            var sessionId = Guid.NewGuid().ToString();
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-400, 1));
+            for (int j = 0; j < random.Next(4, 10); j++)
+            {
+                var productId = ProductIdList![random.Next(ProductIdList.Count)];
+                var quantityChanged = random.Next(1, 2) * (random.Next(2) == 0 ? 1 : -1);
+                var activityType = quantityChanged > 0 ? "Add" : "Remove";
+                BasketActivity activity = new()
+                {
+                    ActivityType = activityType,
+                    QuantityChanged = quantityChanged,
                     SessionId = sessionId,
                     ProductId = productId,
-                    Timestamp = dateTime.AddSeconds(random.Next(5, 30))
+                    Timestamp = dateTime.AddSeconds(random.Next(5, 20))
                 };
                 basketActivities.Add(activity);
             }
@@ -683,7 +701,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
 
     public static int[] GenerateRandomDates()
     {
-        int orderDate = random.Next(-356, -4);
+        int orderDate = random.Next(-400, -4);
         int completionDate = orderDate + random.Next(1, 3);
         return [orderDate, completionDate];
     }

@@ -6,16 +6,27 @@
 
 <h1>Customer Interaction Metrics</h1>
 
-<div class="form-group">
-    <label for="periodSelect">Select Period:</label>
-    <select id="periodSelect" class="form-control" asp-for="Period">
-        <option value="Day">Day</option>
-        <option value="Month" selected="@(Model.Period == "Month")">Month</option>
-        <option value="Year">Year</option>
-    </select>
-</div>
+<form method="get">
+    <div class="form-group">
+        <label for="periodSelect">Select Period:</label>
+        <select id="periodSelect" class="form-control" asp-for="Period">
+            <option value="Day">Day</option>
+            <option value="Month" selected="@(Model.Period == "Month")">Month</option>
+            <option value="Year">Year</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="dateFrom">Date From:</label>
+        <input type="date" id="dateFrom" class="form-control" asp-for="DateFrom" />
+    </div>
+    <div class="form-group">
+        <label for="dateTo">Date To:</label>
+        <input type="date" id="dateTo" class="form-control" asp-for="DateTo" />
+    </div>
+    <button type="submit" class="btn btn-primary">Apply Filters</button>
+</form>
 
-<div class="row">
+<div class="row mt-4">
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
@@ -34,7 +45,79 @@
     </div>
 </div>
 
-<div class="btn btn-outline-primary">
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Average Time Spent on Site</h5>
+                <p>@Model.Data!.AvgTimeSpentOnSite minutes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Average Max Items in Basket</h5>
+                <p>@Model.Data!.AvgMaxItemsInBasket</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Average Activities per Session</h5>
+                <p>@Model.Data!.AvgActivitiesPerSession</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Activity Types Count</h5>
+                <ul>
+                    @foreach (var activityType in Model.Data!.ActivityTypeCount)
+                    {
+                        <li>@activityType.Key: @activityType.Value</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Top 5 Most Added Products</h5>
+                <ul>
+                    @foreach (var product in Model.Data!.MostAddedProducts)
+                    {
+                        <li>@product.ProductName: @product.Count</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5>Top 5 Most Removed Products</h5>
+                <ul>
+                    @foreach (var product in Model.Data!.MostRemovedProducts)
+                    {
+                        <li>@product.ProductName: @product.Count</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn btn-outline-primary mt-4">
     <a asp-page="/Admin/Analytics/Index">Back to Analytics</a>
 </div>
 
