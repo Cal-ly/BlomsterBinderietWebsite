@@ -28,7 +28,7 @@ public class MyOrderDetailsModel : PageModel
         }
 
         Order? orderToGet = await GetOrderForUserAsync(user, id);
-        
+
         if (orderToGet == null)
         {
             return NotFound();

@@ -13,17 +13,19 @@ public class ProductsOrdersModel : PageModel
     }
 
     public ProductsOrdersData Data { get; set; } = new ProductsOrdersData();
-    public string? Period { get; set; } = "Month";
+    public DateTime? DateFrom { get; set; }
+    public DateTime? DateTo { get; set; }
 
-    public async Task OnGetAsync(string period = "Month")
+    public async Task OnGetAsync(DateTime? dateFrom = null, DateTime? dateTo = null)
     {
-        Period = period ?? "Month";
+        DateFrom = dateFrom ?? DateTime.UtcNow.AddYears(-1);
+        DateTo = dateTo ?? DateTime.UtcNow;
 
         try
         {
-            Data.TopProducts = await GetTopProductsAsync(Period);
-            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync(Period);
-            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync(Period);
+            Data.TopProducts = await GetTopProductsAsync();
+            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync();
+            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync();
         }
         catch (Exception ex)
         {
@@ -32,26 +34,18 @@ public class ProductsOrdersModel : PageModel
         }
     }
 
-    private IQueryable<Order> FilterOrdersByPeriod(IQueryable<Order> query, string period)
+    private IQueryable<Order> FilterOrdersByDateRange(IQueryable<Order> query)
     {
-        var now = DateTime.UtcNow;
-
-        return period switch
-        {
-            "Day" => query.Where(o => o.OrderDate.Date == now.Date),
-            "Month" => query.Where(o => o.OrderDate.Year == now.Year && o.OrderDate.Month == now.Month),
-            "Year" => query.Where(o => o.OrderDate.Year == now.Year),
-            _ => query
-        };
+        return query.Where(o => o.OrderDate >= DateFrom && o.OrderDate <= DateTo);
     }
 
-    private async Task<List<TopProduct>> GetTopProductsAsync(string period)
+    private async Task<List<TopProduct>> GetTopProductsAsync()
     {
         IQueryable<OrderItem> query = _context.OrderItems
             .Include(oi => oi.Order)
             .Where(oi => oi.Order!.Status == OrderStatus.Completed);
 
-        query = FilterOrdersByPeriod(query.Select(oi => oi.Order!), period)
+        query = FilterOrdersByDateRange(query.Select(oi => oi.Order!))
             .SelectMany(o => o.OrderItems);
 
         var topProducts = await query
@@ -68,9 +62,9 @@ public class ProductsOrdersModel : PageModel
         return topProducts;
     }
 
-    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync(string period)
+    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync()
     {
-        var query = FilterOrdersByPeriod(_context.Orders, period);
+        var query = FilterOrdersByDateRange(_context.Orders);
 
         return await query.GroupBy(o => o.Status)
                   .Select(g => new OrderStatusBreakdown
@@ -81,9 +75,9 @@ public class ProductsOrdersModel : PageModel
                   .ToListAsync();
     }
 
-    private async Task<double> GetAverageTimeToFulfillOrdersAsync(string period)
+    private async Task<double> GetAverageTimeToFulfillOrdersAsync()
     {
-        var query = FilterOrdersByPeriod(_context.Orders.Where(o => o.Status == OrderStatus.Completed), period);
+        var query = FilterOrdersByDateRange(_context.Orders.Where(o => o.Status == OrderStatus.Completed));
 
         return await query.AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
     }

@@ -13,6 +13,9 @@ public class Order
     public Employee? Employee { get; set; }
     public string? EmployeeId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public string? SpecialOrderInstructionsId { get; set; }
+    public SpecialOrderInstruction? SpecialOrderInstruction { get; set; }
+
     public decimal TotalPrice
     {
         get { return GetTotalPrice(); }
@@ -21,7 +24,19 @@ public class Order
 
     public decimal GetTotalPrice()
     {
-        return OrderItems?.Sum(item => item.UnitPrice * item.Quantity) ?? 0;
+        decimal totalPrice = OrderItems?.Sum(item => item.UnitPrice * item.Quantity) ?? 0;
+        if (SpecialOrderInstruction != null)
+        {
+            if (SpecialOrderInstruction.Delivery)
+            {
+                totalPrice += 500;
+            }
+            if (SpecialOrderInstruction.Arrangement)
+            {
+                totalPrice += 500;
+            }
+        }
+        return totalPrice;
     }
 }
 

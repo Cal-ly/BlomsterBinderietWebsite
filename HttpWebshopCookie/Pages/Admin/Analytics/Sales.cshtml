@@ -5,20 +5,27 @@
     string totalSales = Model.Data?.TotalSales.ToString("C2") ?? "N/A";
     int totalOrders = Model.Data?.TotalOrders ?? 0;
     string averageOrderValue = Model.Data?.AverageOrderValue.ToString("C2") ?? "N/A";
+    string salesGrowthRate = Model.Data?.SalesGrowthRate.ToString("F2") ?? "N/A";
+    string averageOrderProcessingTime = Model.Data?.AverageOrderProcessingTime.ToString("F2") ?? "N/A";
 }
 
 <h1>Sales Metrics</h1>
 
-<div class="form-group">
-    <label for="periodSelect">Select Period:</label>
-    <select id="periodSelect" class="form-control" asp-for="Period">
-        <option value="Day">Day</option>
-        <option value="Month" selected="@(Model.Period == "Month")">Month</option>
-        <option value="Year">Year</option>
-    </select>
-</div>
+<form method="get">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="dateFrom">Date From:</label>
+            <input type="date" id="dateFrom" class="form-control" asp-for="DateFrom" />
+        </div>
+        <div class="form-group col-md-6">
+            <label for="dateTo">Date To:</label>
+            <input type="date" id="dateTo" class="form-control" asp-for="DateTo" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
+</form>
 
-<div class="card-deck">
+<div class="card-deck mt-4">
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Total Sales</h5>
@@ -37,17 +44,32 @@
             <p class="card-text">@averageOrderValue</p>
         </div>
     </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Sales Growth Rate</h5>
+            <p class="card-text">@salesGrowthRate %</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Average Order Processing Time</h5>
+            <p class="card-text">@averageOrderProcessingTime days</p>
+        </div>
+    </div>
 </div>
 
-<div class="btn btn-outline-primary">
+<div class="mt-4">
+    <h5>Top Selling Products</h5>
+    <ul class="list-group">
+        @foreach (var product in Model.Data!.TopSellingProducts)
+        {
+            <li class="list-group-item">
+                <strong>@product.ProductName:</strong> @product.Sales.ToString("C2")
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="btn btn-outline-primary mt-4">
     <a asp-page="/Admin/Analytics/Index">Back to Analytics</a>
 </div>
-
-@section Scripts {
-    <script>
-        document.getElementById('periodSelect').addEventListener('change', function () {
-            var selectedPeriod = this.value;
-            window.location.href = '/Admin/Analytics/Sales?period=' + selectedPeriod;
-        });
-    </script>
-}

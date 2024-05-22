@@ -1,4 +1,6 @@
-﻿namespace HttpWebshopCookie.Config;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace HttpWebshopCookie.Config;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
@@ -34,6 +36,10 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(o => o.SpecialOrderInstruction)
+            .WithOne(soi => soi.Order)
+            .HasForeignKey<SpecialOrderInstruction>(soi => soi.OrderId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(o => o.CustomerId).HasDatabaseName("IDX_CustomerId");
         builder.HasIndex(o => o.GuestId).HasDatabaseName("IDX_GuestId");
@@ -61,5 +67,22 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
             .WithMany(o => o.OrderItems)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.ClientCascade);
+    }
+}
+
+public class SpecialOrderInstructionsConfiguration : IEntityTypeConfiguration<SpecialOrderInstruction>
+{
+    public void Configure(EntityTypeBuilder<SpecialOrderInstruction> builder)
+    {
+        builder.HasKey(soi => soi.Id);
+        builder.Property(soi => soi.Id).ValueGeneratedOnAdd();
+
+        builder.ToTable("SpecialOrderInstructions");
+        builder.Property(soi => soi.Delivery)
+            .HasDefaultValue(false);
+        builder.Property(soi => soi.Arrangement)
+            .HasDefaultValue(false);
+
+
     }
 }

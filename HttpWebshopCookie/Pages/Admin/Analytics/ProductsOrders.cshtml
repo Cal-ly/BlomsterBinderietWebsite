@@ -6,16 +6,19 @@
 
 <h1>Product and Order Metrics</h1>
 
-<div class="row p-2 w-25">
-    <label for="periodSelect">Select Period:</label>
-    <div class="form-group">
-        <select id="periodSelect" class="form-control" asp-for="Period">
-            <option value="Day">Day</option>
-            <option value="Month" selected="@(Model.Period == "Month")">Month</option>
-            <option value="Year">Year</option>
-        </select>
+<form method="get">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="dateFrom">Date From:</label>
+            <input type="date" id="dateFrom" class="form-control" asp-for="DateFrom" />
+        </div>
+        <div class="form-group col-md-6">
+            <label for="dateTo">Date To:</label>
+            <input type="date" id="dateTo" class="form-control" asp-for="DateTo" />
+        </div>
     </div>
-</div>
+    <button type="submit" class="btn btn-primary mt-2">Apply Filters</button>
+</form>
 
 <div class="row p-2">
     <div class="col-md-6">
@@ -53,11 +56,6 @@
 
 @section Scripts {
     <script>
-        document.getElementById('periodSelect').addEventListener('change', function () {
-            var selectedPeriod = this.value;
-            window.location.href = '/Admin/Analytics/ProductsOrders?period=' + selectedPeriod;
-        });
-
         var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
         var topProductsChart = new Chart(topProductsCtx, {
             type: 'bar',
@@ -79,10 +77,6 @@
             data: {
                 labels: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Status).ToList())),
                 datasets: [{
-                    barPercentage: 0.5,
-                    barThickness: 6,
-                    maxBarThickness: 8,
-                    minBarLength: 2,
                     data: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Count).ToList())),
                     backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
                 }]

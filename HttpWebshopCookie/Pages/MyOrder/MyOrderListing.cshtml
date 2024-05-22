@@ -16,6 +16,7 @@
                 <th>Status</th>
                 <th>Total</th>
                 <th>Details</th>
+                <th>Special Instructions</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,14 @@
                         <a class="btn btn-primary btn-sm" asp-page="/MyOrder/MyOrderDetails" asp-route-id="@order.Id">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </a>
+                    </td>
+                    <td>
+                        @if (User.IsInRole("companyrep"))
+                        {
+                            <a class="btn btn-primary btn-sm" asp-page="/MyOrder/SpecialInstructions" asp-route-id="@order.Id" title="Special Instructions">
+                                Add SOI
+                            </a>
+                        }
                     </td>
                 </tr>
             }
