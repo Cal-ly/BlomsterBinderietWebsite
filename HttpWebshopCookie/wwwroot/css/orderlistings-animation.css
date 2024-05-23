@@ -1,0 +1,16 @@
+﻿.fading-dot::after {
+    content: '•';
+    color: red;
+    animation: fade 1.5s infinite;
+    margin-left: 5px;
+}
+
+@keyframes fade {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

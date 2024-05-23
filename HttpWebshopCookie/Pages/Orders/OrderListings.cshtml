@@ -108,9 +108,18 @@
         <tbody>
             @foreach (var order in Model.Orders)
             {
+                var isNewOrder = (order.OrderDate >= DateTime.Now.AddHours(-36) && (order.Status == OrderStatus.Accepted || order.Status == OrderStatus.Pending));
                 <tr>
                     <td class="col-auto">@order.OrderDate.ToString("dd-MM-yy HH:mm:ss")</td>
-                    <td class="col-auto">@order.Status</td>
+                    <td class="col-auto">
+                        @order.Status
+                        @if(isNewOrder)
+                        {
+                            <div class="spinner-grow spinner-grow-sm text-danger" role="status">
+                                <span class="visually-hidden">Pending...</span>
+                            </div>
+                        }
+                    </td>
                     <td class="col-auto">
                         @{
                             string specialInstructions = "No";
