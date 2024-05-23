@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace HttpWebshopCookie.Pages.Products;
 
-namespace HttpWebshopCookie.Pages.Products;
-
+[Authorize(Policy = "staffAccess")]
 public class CreateModel(ApplicationDbContext context, IWebHostEnvironment environment) : PageModel
 {
     [BindProperty]

@@ -1,7 +1,6 @@
 ﻿namespace HttpWebshopCookie.Pages.Products;
 
-//TODO - Refactor table, let the number of columns be dynamic, divide into action butttons and information
-
+[Authorize(Policy = "staffAccess")]
 public class IndexModel(ApplicationDbContext context, BasketService basketService) : PageModel
 {
     [BindProperty]

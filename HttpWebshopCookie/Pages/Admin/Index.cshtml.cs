@@ -1,6 +1,6 @@
 namespace HttpWebshopCookie.Pages.Admin;
 
-[Authorize(Policy = "managerAccess")]
+[Authorize(Policy = "staffAccess")]
 public class IndexModel : PageModel
 {
     public void OnGet()

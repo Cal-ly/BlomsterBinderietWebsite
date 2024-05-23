@@ -41,12 +41,6 @@
                                 <li><a class="dropdown-item" asp-area="" asp-page="/CustomerProducts/Index" asp-route-searchTerm="" asp-route-pageIndex="1" asp-route-pageSize="9" asp-route-sortBy="Name" asp-route-sortOrder="Ascending">All Products</a></li>
                             </ul>
                         </li>
-                        @if (User.IsInRole("admin") || User.IsInRole("manager") || User.IsInRole("staff") || User.IsInRole("assistant"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Products/Index">Product Overview</a>
-                            </li>
-                        }
                         @if (User.IsInRole("comapnyrep") || User.IsInRole("customer"))
                         {
                             <li class="nav-item">

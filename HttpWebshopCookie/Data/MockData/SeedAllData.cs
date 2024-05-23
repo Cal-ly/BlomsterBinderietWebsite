@@ -548,7 +548,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     public async Task SeedOrdersAsync()
     {
         List<Order> orders = new List<Order>();
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 10; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -573,7 +573,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             order.OrderItems.AddRange(orderItemList);
             orders.Add(order);
         }
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 10; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -601,6 +601,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
         await context.Orders.AddRangeAsync(orders);
         await context.SaveChangesAsync();
     }
+
     public async Task SeedCompanyOrdersAsync()
     {
         List<Order> orders = new List<Order>();
@@ -658,12 +659,12 @@ public class SeedAllData(IServiceProvider serviceProvider)
     {
         List<BasketActivity> basketActivities = new();
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 10; i++)
         {
             var userId = CustomerIdList![random.Next(CustomerIdList.Count)];
             var isRegisteredUser = userId != null;
-            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-365, 1));
-            for (int j = 0; j < random.Next(4, 10); j++)
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-90, 1));
+            for (int j = 0; j < random.Next(2, 6); j++)
             {
                 var productId = ProductIdList![random.Next(ProductIdList.Count)];
                 var quantityChanged = random.Next(1, 2) * (random.Next(2) == 0 ? 1 : -1);
@@ -680,11 +681,11 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 basketActivities.Add(activity);
             }
         }
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 10; i++)
         {
             var sessionId = Guid.NewGuid().ToString();
-            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-365, 1));
-            for (int j = 0; j < random.Next(4, 10); j++)
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-90, 1));
+            for (int j = 0; j < random.Next(2, 6); j++)
             {
                 var productId = ProductIdList![random.Next(ProductIdList.Count)];
                 var quantityChanged = random.Next(1, 2) * (random.Next(2) == 0 ? 1 : -1);
@@ -757,7 +758,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
 
     public static int[] GenerateRandomDates()
     {
-        int orderDate = random.Next(-365, -4);
+        int orderDate = random.Next(-90, -4);
         int completionDate = orderDate + random.Next(1, 3);
         return [orderDate, completionDate];
     }
