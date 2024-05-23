@@ -115,6 +115,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             };
             companyReps.Add(companyRep);
             CompanyRepIdList?.Add(companyRep.Id);
+            CompanyRepList.Add(companyRep);
         }
         await context.Addresses.AddRangeAsync(companyAddresses);
         await context.Companies.AddRangeAsync(companies);
@@ -616,10 +617,10 @@ public class SeedAllData(IServiceProvider serviceProvider)
             }
 
             List<OrderItem> orderItemList = new List<OrderItem>
-        {
-            new OrderItem { ProductId = ProductList![randomProduct1].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct1].Price },
-            new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct2].Price }
-        };
+            {
+                new OrderItem { ProductId = ProductList![randomProduct1].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct1].Price },
+                new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct2].Price }
+            };
 
             var order = new Order
             {
@@ -635,6 +636,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             var soi = new SpecialOrderInstruction
             {
                 OrderId = order.Id,
+                Order = order,
                 SpecialInstructions = "Opstilling i kappel, Fredag 24/05 kl 1000",
                 Delivery = true,
                 Arrangement = true,

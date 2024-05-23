@@ -1,77 +1,124 @@
 ﻿@page "{id}"
 @model HttpWebshopCookie.Pages.Orders.OrderDetailsModel
-
-<h1>Order Details</h1>
-
-@if (Model.Message != null)
-{
-    <div class="container">@Model.Message</div>
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Order Details";
 }
 
-@if (Model.Order != null)
-{
-    <div class ="container">
-        <h2>Order Information</h2>
-        <p>Order ID: @Model.Order.Id</p>
-        <p>Order Date: @Model.Order.OrderDate.ToShortDateString()</p>
-        <p>Customer: @(Model.Order.Customer?.FirstName + " " + Model.Order.Customer?.LastName)</p>
-        <p>Assigned Employee: @Model.Order.Employee?.FirstName</p>
-        <p>Status: @Model.Order.Status</p>
-        @if (Model.Order.SpecialOrderInstruction != null)
-        {
-            <div>
-                <h5>Special Delivery Address:</h5>
-                <p>@Model.Order.SpecialOrderInstruction.SpecialDeliveryAddress!.FullAddress()</p>
+<div class="container mt-4">
+    @if (Model.Message != null)
+    {
+        <div class="alert alert-info">@Model.Message</div>
+    }
 
-                <h5>Special Instructions:</h5>
-                <p>@Model.Order.SpecialOrderInstruction.SpecialInstructions</p>
-
-                <h5>Delivery:</h5>
-                <p>@Model.Order.SpecialOrderInstruction.Delivery ? "Yes" : "No"</p>
-
-                <h5>Arrangement:</h5>
-                <p>@Model.Order.SpecialOrderInstruction.Arrangement ? "Yes" : "No"</p>
+    @if (Model.Order != null)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Order Information</h2>
             </div>
-        }
-        <form method="post" asp-page-handler="AssignToSelf">
-            <input type="hidden" name="id" value="@Model.Order.Id" />
-            <button type="submit">Assign to Me</button>
-        </form>
+            <div class="card-body">
+                <p><strong>Order ID:</strong> @Model.Order.Id</p>
+                <p><strong>Order Date:</strong> @Model.Order.OrderDate.ToShortDateString()</p>
+                <p><strong>Customer:</strong> @(Model.Order.Customer?.FirstName + " " + Model.Order.Customer?.LastName)</p>
+                <div class="mt-1">
+                    <p><strong>Current status:</strong> @Model.Order.Status</p>
+                    <div class="col-md-4">
+                        <form method="post" asp-page-handler="UpdateStatus">
+                            <input type="hidden" name="id" value="@Model.Order.Id" />
+                            <div class="input-group">
+                                <select name="status" class="form-select">
+                                    @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
+                                    {
+                                        <option value="@status" selected="@(Model.Order.Status == status)">@status</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-outline-secondary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <p><strong>Assigned Employee:</strong> @Model.Order.Employee?.FirstName @Model.Order.Employee?.LastName</p>
+                    @if (User.IsInRole("manager") || User.IsInRole("admin"))
+                    {
+                        <div class="input-group">
+                            <form method="post" asp-page-handler="AssignToEmployee" class="d-inline-flex col-md-4 me-2">
+                                <input type="hidden" name="id" value="@Model.Order.Id" />
+                                <div class="input-group">
+                                    <select name="employeeId" class="form-select">
+                                        <option value="">Select Employee</option>
+                                        @foreach (var employee in Model.Employees)
+                                        {
+                                            <option value="@employee.Id">@employee.FirstName @employee.LastName</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-outline-secondary">Assign</button>
+                                </div>
+                            </form>
+                            <form method="post" asp-page-handler="AssignToSelf" class="col-md-2">
+                                <input type="hidden" name="id" value="@Model.Order.Id" />
+                                <button type="submit" class="btn btn-outline-secondary">Assign to Me</button>
+                            </form>
+                        </div>
+                        <div class="col-md-4">
 
-        <form method="post" asp-page-handler="UpdateStatus">
-            <input type="hidden" name="id" value="@Model.Order.Id" />
-            <select name="status">
-                @foreach (HttpWebshopCookie.Models.OrderStatus status in Enum.GetValues(typeof(HttpWebshopCookie.Models.OrderStatus)))
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2">
+                            <form method="post" asp-page-handler="AssignToSelf" class="mb-4">
+                                <input type="hidden" name="id" value="@Model.Order.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Assign to Me</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+                @if (Model.Order.SpecialOrderInstruction != null)
                 {
-                    <option value="@status" selected="@(Model.Order.Status == status)">@status</option>
+                    <div class="mt-4">
+                        <h5>Special Order Instructions</h5>
+                        <p><strong>Special Delivery Address:</strong> @Model.Order.SpecialOrderInstruction.SpecialDeliveryAddress!.FullAddress()</p>
+                        <p><strong>Special Instructions:</strong> @Model.Order.SpecialOrderInstruction.SpecialInstructions</p>
+                        <p><strong>Delivery:</strong> @(Model.Order.SpecialOrderInstruction.Delivery ? "Yes" : "No")</p>
+                        <p><strong>Arrangement:</strong> @(Model.Order.SpecialOrderInstruction.Arrangement ? "Yes" : "No")</p>
+                    </div>
                 }
-            </select>
-            <button type="submit">Update Status</button>
-        </form>
-    </div>
+            </div>
+        </div>
 
-    <div>
-        <h3>Order Items</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Order.OrderItems)
-                {
-                    <tr>
-                        <td>@item.ProductItem?.Name</td>
-                        <td>@item.Quantity</td>
-                        <td>@item.UnitPrice.ToString("C")</td>
-                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
+        <div class="card">
+            <div class="card-header">
+                <h3>Order Items</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Order.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.ProductItem?.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.UnitPrice.ToString("C")</td>
+                                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Order not found.</div>
+    }
+</div>
