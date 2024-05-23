@@ -12,15 +12,15 @@
 <h1>Sales Metrics</h1>
 
 <form method="get" class="row g-3">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <label for="dateFrom" class="form-label">Date From:</label>
-        <input type="date" id="dateFrom" name="dateFrom" class="form-control" value="@Model.DateFrom" asp-for="DateFrom"/>
+        <input type="date" id="dateFrom" name="dateFrom" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateFrom.ToString("yyyy-MM-dd"))" />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <label for="dateTo" class="form-label">Date To:</label>
-        <input type="date" id="dateTo" name="dateTo" class="form-control" value="@Model.DateTo" asp-for="DateTo"/>
+        <input type="date" id="dateTo" name="dateTo" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateTo.ToString("yyyy-MM-dd"))" />
     </div>
-    <div class="col-md-2 text-end">
+    <div class="col-12 text-end">
         <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
     </div>
 </form>
@@ -66,7 +66,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.js"></script>
     <script>
         var topSellingProductsCtx = document.getElementById('topSellingProductsChart').getContext('2d');
         var topSellingProductsChart = new Chart(topSellingProductsCtx, {
@@ -78,8 +77,16 @@
                     data: @Html.Raw(Json.Serialize(Model.Data!.TopSellingProducts.Select(x => x.Sales).ToList())),
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2
+                    borderWidth: 1
                 }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
         });
     </script>

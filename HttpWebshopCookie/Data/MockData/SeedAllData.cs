@@ -6,6 +6,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     private readonly UserManager<ApplicationUser> userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     private static readonly Random random = new();
     private const string Password = "Tester";
+    private static readonly int[] dateRange = [-365, -1];
 
     public static List<string>? EmployeeIdList = [];
     public static List<string>? CompanyIdList = [];
@@ -548,7 +549,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     public async Task SeedOrdersAsync()
     {
         List<Order> orders = new List<Order>();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -570,10 +571,13 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 Status = OrderStatus.Completed,
                 OrderItems = new List<OrderItem>(),
             };
-            order.OrderItems.AddRange(orderItemList);
+            foreach (var item in orderItemList)
+            {
+                order.OrderItems.Add(item);
+            }
             orders.Add(order);
         }
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -595,7 +599,10 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 Status = OrderStatus.Completed,
                 OrderItems = new List<OrderItem>(),
             };
-            order.OrderItems.AddRange(orderItemList);
+            foreach (var item in orderItemList)
+            {
+                order.OrderItems.Add(item);
+            }
             orders.Add(order);
         }
         await context.Orders.AddRangeAsync(orders);
@@ -632,7 +639,10 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 Status = OrderStatus.Completed,
                 OrderItems = new List<OrderItem>(),
             };
-            order.OrderItems.AddRange(orderItemList);
+            foreach (var item in orderItemList)
+            {
+                order.OrderItems.Add(item);
+            }
 
             var soi = new SpecialOrderInstruction
             {
@@ -659,11 +669,11 @@ public class SeedAllData(IServiceProvider serviceProvider)
     {
         List<BasketActivity> basketActivities = new();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
         {
             var userId = CustomerIdList![random.Next(CustomerIdList.Count)];
             var isRegisteredUser = userId != null;
-            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-90, 1));
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(dateRange[0], dateRange[1]));
             for (int j = 0; j < random.Next(2, 6); j++)
             {
                 var productId = ProductIdList![random.Next(ProductIdList.Count)];
@@ -681,10 +691,10 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 basketActivities.Add(activity);
             }
         }
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
         {
             var sessionId = Guid.NewGuid().ToString();
-            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(-90, 1));
+            DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(dateRange[0], dateRange[1]));
             for (int j = 0; j < random.Next(2, 6); j++)
             {
                 var productId = ProductIdList![random.Next(ProductIdList.Count)];
@@ -696,7 +706,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
                     QuantityChanged = quantityChanged,
                     SessionId = sessionId,
                     ProductId = productId,
-                    Timestamp = dateTime.AddSeconds(random.Next(5, 20))
+                    Timestamp = dateTime.AddSeconds(random.Next(10, 30))
                 };
                 basketActivities.Add(activity);
             }
@@ -758,7 +768,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
 
     public static int[] GenerateRandomDates()
     {
-        int orderDate = random.Next(-90, -4);
+        int orderDate = random.Next(dateRange[0], dateRange[1]-3);
         int completionDate = orderDate + random.Next(1, 3);
         return [orderDate, completionDate];
     }

@@ -1,4 +1,4 @@
-﻿using HttpWebshopCookie.Utilities;
+﻿using HttpWebshopCookie.Config;
 
 namespace HttpWebshopCookie.Data;
 
@@ -32,6 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new SpecialOrderInstructionsConfiguration());
         modelBuilder.ApplyConfiguration(new BasketConfiguration());
         modelBuilder.ApplyConfiguration(new BasketItemConfiguration());
         modelBuilder.ApplyConfiguration(new BasketActivityConfiguration());

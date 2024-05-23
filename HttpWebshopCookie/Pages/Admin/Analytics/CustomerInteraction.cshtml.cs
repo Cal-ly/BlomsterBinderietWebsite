@@ -12,18 +12,32 @@ public class CustomerInteractionModel : PageModel
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    [BindProperty]
     public CustomerInteractionData Data { get; set; } = new CustomerInteractionData();
-    public DateTime? DateFrom { get; set; } = DateTime.UtcNow.AddDays(-90);
-    public DateTime? DateTo { get; set; } = DateTime.UtcNow;
+
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateFrom { get; set; } = DateTime.Now.AddDays(-90);
+
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateTo { get; set; } = DateTime.Now;
 
     public async Task OnGetAsync(DateTime? dateFrom, DateTime? dateTo)
     {
-        DateFrom = dateFrom ?? DateTime.UtcNow.AddDays(-90);
-        DateTo = dateTo ?? DateTime.UtcNow;
+        DateFrom = dateFrom ?? DateTime.Now.AddDays(-90);
+        DateTo = dateTo ?? DateTime.Now;
 
         try
         {
-            await FetchCustomerInteractionDataAsync();
+            var customerQuery = FilterCustomersByDateRange(DateFrom, DateTo);
+            var basketQuery = FilterBasketActivitiesByDateRange(DateFrom, DateTo);
+            Data.CustomerGrowth = await GetCustomerGrowthAsync(customerQuery);
+            Data.BasketActivitySummary = await GetBasketActivitySummaryAsync(basketQuery);
+            Data.AvgTimeSpentOnSite = await GetAvgTimeSpentOnSiteAsync(basketQuery);
+            Data.AvgMaxItemsInBasket = await GetAvgMaxItemsInBasketAsync(basketQuery);
+            Data.AvgActivitiesPerSession = await GetAverageActivitiesPerSessionAsync(basketQuery);
+            Data.MostAddedProducts = await GetMostAddedProductsAsync(basketQuery);
+            Data.MostRemovedProducts = await GetMostRemovedProductsAsync(basketQuery);
+            Data.ActivityTypeCount = await GetActivityTypeCountAsync(basketQuery);
         }
         catch (Exception ex)
         {
@@ -32,82 +46,56 @@ public class CustomerInteractionModel : PageModel
         }
     }
 
-    private async Task FetchCustomerInteractionDataAsync()
+    private IQueryable<Customer> FilterCustomersByDateRange(DateTime dateFrom, DateTime dateTo)
     {
-        var tasks = new Task[]
-        {
-            Task.Run(async () => Data.CustomerGrowth = await GetCustomerGrowthAsync()),
-            Task.Run(async () => Data.BasketActivitySummary = await GetBasketActivitySummaryAsync()),
-            Task.Run(async () => Data.AvgTimeSpentOnSite = await GetAvgTimeSpentOnSiteAsync()),
-            Task.Run(async () => Data.AvgMaxItemsInBasket = await GetAvgMaxItemsInBasketAsync()),
-            Task.Run(async () => Data.AvgActivitiesPerSession = await GetAverageActivitiesPerSessionAsync()),
-            Task.Run(async () => Data.MostAddedProducts = await GetMostAddedProductsAsync()),
-            Task.Run(async () => Data.MostRemovedProducts = await GetMostRemovedProductsAsync()),
-            Task.Run(async () => Data.ActivityTypeCount = await GetActivityTypeCountAsync())
-        };
 
-        await Task.WhenAll(tasks);
+        return _context.Customers.Where(c => c.EnrollmentDate >= dateFrom && c.EnrollmentDate <= dateTo);
     }
 
-    private IQueryable<Customer> FilterCustomersByDateRange(IQueryable<Customer> query)
+    private async Task<List<CustomerGrowth>> GetCustomerGrowthAsync(IQueryable<Customer> customerQuery)
     {
-        return query.Where(c => c.EnrollmentDate.HasValue && c.EnrollmentDate.Value >= DateFrom!.Value && c.EnrollmentDate.Value <= DateTo!.Value);
-    }
-
-    private async Task<List<CustomerGrowth>> GetCustomerGrowthAsync()
-    {
-        var query = _context.Users.OfType<Customer>();
-        query = FilterCustomersByDateRange(query);
-
-        var customerGrowth = await query.GroupBy(c => c.EnrollmentDate!.Value.Date.ToString("yyyy-MM-dd"))
+        IQueryable<Customer> query = customerQuery;
+        return await query.GroupBy(c => c.EnrollmentDate!.Value.Date.ToString("yyyy-MM-dd"))
                                         .Select(g => new CustomerGrowth
                                         {
                                             Period = g.Key,
                                             NewCustomers = g.Count()
                                         })
                                         .ToListAsync();
-
-        return customerGrowth;
     }
 
-    private IQueryable<BasketActivity> FilterBasketActivitiesByDateRange(IQueryable<BasketActivity> query)
+    private IQueryable<BasketActivity> FilterBasketActivitiesByDateRange(DateTime dateFrom, DateTime dateTo)
     {
-        return query.Where(ba => ba.Timestamp.HasValue && ba.Timestamp.Value >= DateFrom!.Value && ba.Timestamp.Value <= DateTo!.Value);
+        return _context.BasketActivities.Where(ba => ba.Timestamp >= dateFrom && ba.Timestamp <= dateTo);
     }
 
-    private async Task<List<BasketActivitySummary>> GetBasketActivitySummaryAsync()
+    private async Task<List<BasketActivitySummary>> GetBasketActivitySummaryAsync(IQueryable<BasketActivity> basketQuery)
     {
-        IQueryable<BasketActivity> query = _context.BasketActivities;
-        query = FilterBasketActivitiesByDateRange(query);
-
-        var basketActivitySummary = await query.GroupBy(ba => ba.ActivityType)
-                                               .Select(g => new BasketActivitySummary
-                                               {
-                                                   ActivityType = g.Key ?? "Unknown",
-                                                   Count = g.Count(),
-                                                   TotalQuantityChanged = g.Sum(ba => ba.QuantityChanged ?? 0)
-                                               })
-                                               .ToListAsync();
-
-        return basketActivitySummary;
+        IQueryable<BasketActivity> query = basketQuery;
+        return await query.GroupBy(ba => ba.ActivityType)
+                          .Select(g => new BasketActivitySummary
+                          {
+                              ActivityType = g.Key ?? "Unknown",
+                              Count = g.Count(),
+                              TotalQuantityChanged = g.Sum(ba => ba.QuantityChanged ?? 0)
+                          })
+                          .ToListAsync();
     }
 
-    private async Task<double> GetAvgTimeSpentOnSiteAsync()
+    private async Task<double> GetAvgTimeSpentOnSiteAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         var sessionDurations = await query.Where(ba => !string.IsNullOrEmpty(ba.SessionId))
                                           .GroupBy(ba => ba.SessionId)
                                           .Select(g => EF.Functions.DateDiffMinute(g.Min(ba => ba.Timestamp), g.Max(ba => ba.Timestamp)))
                                           .ToListAsync();
-        var decimalAvg = Math.Round((decimal)sessionDurations.Average()!, 2);
-        return (double)decimalAvg;
+
+        return Math.Round(sessionDurations.Average() ?? 0, 2);
     }
 
-    private async Task<double> GetAvgMaxItemsInBasketAsync()
+    private async Task<double> GetAvgMaxItemsInBasketAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         var maxItems = await query.GroupBy(ba => ba.SessionId)
                                   .Select(g => g.Max(ba => ba.QuantityChanged))
                                   .ToListAsync();
@@ -115,10 +103,9 @@ public class CustomerInteractionModel : PageModel
         return Math.Round(maxItems.Average() ?? 0, 2);
     }
 
-    private async Task<double> GetAverageActivitiesPerSessionAsync()
+    private async Task<double> GetAverageActivitiesPerSessionAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         var activities = await query.GroupBy(ba => ba.SessionId)
                                     .Select(g => g.Count())
                                     .ToListAsync();
@@ -126,10 +113,9 @@ public class CustomerInteractionModel : PageModel
         return Math.Round((double)activities.Average(), 2);
     }
 
-    private async Task<List<ProductActivity>> GetMostAddedProductsAsync()
+    private async Task<List<ProductActivity>> GetMostAddedProductsAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         return await query.Where(ba => ba.ActivityType == "Add")
                           .GroupBy(ba => new { ba.ProductId, ba.Product!.Name })
                           .Select(g => new ProductActivity { ProductName = g.Key.Name!, Count = g.Count() })
@@ -138,10 +124,9 @@ public class CustomerInteractionModel : PageModel
                           .ToListAsync();
     }
 
-    private async Task<List<ProductActivity>> GetMostRemovedProductsAsync()
+    private async Task<List<ProductActivity>> GetMostRemovedProductsAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         return await query.Where(ba => ba.ActivityType == "Remove")
                           .GroupBy(ba => new { ba.ProductId, ba.Product!.Name })
                           .Select(g => new ProductActivity { ProductName = g.Key.Name!, Count = g.Count() })
@@ -150,10 +135,9 @@ public class CustomerInteractionModel : PageModel
                           .ToListAsync();
     }
 
-    private async Task<Dictionary<string, int>> GetActivityTypeCountAsync()
+    private async Task<Dictionary<string, int>> GetActivityTypeCountAsync(IQueryable<BasketActivity> basketQuery)
     {
-        var query = FilterBasketActivitiesByDateRange(_context.BasketActivities);
-
+        IQueryable<BasketActivity> query = basketQuery;
         return await query.GroupBy(ba => ba.ActivityType)
                           .Select(g => new { ActivityType = g.Key!, Count = g.Count() })
                           .ToDictionaryAsync(x => x.ActivityType, x => x.Count);
@@ -173,20 +157,20 @@ public class CustomerInteractionModel : PageModel
 
     public class CustomerGrowth
     {
-        public string Period { get; set; } = string.Empty;
-        public int NewCustomers { get; set; } = 0;
+        public string? Period { get; set; }
+        public int NewCustomers { get; set; }
     }
 
     public class BasketActivitySummary
     {
-        public string ActivityType { get; set; } = string.Empty;
+        public string? ActivityType { get; set; }
         public int Count { get; set; }
         public int TotalQuantityChanged { get; set; }
     }
 
     public class ProductActivity
     {
-        public string ProductName { get; set; } = string.Empty;
+        public string? ProductName { get; set; }
         public int Count { get; set; }
     }
 }

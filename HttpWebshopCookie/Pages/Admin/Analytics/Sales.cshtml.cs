@@ -5,6 +5,7 @@ public class SalesModel : PageModel
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<SalesModel> _logger;
+    private IQueryable<Order>? _query;
 
     public SalesModel(ApplicationDbContext context, ILogger<SalesModel> logger)
     {
@@ -14,23 +15,26 @@ public class SalesModel : PageModel
 
     [BindProperty]
     public SalesData Data { get; set; } = new SalesData();
+
     [BindProperty(SupportsGet = true)]
-    public DateTime DateFrom { get; set; } = DateTime.UtcNow.AddDays(-90);
+    public DateTime DateFrom { get; set; } = DateTime.Now.AddDays(-90);
+
     [BindProperty(SupportsGet = true)]
-    public DateTime DateTo { get; set; } = DateTime.UtcNow;
+    public DateTime DateTo { get; set; } = DateTime.Now;
 
     public async Task OnGetAsync(DateTime? dateFrom, DateTime? dateTo)
     {
-        DateFrom = dateFrom ?? DateTime.UtcNow.AddDays(-90);
-        DateTo = dateTo ?? DateTime.UtcNow;
+        DateFrom = dateFrom ?? DateTime.Now.AddDays(-90);
+        DateTo = dateTo ?? DateTime.Now;
 
         try
         {
-            Data.TotalSales = await GetTotalSalesAsync();
-            Data.TotalOrders = await GetTotalOrdersAsync();
-            Data.AverageOrderValue = await GetAverageOrderValueAsync();
-            Data.SalesGrowthRate = await GetSalesGrowthRateAsync();
-            Data.AverageOrderProcessingTime = await GetAverageOrderProcessingTimeAsync();
+            _query = FilterOrdersByDateRange(DateFrom, DateTo);
+            Data.TotalSales = await GetTotalSalesAsync(_query);
+            Data.TotalOrders = await GetTotalOrdersAsync(_query);
+            Data.AverageOrderValue = await GetAverageOrderValueAsync(_query);
+            Data.SalesGrowthRate = await GetSalesGrowthRateAsync(_query);
+            Data.AverageOrderProcessingTime = await GetAverageOrderProcessingTimeAsync(_query);
             Data.TopSellingProducts = await GetTopSellingProductsAsync();
         }
         catch (Exception ex)
@@ -40,61 +44,64 @@ public class SalesModel : PageModel
         }
     }
 
-    private IQueryable<Order> FilterOrdersByDateRange(IQueryable<Order> query)
-    {
-        return query.Where(o => o.OrderDate >= DateFrom && o.OrderDate <= DateTo);
-    }
-
-    private async Task<decimal> GetTotalSalesAsync()
-    {
-        var query = _context.Orders.Where(o => o.Status == OrderStatus.Completed);
-        query = FilterOrdersByDateRange(query);
-        return await query.SumAsync(o => o.GetTotalPrice());
-    }
-
-    private async Task<int> GetTotalOrdersAsync()
+    private IQueryable<Order> FilterOrdersByDateRange(DateTime dateFrom, DateTime dateTo)
     {
         IQueryable<Order> query = _context.Orders;
-        query = FilterOrdersByDateRange(query);
-        return await query.CountAsync();
+
+        if (DateFrom != default)
+        {
+            query = query.Where(o => o.OrderDate >= dateFrom);
+        }
+        if (DateTo != default)
+        {
+            query = query.Where(o => o.OrderDate <= dateTo);
+        }
+
+        return query;
     }
 
-    private async Task<decimal> GetAverageOrderValueAsync()
+    private async Task<decimal> GetTotalSalesAsync(IQueryable<Order> inputQuery)
     {
-        IQueryable<Order> query = _context.Orders;
-        query = FilterOrdersByDateRange(query);
-        return await query.AverageAsync(o => o.GetTotalPrice());
+        return await inputQuery.Where(o => o.Status == OrderStatus.Completed).SumAsync(o => o.TotalPrice);
     }
 
-    private async Task<double> GetSalesGrowthRateAsync()
+    private async Task<int> GetTotalOrdersAsync(IQueryable<Order> inputQuery)
     {
+        return await inputQuery.CountAsync();
+    }
+
+    private async Task<decimal> GetAverageOrderValueAsync(IQueryable<Order> inputQuery)
+    {
+        return await inputQuery.AverageAsync(o => o.TotalPrice);
+    }
+
+    private async Task<double> GetSalesGrowthRateAsync(IQueryable<Order> inputQuery)
+    {
+        IQueryable<Order> query = inputQuery;
         var previousPeriodEnd = DateFrom.AddDays(-1);
         var previousPeriodStart = previousPeriodEnd.AddDays(-(DateTo - DateFrom).TotalDays);
         var previousPeriodSales = await _context.Orders
             .Where(o => o.Status == OrderStatus.Completed && o.OrderDate >= previousPeriodStart && o.OrderDate <= previousPeriodEnd)
-            .SumAsync(o => o.GetTotalPrice());
+            .SumAsync(o => o.TotalPrice);
 
-        var currentPeriodSales = await GetTotalSalesAsync();
+        var currentPeriodSales = await GetTotalSalesAsync(query);
 
         if (previousPeriodSales == 0) return 100;
         var salesGrowth = ((currentPeriodSales - previousPeriodSales) / previousPeriodSales) * 100;
         return (double)salesGrowth;
     }
 
-    private async Task<double> GetAverageOrderProcessingTimeAsync()
+    private async Task<double> GetAverageOrderProcessingTimeAsync(IQueryable<Order> inputQuery)
     {
-        var query = _context.Orders.Where(o => o.Status == OrderStatus.Completed);
-        query = FilterOrdersByDateRange(query);
+        IQueryable<Order> query = inputQuery.Where(o => o.Status == OrderStatus.Completed);
         return await query.AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
     }
 
     private async Task<List<TopProduct>> GetTopSellingProductsAsync()
     {
-        IQueryable<OrderItem> query = _context.OrderItems
+        return await _context.OrderItems
             .Include(oi => oi.Order)
-            .Where(oi => oi.Order!.Status == OrderStatus.Completed && oi.Order.OrderDate >= DateFrom && oi.Order.OrderDate <= DateTo);
-
-        var topProducts = await query
+            .Where(oi => oi.Order!.Status == OrderStatus.Completed && oi.Order.OrderDate >= DateFrom && oi.Order.OrderDate <= DateTo)
             .GroupBy(oi => new { oi.ProductId, oi.ProductItem!.Name })
             .Select(g => new TopProduct
             {
@@ -104,23 +111,21 @@ public class SalesModel : PageModel
             .OrderByDescending(tp => tp.Sales)
             .Take(5)
             .ToListAsync();
-
-        return topProducts;
     }
 
     public class SalesData
     {
-        public decimal TotalSales { get; set; }
+        public decimal TotalSales { get; set; } = 0;
         public int TotalOrders { get; set; }
-        public decimal AverageOrderValue { get; set; }
-        public double SalesGrowthRate { get; set; }
-        public double AverageOrderProcessingTime { get; set; }
-        public List<TopProduct> TopSellingProducts { get; set; } = new List<TopProduct>();
+        public decimal AverageOrderValue { get; set; } = 0;
+        public double SalesGrowthRate { get; set; } = 0;
+        public double AverageOrderProcessingTime { get; set; } = 0;
+        public List<TopProduct> TopSellingProducts { get; set; } = [];
     }
 
     public class TopProduct
     {
         public string? ProductName { get; set; }
-        public decimal Sales { get; set; }
+        public decimal Sales { get; set; } = 0;
     }
 }

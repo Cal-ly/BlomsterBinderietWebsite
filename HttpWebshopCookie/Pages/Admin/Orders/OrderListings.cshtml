@@ -139,7 +139,7 @@
                     </td>
                     <td class="col-auto">@(order.Employee?.FirstName + " " + order.Employee?.LastName)</td>
                     <td class="col-auto">@order.TotalPrice.ToString("C")</td>
-                    <td class="col-auto"><a asp-page="/Orders/OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-info border rounded"><i class="fa-solid fa-magnifying-glass"></i></a></td>
+                    <td class="col-auto"><a asp-page="./OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-info border rounded"><i class="fa-solid fa-magnifying-glass"></i></a></td>
                 </tr>
             }
         </tbody>

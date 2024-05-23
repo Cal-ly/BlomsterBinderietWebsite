@@ -12,20 +12,23 @@ public class ProductsOrdersModel : PageModel
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    [BindProperty]
     public ProductsOrdersData Data { get; set; } = new ProductsOrdersData();
-    public DateTime? DateFrom { get; set; }
-    public DateTime? DateTo { get; set; }
 
-    public async Task OnGetAsync(DateTime? dateFrom = null, DateTime? dateTo = null)
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateFrom { get; set; } = DateTime.Now.AddDays(-90);
+
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateTo { get; set; } = DateTime.Now;
+
+    public async Task OnGetAsync()
     {
-        DateFrom = dateFrom ?? DateTime.UtcNow.AddYears(-1);
-        DateTo = dateTo ?? DateTime.UtcNow;
-
         try
         {
+            var query = FilterOrdersByDateRange(DateFrom, DateTo);
             Data.TopProducts = await GetTopProductsAsync();
-            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync();
-            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync();
+            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync(query);
+            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync(query);
         }
         catch (Exception ex)
         {
@@ -34,21 +37,18 @@ public class ProductsOrdersModel : PageModel
         }
     }
 
-    private IQueryable<Order> FilterOrdersByDateRange(IQueryable<Order> query)
+    private IQueryable<Order> FilterOrdersByDateRange(DateTime dateFrom, DateTime dateTo)
     {
-        return query.Where(o => o.OrderDate >= DateFrom && o.OrderDate <= DateTo);
+        return _context.Orders.Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo).OrderBy(o => o.OrderDate);
     }
 
     private async Task<List<TopProduct>> GetTopProductsAsync()
     {
         IQueryable<OrderItem> query = _context.OrderItems
             .Include(oi => oi.Order)
-            .Where(oi => oi.Order!.Status == OrderStatus.Completed);
+            .Where(oi => oi.Order!.Status == OrderStatus.Completed && oi.Order.OrderDate >= DateFrom && oi.Order.OrderDate <= DateTo);
 
-        query = FilterOrdersByDateRange(query.Select(oi => oi.Order!))
-            .SelectMany(o => o.OrderItems);
-
-        var topProducts = await query
+        return await query
             .GroupBy(oi => new { oi.ProductId, oi.ProductItem!.Name })
             .Select(g => new TopProduct
             {
@@ -58,28 +58,23 @@ public class ProductsOrdersModel : PageModel
             .OrderByDescending(tp => tp.Sales)
             .Take(10)
             .ToListAsync();
-
-        return topProducts;
     }
 
-    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync()
+    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync(IQueryable<Order> inputQuery)
     {
-        var query = FilterOrdersByDateRange(_context.Orders);
-
-        return await query.GroupBy(o => o.Status)
-                  .Select(g => new OrderStatusBreakdown
-                  {
-                      Status = g.Key.ToString() ?? "Unknown",
-                      Count = g.Count()
-                  })
-                  .ToListAsync();
+        return await inputQuery.GroupBy(o => o.Status)
+            .Select(g => new OrderStatusBreakdown
+            {
+                Status = g.Key.ToString() ?? "Unknown",
+                Count = g.Count()
+            })
+            .ToListAsync();
     }
 
-    private async Task<double> GetAverageTimeToFulfillOrdersAsync()
+    private async Task<double> GetAverageTimeToFulfillOrdersAsync(IQueryable<Order> inputQuery)
     {
-        var query = FilterOrdersByDateRange(_context.Orders.Where(o => o.Status == OrderStatus.Completed));
-
-        return await query.AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
+        return await inputQuery.Where(o => o.Status == OrderStatus.Completed)
+            .AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
     }
 
     public class ProductsOrdersData
