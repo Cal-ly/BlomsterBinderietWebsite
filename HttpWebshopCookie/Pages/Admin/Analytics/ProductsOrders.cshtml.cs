@@ -79,21 +79,24 @@ public class ProductsOrdersModel : PageModel
 
     private async Task<double> GetAverageTimeToFulfillOrdersAsync(IQueryable<Order> orderQuery)
     {
-        return await orderQuery
+        IQueryable<Order> query = orderQuery;
+        return await query
             .Where(o => o.Status == OrderStatus.Completed)
             .AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
     }
 
     private async Task<double> GetAverageItemsPerOrderAsync(IQueryable<Order> orderQuery)
     {
-        return await orderQuery
+        IQueryable<Order> query = orderQuery;
+        return await query
             .Where(o => o.Status == OrderStatus.Completed)
             .AverageAsync(o => o.OrderItems.Sum(oi => oi.Quantity));
     }
 
     private async Task<double> GetAverageUniqueItemsPerOrderAsync(IQueryable<Order> orderQuery)
     {
-        return await orderQuery
+        IQueryable<Order> query = orderQuery;
+        return await query
             .Where(o => o.Status == OrderStatus.Completed)
             .AverageAsync(o => o.OrderItems.Count);
     }
