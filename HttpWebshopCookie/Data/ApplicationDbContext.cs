@@ -37,7 +37,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.ApplyConfiguration(new BasketActivityConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
         modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
-
-        modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
     }
 }

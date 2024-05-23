@@ -35,10 +35,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(o => o.SpecialOrderInstruction)
-            .WithOne(soi => soi.Order)
-            .HasForeignKey<SpecialOrderInstruction>(soi => soi.OrderId)
+            .WithOne(si => si.Order)
+            .HasForeignKey<SpecialOrderInstruction>(si => si.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasIndex(o => o.OrderDate).HasDatabaseName("IDX_OrderDate").IsDescending();
         builder.HasIndex(o => o.CustomerId).HasDatabaseName("IDX_CustomerId");
         builder.HasIndex(o => o.GuestId).HasDatabaseName("IDX_GuestId");
         builder.HasIndex(o => o.EmployeeId).HasDatabaseName("IDX_EmployeeId");

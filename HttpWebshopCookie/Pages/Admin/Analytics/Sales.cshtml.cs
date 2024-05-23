@@ -12,13 +12,16 @@ public class SalesModel : PageModel
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    [BindProperty]
     public SalesData Data { get; set; } = new SalesData();
-    public DateTime? DateFrom { get; set; }
-    public DateTime? DateTo { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateFrom { get; set; } = DateTime.UtcNow.AddDays(-90);
+    [BindProperty(SupportsGet = true)]
+    public DateTime DateTo { get; set; } = DateTime.UtcNow;
 
-    public async Task OnGetAsync(DateTime? dateFrom = null, DateTime? dateTo = null)
+    public async Task OnGetAsync(DateTime? dateFrom, DateTime? dateTo)
     {
-        DateFrom = dateFrom ?? DateTime.UtcNow.AddYears(-1);
+        DateFrom = dateFrom ?? DateTime.UtcNow.AddDays(-90);
         DateTo = dateTo ?? DateTime.UtcNow;
 
         try
@@ -65,8 +68,8 @@ public class SalesModel : PageModel
 
     private async Task<double> GetSalesGrowthRateAsync()
     {
-        var previousPeriodEnd = DateFrom!.Value.AddDays(-1);
-        var previousPeriodStart = previousPeriodEnd.AddDays(-(DateTo!.Value - DateFrom.Value).TotalDays);
+        var previousPeriodEnd = DateFrom.AddDays(-1);
+        var previousPeriodStart = previousPeriodEnd.AddDays(-(DateTo - DateFrom).TotalDays);
         var previousPeriodSales = await _context.Orders
             .Where(o => o.Status == OrderStatus.Completed && o.OrderDate >= previousPeriodStart && o.OrderDate <= previousPeriodEnd)
             .SumAsync(o => o.GetTotalPrice());

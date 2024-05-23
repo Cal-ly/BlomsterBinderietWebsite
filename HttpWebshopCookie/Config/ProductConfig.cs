@@ -6,6 +6,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.ToTable("Products");
 
+        builder.HasQueryFilter(p => !p.IsDeleted);
+
         builder.Property(p => p.Name).IsRequired();
         builder.Property(p => p.Description).IsRequired();
         builder.Property(p => p.Price).HasColumnType("decimal(18,2)").IsRequired();
@@ -16,6 +18,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithOne(pt => pt.Product)
             .HasForeignKey(pt => pt.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(p => p.Name);
     }
 }
 
