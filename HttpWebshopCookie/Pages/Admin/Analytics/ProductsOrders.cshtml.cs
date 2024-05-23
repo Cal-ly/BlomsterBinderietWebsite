@@ -21,14 +21,19 @@ public class ProductsOrdersModel : PageModel
     [BindProperty(SupportsGet = true)]
     public DateTime DateTo { get; set; } = DateTime.Now;
 
-    public async Task OnGetAsync()
+    public async Task OnGetAsync(DateTime? dateFrom, DateTime? dateTo)
     {
+        DateFrom = dateFrom ?? DateTime.Now.AddDays(-90);
+        DateTo = dateTo ?? DateTime.Now;
+
         try
         {
-            var query = FilterOrdersByDateRange(DateFrom, DateTo);
-            Data.TopProducts = await GetTopProductsAsync();
-            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync(query);
-            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync(query);
+            var orderQuery = FilterOrdersByDateRange(DateFrom, DateTo);
+            Data.TopProducts = await GetTopProductsAsync(orderQuery);
+            Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync(orderQuery);
+            Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync(orderQuery);
+            Data.AvgItemsPerOrder = await GetAverageItemsPerOrderAsync(orderQuery);
+            Data.AvgUniqueItemsPerOrder = await GetAverageUniqueItemsPerOrderAsync(orderQuery);
         }
         catch (Exception ex)
         {
@@ -39,14 +44,14 @@ public class ProductsOrdersModel : PageModel
 
     private IQueryable<Order> FilterOrdersByDateRange(DateTime dateFrom, DateTime dateTo)
     {
-        return _context.Orders.Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo).OrderBy(o => o.OrderDate);
+        return _context.Orders.Where(o => o.OrderDate >= dateFrom && o.OrderDate <= dateTo).Include(o => o.OrderItems);
     }
 
-    private async Task<List<TopProduct>> GetTopProductsAsync()
+    private async Task<List<TopProduct>> GetTopProductsAsync(IQueryable<Order> orderQuery)
     {
-        IQueryable<OrderItem> query = _context.OrderItems
+        var query = _context.OrderItems
             .Include(oi => oi.Order)
-            .Where(oi => oi.Order!.Status == OrderStatus.Completed && oi.Order.OrderDate >= DateFrom && oi.Order.OrderDate <= DateTo);
+            .Where(oi => oi.Order!.Status == OrderStatus.Completed && orderQuery.Contains(oi.Order));
 
         return await query
             .GroupBy(oi => new { oi.ProductId, oi.ProductItem!.Name })
@@ -60,9 +65,10 @@ public class ProductsOrdersModel : PageModel
             .ToListAsync();
     }
 
-    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync(IQueryable<Order> inputQuery)
+    private async Task<List<OrderStatusBreakdown>> GetOrderStatusBreakdownAsync(IQueryable<Order> orderQuery)
     {
-        return await inputQuery.GroupBy(o => o.Status)
+        return await orderQuery
+            .GroupBy(o => o.Status)
             .Select(g => new OrderStatusBreakdown
             {
                 Status = g.Key.ToString() ?? "Unknown",
@@ -71,10 +77,25 @@ public class ProductsOrdersModel : PageModel
             .ToListAsync();
     }
 
-    private async Task<double> GetAverageTimeToFulfillOrdersAsync(IQueryable<Order> inputQuery)
+    private async Task<double> GetAverageTimeToFulfillOrdersAsync(IQueryable<Order> orderQuery)
     {
-        return await inputQuery.Where(o => o.Status == OrderStatus.Completed)
+        return await orderQuery
+            .Where(o => o.Status == OrderStatus.Completed)
             .AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
+    }
+
+    private async Task<double> GetAverageItemsPerOrderAsync(IQueryable<Order> orderQuery)
+    {
+        return await orderQuery
+            .Where(o => o.Status == OrderStatus.Completed)
+            .AverageAsync(o => o.OrderItems.Sum(oi => oi.Quantity));
+    }
+
+    private async Task<double> GetAverageUniqueItemsPerOrderAsync(IQueryable<Order> orderQuery)
+    {
+        return await orderQuery
+            .Where(o => o.Status == OrderStatus.Completed)
+            .AverageAsync(o => o.OrderItems.Count);
     }
 
     public class ProductsOrdersData
@@ -82,6 +103,8 @@ public class ProductsOrdersModel : PageModel
         public List<TopProduct> TopProducts { get; set; } = new List<TopProduct>();
         public List<OrderStatusBreakdown> OrderStatusBreakdown { get; set; } = new List<OrderStatusBreakdown>();
         public double AvgTimeToFulfillOrders { get; set; }
+        public double AvgItemsPerOrder { get; set; }
+        public double AvgUniqueItemsPerOrder { get; set; }
     }
 
     public class TopProduct

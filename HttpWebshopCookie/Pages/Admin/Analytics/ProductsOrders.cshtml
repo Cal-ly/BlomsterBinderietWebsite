@@ -20,25 +20,32 @@
     </div>
 </form>
 
-<div class="row mt-4">
+
+<div class="row p-2">
     <div class="col-md-6">
-        <div class="card mb-4">
+        <div class="card h-75">
             <div class="card-body">
-                <h5 class="card-title">Top Products</h5>
+                <h5>Top Products</h5>
                 <canvas id="topProductsChart"></canvas>
             </div>
         </div>
-        <div class="card">
+        <div class="card h-25">
             <div class="card-body">
-                <h5 class="card-title">Average Time to Fulfill Orders</h5>
-                <p class="card-text">@Model.Data?.AvgTimeToFulfillOrders.ToString("F2") days</p>
+                @{
+                    string fulfillString = $"{Model.Data?.AvgTimeToFulfillOrders.ToString("F2")} days" ?? "N/A";
+                    string avgItemsString = $"{Model.Data?.AvgItemsPerOrder.ToString("F2")}" ?? "N/A";
+                    string avgUniqueItemsString = $"{Model.Data?.AvgUniqueItemsPerOrder.ToString("F2")}" ?? "N/A";
+                }
+                <p>Average Time to Fulfill Orders: @fulfillString</p>
+                <p>Average Items per Order: @avgItemsString</p>
+                <p>Average Unique Items per Order: @avgUniqueItemsString</p>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Order Status Breakdown</h5>
+                <h5>Order Status Breakdown</h5>
                 <canvas id="orderStatusChart"></canvas>
             </div>
         </div>

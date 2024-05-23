@@ -54,14 +54,15 @@ public class CustomerInteractionModel : PageModel
 
     private async Task<List<CustomerGrowth>> GetCustomerGrowthAsync(IQueryable<Customer> customerQuery)
     {
-        IQueryable<Customer> query = customerQuery;
-        return await query.GroupBy(c => c.EnrollmentDate!.Value.Date.ToString("yyyy-MM-dd"))
-                                        .Select(g => new CustomerGrowth
-                                        {
-                                            Period = g.Key,
-                                            NewCustomers = g.Count()
-                                        })
-                                        .ToListAsync();
+        var customers = await customerQuery.ToListAsync();
+        return customers
+            .GroupBy(c => c.EnrollmentDate!.Value.ToString("yyyy-MM-dd"))
+            .Select(g => new CustomerGrowth
+            {
+                Period = g.Key,
+                NewCustomers = g.Count()
+            })
+            .ToList();
     }
 
     private IQueryable<BasketActivity> FilterBasketActivitiesByDateRange(DateTime dateFrom, DateTime dateTo)

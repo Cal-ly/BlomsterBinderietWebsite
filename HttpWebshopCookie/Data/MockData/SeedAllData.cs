@@ -549,7 +549,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     public async Task SeedOrdersAsync()
     {
         List<Order> orders = new List<Order>();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 25; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -577,7 +577,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             }
             orders.Add(order);
         }
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 25; i++)
         {
             var randomDates = GenerateRandomDates();
             var randomProduct1 = random.Next(0, ProductList!.Count);
@@ -669,7 +669,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
     {
         List<BasketActivity> basketActivities = new();
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 50; i++)
         {
             var userId = CustomerIdList![random.Next(CustomerIdList.Count)];
             var isRegisteredUser = userId != null;
@@ -691,7 +691,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
                 basketActivities.Add(activity);
             }
         }
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 50; i++)
         {
             var sessionId = Guid.NewGuid().ToString();
             DateTime dateTime = DateTime.UtcNow.AddDays(random.Next(dateRange[0], dateRange[1]));
