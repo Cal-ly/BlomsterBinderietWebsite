@@ -1,4 +1,4 @@
-namespace HttpWebshopCookie.Pages.Orders;
+namespace HttpWebshopCookie.Pages.Admin.Orders;
 
 public class OrderDetailsModel : PageModel
 {

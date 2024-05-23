@@ -6,7 +6,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.ToTable("Products");
 
-        builder.HasQueryFilter(p => !p.IsDeleted);
 
         builder.Property(p => p.Name).IsRequired();
         builder.Property(p => p.Description).IsRequired();
@@ -19,7 +18,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasForeignKey(pt => pt.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(p => p.Name);
+        builder.HasQueryFilter(p => !p.IsDeleted);
+        builder.HasIndex(p => p.Name).IsUnique();
     }
 }
 
@@ -33,10 +33,10 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
 
         builder.HasMany(t => t.ProductTags)
             .WithOne(pt => pt.Tag)
-            .HasForeignKey(pt => pt.TagId) // Corrected from ProductId to TagId
+            .HasForeignKey(pt => pt.TagId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(t => new { t.Occasion, t.Category, t.SubCategory }).IsUnique(); // Unique constraint on and indexed by hierarchy of Occasion, Category, SubCategory.
+        builder.HasIndex(t => new { t.Occasion, t.Category, t.SubCategory }).IsUnique();
     }
 }
 
