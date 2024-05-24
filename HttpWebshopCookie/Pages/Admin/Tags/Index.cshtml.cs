@@ -1,24 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace HttpWebshopCookie.Pages.Admin.Tags
+﻿namespace HttpWebshopCookie.Pages.Admin.Tags
 {
+    [Authorize(Policy = "managerAccess")]
     public class IndexModel : PageModel
     {
-        private readonly ApplicationDbContext _context;
+        private readonly TagService _tagService;
 
-        public IndexModel(ApplicationDbContext context)
+        public IndexModel(TagService tagService)
         {
-            _context = context;
+            _tagService = tagService;
         }
 
-        public IList<Tag> Tags { get; set; } = default!;
+        public List<IGrouping<string, Tag>> GroupedTags { get; set; } = new List<IGrouping<string, Tag>>();
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalItems { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int pageNumber = 1, int pageSize = 10)
         {
-            Tags = await _context.Tags.ToListAsync();
+            PageNumber = pageNumber;
+            PageSize = pageSize;
+            var (tags, totalItems) = await _tagService.GetTagsOrderedByOccasionAsync(PageNumber, PageSize);
+            GroupedTags = tags.GroupBy(t => t.Occasion).ToList()!;
+            TotalItems = totalItems;
         }
     }
 }

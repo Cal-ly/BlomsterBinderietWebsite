@@ -27,8 +27,8 @@
                     <td>
                         @foreach (var tag in product.ProductTags.Select(pt => pt.Tag!))
                         {
-                            <span class="bagde bg-primary">@tag.Occasion</span>
-                            <span class="badge bg-secondary">@tag.Category - @tag.SubCategory</span>
+                            <span class="badge text-bg-primary">@tag.Occasion</span>
+                            <span class="badge text-bg-secondary">@tag.Category - @tag.SubCategory</span>
                         }
                     </td>
                     <td>

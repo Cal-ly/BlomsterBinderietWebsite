@@ -12,11 +12,11 @@
         <ul class="list-group">
             @foreach (var tag in Model.ProductTags)
             {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @tag.Category
-                    <form method="post" asp-page-handler="RemoveTag">
-                        <input type="hidden" name="tagId" value="@tag.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                <li class="d-flex justify-content-between align-items-center">
+                    <form method="post" asp-page-handler="RemoveTag" class="input-group">
+                        <input type="hidden" name="tagId" value="@tag.Id" class="" />
+                        <label class="input-group-text">@tag.Occasion - @tag.Category</label>
+                        <button type="submit" class="btn btn-danger">Remove</button>
                     </form>
                 </li>
             }
@@ -25,22 +25,19 @@
     <div class="col-md-6">
         <h4>Add New Tag</h4>
         <form method="post" asp-page-handler="AddTag">
-            <div class="form-group">
-                <label for="TagId" class="control-label">Tag</label>
-                <select id="TagId" name="tagId" class="form-control">
+            <div class="input-group">
+                <select id="TagId" name="tagId" class="form-select" aria-label="Example select with button addon">
                     @foreach (var tag in Model.AvailableTags)
                     {
-                        <option value="@tag.Id">@tag.Category</option>
+                        <option value="@tag.Id">@tag.Category - @tag.SubCategory</option>
                     }
                 </select>
-            </div>
-            <div class="form-group mt-2">
                 <button type="submit" class="btn btn-primary">Add Tag</button>
             </div>
         </form>
     </div>
 </div>
 
-<p class="mt-4">
-    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
-</p>
+<div class="btn btn-outline-primary mt-4">
+    <a asp-page="Index">Back</a>
+</div>

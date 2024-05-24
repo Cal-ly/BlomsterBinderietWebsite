@@ -1,4 +1,6 @@
-﻿namespace HttpWebshopCookie.Services;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace HttpWebshopCookie.Services;
 
 public class TagService(ApplicationDbContext context)
 {
@@ -52,5 +54,25 @@ public class TagService(ApplicationDbContext context)
             .Select(t => t.Occasion)
             .Distinct()
             .ToListAsync();
+    }
+    public async Task<List<Tag>> GetTagsOrderedByOccasionAsync()
+    {
+        return await context.Tags
+                             .OrderBy(t => t.Occasion)
+                             .ThenBy(t => t.Category)
+                             .ThenBy(t => t.SubCategory)
+                             .ToListAsync();
+    }
+    public async Task<(List<Tag>, int)> GetTagsOrderedByOccasionAsync(int pageNumber, int pageSize)
+    {
+        var query = context.Tags
+                             .OrderBy(t => t.Occasion)
+                             .ThenBy(t => t.Category)
+                             .ThenBy(t => t.SubCategory);
+
+        var totalItems = await query.CountAsync();
+        var tags = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return (tags, totalItems);
     }
 }

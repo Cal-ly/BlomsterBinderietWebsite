@@ -8,32 +8,52 @@
 
 <h1>Tags</h1>
 
+<form method="get" class="form-inline mb-3">
+    <div class="form-group mr-2">
+        <label for="PageSize" class="mr-2">Show</label>
+        <select id="PageSize" name="pageSize" class="form-control w-25" onchange="this.form.submit()">
+            <option value="10" selected="@(Model.PageSize == 10)">10</option>
+            <option value="15" selected="@(Model.PageSize == 15)">15</option>
+            <option value="30" selected="@(Model.PageSize == 30)">30</option>
+            <option value="@Model.TotalItems" selected="@(Model.PageSize == Model.TotalItems)">All</option>
+        </select>
+    </div>
+</form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Occasion</th>
-            <th>Category</th>
-            <th>SubCategory</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Tags)
+@foreach (var group in Model.GroupedTags)
+{
+    <div class="card mb-3 w-50">
+        <div class="card-header bg-primary-subtle">
+            <h5>@group.Key</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                @foreach (var tag in group)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>@tag.Category - @tag.SubCategory</span>
+                        <div class="btn-group">
+                            <a asp-page="Edit" asp-route-id="@tag.Id" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-page="Delete" asp-route-id="@tag.Id" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<nav aria-label="Page navigation example" class="mt-4">
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
         {
-            <tr>
-                <td>@item.Occasion</td>
-                <td>@item.Category</td>
-                <td>@item.SubCategory</td>
-                <td>
-                    <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-                </td>
-            </tr>
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+            </li>
         }
-    </tbody>
-</table>
+    </ul>
+</nav>
 
-<p>
-    <a asp-page="Create" class="btn btn-primary">Create New</a>
-</p>
+<div class="btn btn-outline-primary mt-4">
+    <a asp-page="/Admin/Tags/Create">Create New Tag</a>
+</div>
