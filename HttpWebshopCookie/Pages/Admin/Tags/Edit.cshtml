@@ -6,31 +6,41 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+
+<h1>Edit Tag</h1>
 
 <h4>Tag</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Tag.Id" />
             <div class="form-group">
-                <label asp-for="Tag.Occasion" class="control-label"></label>
-                <input asp-for="Tag.Occasion" class="form-control" />
-                <span asp-validation-for="Tag.Occasion" class="text-danger"></span>
+                <label asp-for="SelectedOccasion" class="control-label">Occasion</label>
+                <select asp-for="SelectedOccasion" class="form-control" asp-items="@(new SelectList(Model.Occasions))">
+                    <option value="">-- Select Occasion --</option>
+                    @foreach (var occasion in Model.Occasions)
+                    {
+                        <option value="@occasion" selected="@(Model.SelectedOccasion == occasion)">@occasion</option>
+                    }
+                </select>
+                <span asp-validation-for="SelectedOccasion" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
+                <label for="NewOccasion">Or Add New Occasion</label>
+                <input type="text" id="NewOccasion" name="NewOccasion" class="form-control" />
+            </div>
+            <div class="form-group mt-3">
                 <label asp-for="Tag.Category" class="control-label"></label>
                 <input asp-for="Tag.Category" class="form-control" />
                 <span asp-validation-for="Tag.Category" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <label asp-for="Tag.SubCategory" class="control-label"></label>
                 <input asp-for="Tag.SubCategory" class="form-control" />
                 <span asp-validation-for="Tag.SubCategory" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

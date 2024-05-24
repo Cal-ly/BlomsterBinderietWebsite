@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HttpWebshopCookie.Data;
-using HttpWebshopCookie.Models;
-
-namespace HttpWebshopCookie.Pages.Admin.Tags
+﻿namespace HttpWebshopCookie.Pages.Admin.Tags
 {
     public class EditModel : PageModel
     {
@@ -22,6 +11,14 @@ namespace HttpWebshopCookie.Pages.Admin.Tags
 
         [BindProperty]
         public Tag Tag { get; set; } = default!;
+
+        [BindProperty]
+        public string SelectedOccasion { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string NewOccasion { get; set; } = string.Empty;
+
+        public List<string> Occasions { get; set; } = new List<string>();
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -36,6 +33,13 @@ namespace HttpWebshopCookie.Pages.Admin.Tags
             {
                 return NotFound();
             }
+
+            Occasions = await _context.Tags
+                                      .Select(t => t.Occasion!)
+                                      .Distinct()
+                                      .ToListAsync();
+            SelectedOccasion = Tag.Occasion!;
+
             return Page();
         }
 
@@ -45,6 +49,8 @@ namespace HttpWebshopCookie.Pages.Admin.Tags
             {
                 return Page();
             }
+
+            Tag.Occasion = !string.IsNullOrEmpty(NewOccasion) ? NewOccasion : SelectedOccasion;
 
             _context.Attach(Tag).State = EntityState.Modified;
 
