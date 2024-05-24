@@ -561,7 +561,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             List<OrderItem> orderItemList = new List<OrderItem>
             {
                 new OrderItem { ProductId = ProductList![randomProduct1].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct1].Price },
-                new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct2].Price }
+                new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 3), UnitPrice = ProductList![randomProduct2].Price }
             };
             var order = new Order
             {
@@ -589,7 +589,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             List<OrderItem> orderItemList = new List<OrderItem>
             {
                 new OrderItem { ProductId = ProductList![randomProduct1].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct1].Price },
-                new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 2), UnitPrice = ProductList![randomProduct2].Price }
+                new OrderItem { ProductId = ProductList![randomProduct2].Id, Quantity = random.Next(1, 3), UnitPrice = ProductList![randomProduct2].Price }
             };
             var order = new Order
             {

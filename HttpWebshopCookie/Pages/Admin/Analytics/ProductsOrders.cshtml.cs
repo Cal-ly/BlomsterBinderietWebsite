@@ -32,8 +32,8 @@ public class ProductsOrdersModel : PageModel
             Data.TopProducts = await GetTopProductsAsync(orderQuery);
             Data.OrderStatusBreakdown = await GetOrderStatusBreakdownAsync(orderQuery);
             Data.AvgTimeToFulfillOrders = await GetAverageTimeToFulfillOrdersAsync(orderQuery);
-            Data.AvgItemsPerOrder = await GetAverageItemsPerOrderAsync(orderQuery);
-            Data.AvgUniqueItemsPerOrder = await GetAverageUniqueItemsPerOrderAsync(orderQuery);
+            Data.AvgItemsPerOrder = GetAverageItemsPerOrder(orderQuery);
+            Data.AvgUniqueItemsPerOrder = GetAverageUniqueItemsPerOrder(orderQuery);
         }
         catch (Exception ex)
         {
@@ -85,20 +85,17 @@ public class ProductsOrdersModel : PageModel
             .AverageAsync(o => EF.Functions.DateDiffDay(o.OrderDate, o.CompletionDate ?? o.OrderDate));
     }
 
-    private async Task<double> GetAverageItemsPerOrderAsync(IQueryable<Order> orderQuery)
+    private double GetAverageItemsPerOrder(IQueryable<Order> orderQuery)
     {
-        IQueryable<Order> query = orderQuery;
-        return await query
-            .Where(o => o.Status == OrderStatus.Completed)
-            .AverageAsync(o => o.OrderItems.Sum(oi => oi.Quantity));
+        List<Order> orders = [.. orderQuery.Where(o => o.Status == OrderStatus.Completed).Include(o => o.OrderItems)];
+        return orders.Average(o => o.OrderItems.Sum(oi => oi.Quantity));
     }
 
-    private async Task<double> GetAverageUniqueItemsPerOrderAsync(IQueryable<Order> orderQuery)
+    private double GetAverageUniqueItemsPerOrder(IQueryable<Order> orderQuery)
     {
-        IQueryable<Order> query = orderQuery;
-        return await query
-            .Where(o => o.Status == OrderStatus.Completed)
-            .AverageAsync(o => o.OrderItems.Count);
+        List<Order> orders = [.. orderQuery.Where(o => o.Status == OrderStatus.Completed).Include(o => o.OrderItems)];
+
+        return (double)orders.Average(o => o.OrderItems.Count);
     }
 
     public class ProductsOrdersData
