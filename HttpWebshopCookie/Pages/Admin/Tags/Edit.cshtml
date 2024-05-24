@@ -1,0 +1,46 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Tags.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Tag</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Tag.Id" />
+            <div class="form-group">
+                <label asp-for="Tag.Occasion" class="control-label"></label>
+                <input asp-for="Tag.Occasion" class="form-control" />
+                <span asp-validation-for="Tag.Occasion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tag.Category" class="control-label"></label>
+                <input asp-for="Tag.Category" class="form-control" />
+                <span asp-validation-for="Tag.Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tag.SubCategory" class="control-label"></label>
+                <input asp-for="Tag.SubCategory" class="form-control" />
+                <span asp-validation-for="Tag.SubCategory" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,41 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.ProductTags.IndexModel
+@{
+    ViewData["Title"] = "Product Tags";
+}
+
+<h1>Product Tags</h1>
+
+<p>
+    <a asp-page="/Admin/Products/Index" class="btn btn-primary">Back to Products</a>
+</p>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Tags</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>
+                        @foreach (var tag in product.ProductTags.Select(pt => pt.Tag!))
+                        {
+                            <span class="bagde bg-primary">@tag.Occasion</span>
+                            <span class="badge bg-secondary">@tag.Category - @tag.SubCategory</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-primary">Edit Tags</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

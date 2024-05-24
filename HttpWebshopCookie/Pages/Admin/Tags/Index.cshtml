@@ -1,0 +1,39 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Tags.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Tags</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Occasion</th>
+            <th>Category</th>
+            <th>SubCategory</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Tags)
+        {
+            <tr>
+                <td>@item.Occasion</td>
+                <td>@item.Category</td>
+                <td>@item.SubCategory</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
+</p>

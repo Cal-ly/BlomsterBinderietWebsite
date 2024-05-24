@@ -126,7 +126,7 @@ public class SeedAllData(IServiceProvider serviceProvider)
             await userManager.CreateAsync(companyRep, Password);
             await userManager.AddToRoleAsync(companyRep, "companyrep");
         }
-    }
+    }   
 
     public async Task SeedCustomersAsync()
     {
