@@ -49,7 +49,6 @@ public class CreateModel(ApplicationDbContext context, IWebHostEnvironment envir
         }
         else
         {
-            //TODO implement default behavior?
             Product.ImageUrl = null;
         }
 

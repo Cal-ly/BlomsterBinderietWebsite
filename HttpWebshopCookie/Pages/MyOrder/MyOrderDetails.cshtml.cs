@@ -23,7 +23,6 @@ public class MyOrderDetailsModel : PageModel
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
-            //TODO Handle user not found
             return NotFound();
         }
 

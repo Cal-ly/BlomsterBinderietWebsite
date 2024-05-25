@@ -7,7 +7,7 @@ public class SalesModel : PageModel
     private readonly ILogger<SalesModel> _logger;
     private IQueryable<Order>? _query;
 
-    public SalesModel(ApplicationDbContext context, ILogger<SalesModel> logger) //TODO make ViewModel into two columns, look at ProductOrders for template
+    public SalesModel(ApplicationDbContext context, ILogger<SalesModel> logger)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
