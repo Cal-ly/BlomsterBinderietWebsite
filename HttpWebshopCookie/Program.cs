@@ -1,11 +1,14 @@
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
 global using HttpWebshopCookie.Data.MockData;
+global using HttpWebshopCookie.Interfaces;
 global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
 global using HttpWebshopCookie.Utilities;
 global using HttpWebshopCookie.ViewModels;
+global using MimeKit;
+global using MailKit.Net.Smtp;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;
@@ -22,6 +25,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Options;
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
@@ -57,6 +61,7 @@ builder.Services.AddIdentityCore<Employee>()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".HttpWebshopCookie.Session";
@@ -64,6 +69,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
+
 
 builder.Services.AddAuthorization(options =>
 {
@@ -122,6 +128,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<BasketService>();
 builder.Services.AddScoped<TagService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 
