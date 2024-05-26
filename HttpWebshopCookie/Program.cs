@@ -36,6 +36,7 @@ global using System.Text;
 global using System.Text.Encodings.Web;
 global using System.Text.Json;
 global using System.Threading.Tasks;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,6 +129,18 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<BasketService>();
 builder.Services.AddScoped<TagService>();
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.Configure<SmtpSettings>(options =>
+{
+    options.Server = options.Server ?? throw new InvalidOperationException("SmtpSettings:Server not found.");
+    options.Port = options.Port == 0 ? throw new InvalidOperationException("SmtpSettings:Port not found.") : options.Port;
+    options.SenderName = options.SenderName ?? throw new InvalidOperationException("SmtpSettings:SenderName not found.");
+    options.SenderEmail = options.SenderEmail ?? throw new InvalidOperationException("SmtpSettings:SenderEmail not found.");
+    options.Username = options.Username ?? throw new InvalidOperationException("SmtpSettings:Username not found.");
+    options.Password = options.Password ?? throw new InvalidOperationException("SmtpSettings:Password not found.");
+});
+
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
