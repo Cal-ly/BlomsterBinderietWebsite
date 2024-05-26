@@ -1,0 +1,78 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Basket.ReviewInfoModel
+
+
+<div class="container-sm w-50 align-self-lg-center bg-primary-subtle pb-2">
+    <h1>Checkout Information</h1>
+    <form method="post" asp-page-handler="SubmitOrder">
+        <div class="form-group">
+            <label for="FirstName">First Name:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type=" text" asp-for="ReviewInfo.FirstName" id="FirstName" />
+            <span asp-validation-for="ReviewInfo.FirstName"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="LastName">Last Name:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.LastName" id="LastName" />
+            <span asp-validation-for="ReviewInfo.LastName"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Email">Email:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="email" asp-for="ReviewInfo.Email" id="Email" required />
+            <span asp-validation-for="ReviewInfo.Email"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="PhoneNumber">Phone Number:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="tel" asp-for="ReviewInfo.PhoneNumber" id="PhoneNumber" />
+            <span asp-validation-for="ReviewInfo.PhoneNumber"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Resident">Resident:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Resident" autocomplete="name" id="Resident" />
+            <span asp-validation-for="ReviewInfo.Resident"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Street">Street:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Street" autocomplete="address-line1" id="Street" />
+            <span asp-validation-for="ReviewInfo.Street"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <label for="PostalCode">Postal Code:</label>
+                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.PostalCode" autocomplete="postal-code" id="PostalCode" />
+                <span asp-validation-for="ReviewInfo.PostalCode"></span>
+            </div>
+
+            <div class="col-8">
+                <label for="City">City:</label>
+                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.City" autocomplete="address-line3" id="City" />
+                <span asp-validation-for="ReviewInfo.City"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Country">Country:</label>
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Country" autocomplete="country" id="Country" />
+            <span asp-validation-for="ReviewInfo.Country"></span>
+        </div>
+
+        <div class="container text-end">
+            <div class="mt-2 justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="submit" class="btn btn-secondary" asp-page-handler="Cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Order!</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

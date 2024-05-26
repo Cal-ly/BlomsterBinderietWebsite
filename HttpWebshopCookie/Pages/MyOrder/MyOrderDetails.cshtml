@@ -1,0 +1,72 @@
+﻿@page "{id}"
+@model HttpWebshopCookie.Pages.MyOrder.MyOrderDetailsModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+
+@if (Model.Order != null)
+{
+    <div>
+        <h2>Order ID: @Model.Order.Id</h2>
+        <p>Date: @Model.Order.OrderDate.ToString("yyyy-MM-dd")</p>
+        <p>Status: @Model.Order.Status</p>
+
+        @if (User.IsInRole("companyrep") && Model.Order.SpecialOrderInstruction != null)
+        {
+            <div>
+                <h5>Special Delivery Address:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.SpecialDeliveryAddress!.FullAddress()</p>
+
+                <h5>Special Instructions:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.SpecialInstructions</p>
+
+                <h5>Delivery:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.Delivery ? "Yes" : "No"</p>
+
+                <h5>Arrangement:</h5>
+                <p>@Model.Order.SpecialOrderInstruction.Arrangement ? "Yes" : "No"</p>
+            </div>
+        }
+
+        <h3>Order Items</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Sum</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.ProductItem!.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("C")</td>
+                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Order Total</td>
+                    <td></td>
+                    <td></td>
+                    <td>@Model.Order.GetTotalPrice().ToString("C")</td>
+                </tr>
+            </tbody>
+        </table>
+        @if (User.IsInRole("companyrep") || User.IsInRole("admin") || User.IsInRole("manager"))
+        {
+            <div>
+                <a class="btn btn-primary" asp-page="/MyOrder/SpecialInstructions" asp-route-id="@Model.Order.Id">Add Special Instructions</a>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Order not found.</p>
+}

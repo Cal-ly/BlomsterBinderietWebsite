@@ -1,0 +1,44 @@
+﻿@page
+@inject UserManager<Customer> UserManager
+@model HttpWebshopCookie.Pages.Admin.Customers.DetailsModel
+@{
+    ViewData["Title"] = "Customer Details";
+}
+
+<h2>Customer Details</h2>
+
+<div>
+    <h4>@Model.CustomerDetails.FirstName @Model.CustomerDetails.LastName</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Email
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CustomerDetails.Email
+        </dd>
+        <dt class="col-sm-2">
+            Role
+        </dt>
+        <dd class="col-sm-10">
+            @string.Join(", ", await UserManager.GetRolesAsync(Model.CustomerDetails))
+        </dd>
+        <dt class="col-sm-2">
+            Birth Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CustomerDetails.BirthDate
+        </dd>
+        <dt class="col-sm-2">
+            Company
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CustomerDetails.Company?.Name ?? "N/A"
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.CustomerDetails.Id" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

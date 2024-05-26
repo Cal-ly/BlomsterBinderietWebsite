@@ -1,0 +1,48 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Basket.ReviewOrderModel
+
+<div class="container w-75 align-self-lg-center">
+    <h1>Review Your Order</h1>
+    <form method="post">
+        <table class="table table-hover table-striped table-condensed">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col" class="col-sm">Product</th>
+                    <th scope="col" class="col-sm">Quantity</th>
+                    <th scope="col" class="col-sm">Price</th>
+                    <th scope="col" class="col-sm">Line Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Basket.Items)
+                {
+                    <tr>
+                        <td scope="row">@item.ProductInBasket?.Name</td>
+                        <td>@(item.Quantity)</td>
+                        <td>@(item.ProductInBasket?.Price.ToString("C"))</td>
+                        <td>@(item.LinePrice().ToString("C"))</td>
+                    </tr>
+                }
+                <tr>
+                    <th>Total:</th>
+                    <td></td>
+                    <td></td>
+                    <td class="text-decoration-underline">@Model.Basket.TotalPrice().ToString("C")</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="container text-end">
+            <div class="mt-2 justify-content-end">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button class="btn btn-outline-success" type="submit" title="Continue Shopping" asp-page-handler="ContinueShopping">
+                        <i class="fa-solid fa-left-long"></i>
+                    </button>
+                    <button class="btn btn-outline-success" type="submit" title="Proceed to Checkout" asp-page-handler="ProceedToCheckout">
+                        <i class="fa-solid fa-right-long"></i>
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,95 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Your Email" disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FirstName" class="form-control" autocomplete="givent-name" placeholder="Please enter your first name." />
+                <label asp-for="Input.FirstName" class="form-label"></label>
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" placeholder="Please enter your last name." />
+                <label asp-for="Input.LastName" class="form-label"></label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="tel" placeholder="Please enter your phone number." />
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            @if (Model.IsEmployee)
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.JobTitle" class="form-control" auto-complete="organization-title" placeholder="Job title" readonly />
+                    <label asp-for="Input.JobTitle" class="form-label"></label>
+                    <span asp-validation-for="Input.JobTitle" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Salary" class="form-control" type="number" readonly/>
+                    <label asp-for="Input.Salary" class="form-label"></label>
+                    <span asp-validation-for="Input.Salary" class="text-danger"></span>
+                </div>
+            }
+
+            @if (Model.IsCustomer)
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Title" class="form-control" auto-complete="honoric-prefix" placeholder="Your title" />
+                    <label asp-for="Input.Title" class="form-label"></label>
+                    <span asp-validation-for="Input.Title" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.BirthDate" class="form-control" autocomplete="bday" type="date" placeholder="dd-mm-yyyy" />
+                    <label asp-for="Input.BirthDate" class="form-label"></label>
+                    <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
+                </div>
+            }
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.Id" type="hidden" />
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.Resident" class="form-control" autocomplete="name" placeholder="Resident" />
+                <label asp-for="AddressInput.Resident" class="form-label"></label>
+                <span asp-validation-for="AddressInput.Resident" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.Street" class="form-control" autocomplete="address-line1" placeholder="Street" />
+                <label asp-for="AddressInput.Street" class="form-label"></label>
+                <span asp-validation-for="AddressInput.Street" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.PostalCode" class="form-control" autocomplete="postal-code" placeholder="Postal code" />
+                <label asp-for="AddressInput.PostalCode" class="form-label"></label>
+                <span asp-validation-for="AddressInput.PostalCode" class="text-danger"></span>
+             </div>
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.City" class="form-control" autocomplete="address-line3" placeholder="City" />
+                <label asp-for="AddressInput.City" class="form-label"></label>
+                <span asp-validation-for="AddressInput.City" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="AddressInput.Country" class="form-control" autocomplete="country" placeholder="Country" />
+                <label asp-for="AddressInput.Country" class="form-label"></label>
+                <span asp-validation-for="AddressInput.Country" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

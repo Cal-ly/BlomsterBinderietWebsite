@@ -1,0 +1,99 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.ProductsOrdersModel
+@{
+    ViewData["Title"] = "Product and Order Metrics";
+}
+
+<h1>Product and Order Metrics</h1>
+
+<form method="get" class="row g-3">
+    <div class="col-md-6">
+        <label for="dateFrom" class="form-label">Date From:</label>
+        <input type="date" id="dateFrom" name="dateFrom" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateFrom.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-md-6">
+        <label for="dateTo" class="form-label">Date To:</label>
+        <input type="date" id="dateTo" name="dateTo" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateTo.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
+    </div>
+</form>
+
+
+<div class="row p-2">
+    <div class="col-md-6">
+        <div class="card h-75">
+            <div class="card-body">
+                <h5>Top Products</h5>
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+        <div class="card h-25">
+            <div class="card-body">
+                @{
+                    string fulfillString = $"{Model.Data?.AvgTimeToFulfillOrders.ToString("F2")} days" ?? "N/A";
+                    string avgItemsString = $"{Model.Data?.AvgItemsPerOrder.ToString("F2")}" ?? "N/A";
+                    string avgUniqueItemsString = $"{Model.Data?.AvgUniqueItemsPerOrder.ToString("F2")}" ?? "N/A";
+                }
+                <p>Average Time to Fulfill Orders: @fulfillString</p>
+                <p>Average Items per Order: @avgItemsString</p>
+                <p>Average Unique Items per Order: @avgUniqueItemsString</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5>Order Status Breakdown</h5>
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn btn-outline-primary mt-4">
+    <a asp-page="/Admin/Analytics/Index">Back</a>
+</div>
+
+@section Scripts {
+    <script>
+        var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        var topProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data!.TopProducts.Select(x => x.ProductName).ToList())),
+                datasets: [{
+                    label: 'Sales',
+                    data: @Html.Raw(Json.Serialize(Model.Data!.TopProducts.Select(x => x.Sales).ToList())),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+        var orderStatusChart = new Chart(orderStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Status).ToList())),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model.Data!.OrderStatusBreakdown.Select(x => x.Count).ToList())),
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+}

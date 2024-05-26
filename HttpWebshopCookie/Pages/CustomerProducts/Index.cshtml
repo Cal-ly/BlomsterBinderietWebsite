@@ -1,0 +1,213 @@
+﻿@page
+@inject BasketService ThisBasketService
+@model HttpWebshopCookie.Pages.CustomerProducts.IndexModel
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<div class="container rounded pb-2">
+    <form method="get" class="p-1 bg-primary-subtle d-flex justify-content-between rounded-2">
+        <div class="d-flex justify-content-evenly">
+            <label class="col-form-label-lg pe-2 ps-2">Sort by</label>
+            <div class="col-auto m-1">
+                <select class="form-select form-control-sm" name="sortBy" id="sortBy" aria-label="Sort by">
+                    <option value="Name" selected="@((Model.SortBy == "Name") ? "selected" : null)">Name</option>
+                    <option value="Price" selected="@((Model.SortBy == "Price") ? "selected" : null)">Price</option>
+                </select>
+            </div>
+            <div class="col-auto m-1">
+                <select class="form-select form-control-sm" name="sortOrder" id="sortOrder" aria-label="Sort by order">
+                    <option value="Ascending" selected="@((Model.SortOrder == "Ascending") ? "selected" : null)">Ascending</option>
+                    <option value="Descending" selected="@((Model.SortOrder == "Descending") ? "selected" : null)">Descending</option>
+                </select>
+            </div>
+            <div class="col-auto m-1">
+                <select class="form-select form-control-sm" name="pageSize" id="pageSize" aria-label="Products per page">
+                    <option value="9" selected="@((Model.PageSize == 9) ? "selected" : null)">9 per page</option>
+                    <option value="18" selected="@((Model.PageSize == 18) ? "selected" : null)">18 per page</option>
+                    <option value="27" selected="@((Model.PageSize == 27) ? "selected" : null)">27 per page</option>
+                    <option value="36" selected="@((Model.PageSize == 36) ? "selected" : null)">36 per page</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-evenly">
+            <div class="col-auto m-1">
+                <input type="text" class="form-control" name="searchTerm" id="searchTerm" placeholder="Search products..." value="@Model.SearchTerm" />
+                <input type="hidden" name="pageIndex" value="@Model.PageIndex" />
+            </div>
+            <div class="col-auto m-1">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+                <button class="btn btn-outline-danger" type="button" onclick="window.location.href='@Url.Page("/CustomerProducts/Index")';">Reset</button>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="container p-1">
+        @if (!string.IsNullOrEmpty(Model.Occasion))
+        {
+            <h2>Occasion: @Model.Occasion</h2>
+        }
+        <div class="row">
+            @foreach (var product in Model.ProductList)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">@product.Description</p>
+                            <div>
+                                @if (product.Tags.Count > 0)
+                                {
+                                    <span class="badge bg-primary">@product.Tags[0].Occasion</span>
+                                    @if (product.Tags.Count > 1)
+                                    {
+                                        <a href="#" class="expand-tags" data-product-id="@product.Id"><i class="fa-regular fa-square-caret-down"></i></a>
+                                    }
+                                }
+                            </div>
+                            <div class="tags-full-list" id="tags-@product.Id" style="display: none;">
+                                @foreach (var tag in product.Tags)
+                                {
+                                    <span class="badge bg-primary">@tag.Category - @tag.SubCategory</span>
+                                }
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-1">
+                                <div class="btn-group">
+                                    <label class="btn btn-outline-primary btn-sm border-0" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)">@(Model.ProductQuantities[product.Id!])</label>
+                                    <form method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-primary btn-sm" type="submit" asp-page-handler="AddToBasket" asp-route-id="@product.Id" title="Add to Basket" id="toastbtn" onclick="showToast('Product has been added to the basket.')">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                    <form method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-warning btn-sm" type="submit" asp-page-handler="RemoveFromBasket" asp-route-id="@product.Id" title="Remove from Basket" id="toastbtn" disabled="@(Model.ProductQuantities[product.Id!] <= 0 ? "disabled" : null)" onclick="showToast('Product has been removed from the basket.')">
+                                            <i class="fas fa-minus-circle"></i>
+                                        </button>
+                                    </form>
+                                    <form method="get" class="d-inline">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button class="btn btn-primary btn-sm" type="submit" asp-page="/CustomerProducts/Details" asp-route-id="@product.Id" title="Product Details">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                                <small class="text-muted">@product.Price</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <nav aria-label="Product navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.PageIndex > 1 ? "" : "disabled")">
+                <a class="page-link" href="?pageIndex=@(Model.PageIndex - 1)&pageSize=@Model.PageSize&searchTerm=@Model.SearchTerm" aria-label="Previous">
+                    &laquo;
+                </a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" href="?pageIndex=@i&pageSize=@Model.PageSize&searchTerm=@Model.SearchTerm">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.PageIndex < Model.TotalPages ? "" : "disabled")">
+                <a class="page-link" href="?pageIndex=@(Model.PageIndex + 1)&pageSize=@Model.PageSize&searchTerm=@Model.SearchTerm" aria-label="Next">
+                    &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="container mt-2">
+        <div class="row justify-content-end">
+            <div class="col-auto">
+                <a class="btn btn-outline-primary" asp-page="/Basket/ViewBasket">View Basket</a>
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-primary" asp-page="/Basket/ReviewOrder">Review Order</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    TempData.TryGetValue("ToastType", out var toastTypeOut);
+    string toastType = toastTypeOut?.ToString() ?? string.Empty;
+
+    TempData.TryGetValue("ToastMessage", out var toastMessageOut);
+    string toastMessage = toastMessageOut?.ToString() ?? string.Empty;
+
+    if (!string.IsNullOrEmpty(toastType) && toastType == "success")
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div class="toast text-black bg-primary-subtle" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="1500">
+                <div class="toast-header bg-success-subtle">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @if (!string.IsNullOrEmpty(toastMessage))
+                    {
+                        <p>@toastMessage</p>
+                    }
+                    else
+                    {
+                        <p>Hello there!</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(toastType) && toastType == "warning")
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div class="toast text-black bg-warning-subtle" id="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="1500">
+                <div class="toast-header bg-warning-subtle">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    @if (!string.IsNullOrEmpty(toastMessage))
+                    {
+                        <p>@toastMessage</p>
+                    }
+                    else
+                    {
+                        <p>Hello there!</p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var toastEl = document.getElementById('toast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, {
+                    autohide: true,
+                    delay: 1500
+                });
+                toast.show();
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.expand-tags').click(function (e) {
+                e.preventDefault();
+                var productId = $(this).data('product-id');
+                $('#tags-' + productId).toggle();
+            });
+        });
+    </script>
+}

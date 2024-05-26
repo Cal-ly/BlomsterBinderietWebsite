@@ -1,0 +1,57 @@
+﻿@page 
+@model HttpWebshopCookie.Pages.Basket.OrderSuccessModel
+
+<div class="container w-75 align-self-lg-center">
+    <h1>Order Confirmation</h1>
+    <br />
+    @if (Model.OrderItems != null)
+    {
+        <h4>Thank You for Your Purchase!</h4>
+        <p>Your order has been placed successfully.</p>
+        <p>Your order will be reviewed by one of our excellent flower artists</p>
+        <p>Order Number: @Model.OrderId</p>
+        <h4>Order Details</h4>
+        <table class="table table-hover table-striped table-condensed">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col" class="col-sm">Product</th>
+                    <th scope="col" class="col-sm">Quantity</th>
+                    <th scope="col" class="col-sm">Price</th>
+                    <th scope="col" class="col-sm">Line Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <tr>        
+                        <td scope="row">@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@(item.Price!.Value.ToString("C"))</td>
+                        <td>@(item.Price.HasValue && item.Quantity.HasValue ? (item.Price * item.Quantity).Value.ToString("C2") : "0")</td>
+                    </tr>
+                }
+                <tr>
+                    <th>Total:</th>
+                    <td></td>
+                    <td></td>
+                    <td class="text-decoration-underline">@Model.TotalString</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Order Details not available</p>
+    }
+
+    <div class="container mt-2">
+        <div class="row justify-content-end">
+            <div class="col-auto">
+                <a asp-page="/Account/OrderHistory" class="btn btn-outline-primary">View Order History</a>
+            </div>
+            <div class="col-auto">
+                <a asp-page="/CustomerProducts/Index" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>

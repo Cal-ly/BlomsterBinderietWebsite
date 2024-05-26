@@ -1,0 +1,51 @@
+﻿@page
+@model HttpWebshopCookie.Pages.MyOrder.MyOrderListingModel
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<h1>My Orders</h1>
+
+@if (Model.Orders.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Details</th>
+                <th>Special Instructions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                    <td>@order.Status</td>
+                    <td>@order.GetTotalPrice().ToString("C")</td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" asp-page="/MyOrder/MyOrderDetails" asp-route-id="@order.Id">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </a>
+                    </td>
+                    <td>
+                        @if (User.IsInRole("companyrep"))
+                        {
+                            <a class="btn btn-primary btn-sm" asp-page="/MyOrder/SpecialInstructions" asp-route-id="@order.Id" title="Special Instructions">
+                                Add SOI
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>You have no orders.</p>
+}

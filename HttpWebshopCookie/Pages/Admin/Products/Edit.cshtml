@@ -1,0 +1,61 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Products.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Product.Id" />
+
+            <div class="form-group">
+                <label asp-for="Product.Name" class="control-label">Name</label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Description" class="control-label">Description</label>
+                <input asp-for="Product.Description" class="form-control" />
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Product.Price" class="control-label">Price</label>
+                <input asp-for="Product.Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="CurrentImage" class="control-label">Current Image</label>
+                <img id="CurrentImage" src="/@Model.Product.ImageUrl?.Replace("\\", "/")" onerror="this.src='/images/products/default.jpg';" alt="Current Product Image" style="max-width: 75%; height: auto;" />
+            </div>
+
+            <div class="form-group">
+                <label for="File" class="control-label">Change Image</label>
+                <input type="file" asp-for="UploadFile" class="form-control" />
+                <span asp-validation-for="UploadFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group btn-group">
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a class="btn btn-secondary" asp-page="./Index">Back to List</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,27 +1,34 @@
-using HttpWebshopCookie.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+namespace HttpWebshopCookie.Pages.Basket;
 
-namespace HttpWebshopCookie.Pages.Basket
+public class ViewBasketModel(BasketService basketService) : PageModel
 {
-    public class ViewBasketModel : PageModel
+    public Models.Basket Basket { get; set; } = default!;
+
+    [BindProperty]
+    public Dictionary<string, int> Quantities { get; set; } = new Dictionary<string, int>();
+
+    public void OnGet()
     {
+        Basket = basketService.GetOrCreateBasket();
+    }
 
-        private readonly ApplicationDbContext _context;
-        private readonly BasketService _basketService;
-
-        public Models.Basket Basket { get; set; } = default!;
-
-        public ViewBasketModel(ApplicationDbContext context, BasketService basketService)
+    public IActionResult OnPostUpdateBasket()
+    {
+        foreach (var entry in Quantities)
         {
-            _context = context;
-            _basketService = basketService;
+            basketService.UpdateBasketItemQuantity(entry.Key, entry.Value).Wait();
         }
 
-        public void OnGet()
-        {
-            Basket = _basketService.GetOrCreateBasket();
-        }
+        return RedirectToPage();
+    }
+
+    public IActionResult OnPostProceedToCheckout()
+    {
+        return RedirectToPage("ReviewOrder");
+    }
+
+    public IActionResult OnPostContinueShopping()
+    {
+        return RedirectToPage("/CustomerProducts/Index");
     }
 }

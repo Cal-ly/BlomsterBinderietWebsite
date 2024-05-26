@@ -1,0 +1,44 @@
+﻿@page
+@model HttpWebshopCookie.Pages.TestEmail.TestEmailModel
+@{
+    ViewData["Title"] = "Test Email";
+}
+
+<h2>Test Email</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label for="RecipientEmail">Recipient Email:</label>
+        <input type="email" id="RecipientEmail" name="RecipientEmail" class="form-control" asp-for="RecipientEmail" value="test@test.com" required />
+    </div>
+    <div class="form-group">
+        <label for="EmailSubject">Email Subject:</label>
+        <input type="text" id="EmailSubject" name="EmailSubject" class="form-control" asp-for="EmailSubject" value="test" required />
+    </div>
+    <div class="form-group">
+        <label for="EmailBody">Email Body:</label>
+        <textarea id="EmailBody" name="EmailBody" class="form-control" asp-for="EmailBody" value="TestSubject" rows="5" required></textarea>
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary">Send Email</button>
+    </div>
+</form>
+
+<form method="post" class="mt-2">
+    <input type="hidden" name="RecipientEmail" value="test@test.com" />
+    <input type="hidden" name="EmailSubject" value="Test" />
+    <input type="hidden" name="EmailBody" value="This is a test mail" />
+    <button type="submit" class="btn btn-primary">Send Test Email</button>
+</form>
+
+<form method="post" class="mt-2">
+    <input type="hidden" asp-for="RecipientEmail" value="test@test.com" />
+    <input type="hidden" asp-for="EmailSubject" value="Test" />
+    <input type="hidden" asp-for="EmailBody" value="This is a test mail" />
+    <button type="submit" asp-for="SendTestEmail" class="btn btn-primary">Send Test Email</button>
+</form>

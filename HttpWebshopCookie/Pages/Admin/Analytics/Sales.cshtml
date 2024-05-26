@@ -1,0 +1,84 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.SalesModel
+@{
+    ViewData["Title"] = "Sales Metrics";
+    string totalSales = Model.Data?.TotalSales.ToString("C2") ?? "N/A";
+    int totalOrders = Model.Data?.TotalOrders ?? 0;
+    string averageOrderValue = Model.Data?.AverageOrderValue.ToString("C2") ?? "N/A";
+    string salesGrowthRate = Model.Data?.SalesGrowthRate.ToString("F2") ?? "N/A";
+    string averageOrderProcessingTime = Model.Data?.AverageOrderProcessingTime.ToString("F2") ?? "N/A";
+}
+
+<h1>Sales Metrics</h1>
+
+<form method="get" class="row g-3">
+    <div class="col-md-6">
+        <label for="dateFrom" class="form-label">Date From:</label>
+        <input type="date" id="dateFrom" name="dateFrom" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateFrom.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-md-6">
+        <label for="dateTo" class="form-label">Date To:</label>
+        <input type="date" id="dateTo" name="dateTo" placeholder="dd-mm-yyyy" class="form-control" value="@(Model.DateTo.ToString("yyyy-MM-dd"))" />
+    </div>
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Apply Filters</button>
+    </div>
+</form>
+
+<div class="row p-2">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Sales</h5>
+                <p class="card-text">@totalSales</p>
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text">@totalOrders</p>
+                <h5 class="card-title">Average Order Value</h5>
+                <p class="card-text">@averageOrderValue</p>
+                <h5 class="card-title">Sales Growth Rate</h5>
+                <p class="card-text">@salesGrowthRate %</p>
+                <h5 class="card-title">Average Order Processing Time</h5>
+                <p class="card-text">@averageOrderProcessingTime days</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h3 class="mt-2">Top Selling Products</h3>
+                <canvas id="topSellingProductsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn btn-outline-primary mt-2">
+    <a asp-page="/Admin/Analytics/Index">Back</a>
+</div>
+
+@section Scripts {
+    <script>
+        var topSellingProductsCtx = document.getElementById('topSellingProductsChart').getContext('2d');
+        var topSellingProductsChart = new Chart(topSellingProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.Data!.TopSellingProducts.Select(x => x.ProductName).ToList())),
+                datasets: [{
+                    label: 'Sales',
+                    data: @Html.Raw(Json.Serialize(Model.Data!.TopSellingProducts.Select(x => x.Sales).ToList())),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}

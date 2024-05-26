@@ -1,0 +1,19 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Analytics.IndexModel
+@{
+    ViewData["Title"] = "Analytics Dashboard";
+}
+
+<h1>Analytics Dashboard</h1>
+
+<p>Welcome to the Analytics Dashboard. Please select a section to view detailed analytics.</p>
+
+<div class="list-group">
+    <a href="/Admin/Analytics/Sales" class="list-group-item list-group-item-action">Sales Metrics</a>
+    <a href="/Admin/Analytics/ProductsOrders" class="list-group-item list-group-item-action">Product and Order Metrics</a>
+    <a href="/Admin/Analytics/CustomerInteraction" class="list-group-item list-group-item-action">Customer Interaction</a>
+</div>
+
+<div class="btn btn-outline-primary">
+    <a asp-page="/Admin/Index">Back to Admin</a>
+</div>

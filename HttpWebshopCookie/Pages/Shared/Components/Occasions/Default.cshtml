@@ -1,0 +1,9 @@
+﻿@model List<string>
+
+@{
+    List<string> occasionList = new(Model);
+    @foreach (var occasion in occasionList)
+    {
+        <li><a class="dropdown-item" href="@Url.Page("/CustomerProducts/Index", new { occasion = occasion })">@occasion</a></li>
+    }
+}

@@ -1,0 +1,31 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Companies.DeleteModel
+@{
+    ViewData["Title"] = "Delete Company";
+}
+
+<h2>Delete Company</h2>
+
+<h3>Are you sure you want to delete this company?</h3>
+
+<div>
+    <h4>@Model.CompanyToDelete.Name</h4>
+    <div>
+        <label>CVR:</label>
+        <span>@Model.CompanyToDelete.CVR</span>
+    </div>
+    <div>
+        <label>Phone Number:</label>
+        <span>@Model.CompanyToDelete.PhoneNumber</span>
+    </div>
+    <div>
+        <label>Address:</label>
+        <span>@Model.CompanyToDelete.Address!.FullAddress()</span>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="CompanyToDelete.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,43 @@
+﻿@page
+@model HttpWebshopCookie.Pages.MyOrder.SpecialInstructionsModel
+@{
+    ViewData["Title"] = "Special Order Instructions";
+}
+
+<h1>Special Order Instructions</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Resident">Resident</label>
+        <input asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Resident" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Street">Street</label>
+        <input asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Street" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.PostalCode">Postal Code</label>
+        <input asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.PostalCode" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.City">City</label>
+        <input asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Country">Country</label>
+        <input asp-for="SpecialOrderInstructions.SpecialDeliveryAddress.Country" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.SpecialInstructions">Special Instructions</label>
+        <textarea asp-for="SpecialOrderInstructions.SpecialInstructions" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.Delivery">Delivery</label>
+        <input asp-for="SpecialOrderInstructions.Delivery" type="checkbox" class="form-check-input" />
+    </div>
+    <div class="form-group">
+        <label asp-for="SpecialOrderInstructions.Arrangement">Arrangement</label>
+        <input asp-for="SpecialOrderInstructions.Arrangement" type="checkbox" class="form-check-input" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

@@ -1,0 +1,168 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<p>Welcome to the Admin Dashboard.</p>
+
+<div class="accordion" id="adminAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOrders">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrders" aria-expanded="true" aria-controls="collapseOrders">
+                Orders
+            </button>
+        </h2>
+        <div id="collapseOrders" class="accordion-collapse collapse show" aria-labelledby="headingOrders" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Orders/OrderListings" class="list-group-item list-group-item-action">Order Listings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingProducts">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                Products
+            </button>
+        </h2>
+        <div id="collapseProducts" class="accordion-collapse collapse" aria-labelledby="headingProducts" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Products/Index" class="list-group-item list-group-item-action">Product Listings</a>
+                    </li>
+                        <li>
+                        <a href="/Admin/Products/Create" class="list-group-item list-group-item-action">Create Product</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTags">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTags" aria-expanded="false" aria-controls="collapseTags">
+                Tags
+            </button>
+        </h2>
+        <div id="collapseTags" class="accordion-collapse collapse" aria-labelledby="headingTags" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Tags/Index" class="list-group-item list-group-item-action">Tag Listings</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Tags/Create" class="list-group-item list-group-item-action">Create Tag</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingProductTags">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProductTags" aria-expanded="false" aria-controls="collapseProductTags">
+                Product Tags
+            </button>
+        </h2>
+        <div id="collapseProductTags" class="accordion-collapse collapse" aria-labelledby="headingProductTags" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/ProductTags/Index" class="list-group-item list-group-item-action">Product Tag Listings</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/ProductTags/Create" class="list-group-item list-group-item-action">Create Product Tag</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingCompanies">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompanies" aria-expanded="false" aria-controls="collapseCompanies">
+                Companies
+            </button>
+        </h2>
+        <div id="collapseCompanies" class="accordion-collapse collapse" aria-labelledby="headingCompanies" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Companies/Index" class="list-group-item list-group-item-action">Company Listings</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Companies/Create" class="list-group-item list-group-item-action">Create Company</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingCustomers">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustomers" aria-expanded="false" aria-controls="collapseCustomers">
+                Customers
+            </button>
+        </h2>
+        <div id="collapseCustomers" class="accordion-collapse collapse" aria-labelledby="headingCustomers" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Customers/Index" class="list-group-item list-group-item-action">Customer Listings</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Customers/Create" class="list-group-item list-group-item-action">Create Customer</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingEmployees">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmployees" aria-expanded="false" aria-controls="collapseEmployees">
+                Employees
+            </button>
+        </h2>
+        <div id="collapseEmployees" class="accordion-collapse collapse" aria-labelledby="headingEmployees" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Employees/Index" class="list-group-item list-group-item-action">Employee Listings</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Employees/Create" class="list-group-item list-group-item-action">Create Employee</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAnalytics">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalytics" aria-expanded="false" aria-controls="collapseAnalytics">
+                Analytics
+            </button>
+        </h2>
+        <div id="collapseAnalytics" class="accordion-collapse collapse" aria-labelledby="headingAnalytics" data-bs-parent="#adminAccordion">
+            <div class="accordion-body">
+                <ul>
+                    <li>
+                        <a href="/Admin/Analytics/Sales" class="list-group-item list-group-item-action">Sales</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Analytics/ProductsOrders" class="list-group-item list-group-item-action">Product Orders</a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Analytics/CustomerInteraction" class="list-group-item list-group-item-action">Customer Interaction</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+}

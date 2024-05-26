@@ -1,0 +1,67 @@
+﻿@page
+@model HttpWebshopCookie.Pages.Admin.Companies.DetailsModel
+@{
+    ViewData["Title"] = "Company Details";
+}
+
+<h2>Company Details</h2>
+
+<div>
+    <h4>@Model.CompanyDetails.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            CVR
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.CVR
+        </dd>
+        <dt class="col-sm-2">
+            Phone Number
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.PhoneNumber
+        </dd>
+        <dt class="col-sm-2">
+            Street
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.Address!.Street
+        </dd>
+        <dt class="col-sm-2">
+            Postal Code
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.Address.PostalCode
+        </dd>
+        <dt class="col-sm-2">
+            City
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.Address.City
+        </dd>
+        <dt class="col-sm-2">
+            Country
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CompanyDetails.Address.Country
+        </dd>
+        <dt class="col-sm-2">
+            Representatives
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var rep in Model.CompanyDetails.Representatives)
+            {
+                <div>@rep.FirstName @rep.LastName (@rep.Email)</div>
+                <div>
+                    <a asp-page="../Customer/Details" asp-route-id="@rep.Id" class="btn btn-primary">View Representative</a>
+                </div>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.CompanyDetails.Id" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

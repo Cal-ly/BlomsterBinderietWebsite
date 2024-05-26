@@ -1,0 +1,43 @@
+﻿@page "{id}"
+@model HttpWebshopCookie.Pages.Admin.ProductTags.EditModel
+@{
+    ViewData["Title"] = "Edit Product Tags";
+}
+
+<h1>Edit Tags for @Model.Product.Name</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Current Tags</h4>
+        <ul class="list-group">
+            @foreach (var tag in Model.ProductTags)
+            {
+                <li class="d-flex justify-content-between align-items-center">
+                    <form method="post" asp-page-handler="RemoveTag" class="input-group">
+                        <input type="hidden" name="tagId" value="@tag.Id" class="" />
+                        <label class="input-group-text">@tag.Occasion - @tag.Category</label>
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h4>Add New Tag</h4>
+        <form method="post" asp-page-handler="AddTag">
+            <div class="input-group">
+                <select id="TagId" name="tagId" class="form-select" aria-label="Example select with button addon">
+                    @foreach (var tag in Model.AvailableTags)
+                    {
+                        <option value="@tag.Id">@tag.Category - @tag.SubCategory</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary">Add Tag</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="btn btn-outline-primary mt-4">
+    <a asp-page="Index">Back</a>
+</div>
