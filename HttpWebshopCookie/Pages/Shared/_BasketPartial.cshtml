@@ -15,7 +15,7 @@
         {
             <tr>
                 <td>@product.Name</td>
-                <td>@product.Price.ToString("C")</td> <!-- C is for currency -->
+                <td>@product.Price.ToString()</td> <!-- C is for currency -->
                 <td>@product.Description</td>
                 <td>
                     @(Model.ProductQuantities.TryGetValue(product.Id, out int quantity) ? quantity.ToString() : "0")
