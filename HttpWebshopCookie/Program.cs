@@ -142,6 +142,7 @@ builder.Services.Configure<SmtpSettings>(options =>
 });
 
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailSender, IdentityEmailSender>();
 
 var app = builder.Build();
 
