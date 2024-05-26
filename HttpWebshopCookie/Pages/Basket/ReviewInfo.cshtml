@@ -19,7 +19,7 @@
 
         <div class="form-group">
             <label for="Email">Email:</label>
-            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="email" asp-for="ReviewInfo.Email" id="Email" />
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="email" asp-for="ReviewInfo.Email" id="Email" required />
             <span asp-validation-for="ReviewInfo.Email"></span>
         </div>
 
@@ -31,33 +31,33 @@
 
         <div class="form-group">
             <label for="Resident">Resident:</label>
-            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Resident" id="Resident" />
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Resident" autocomplete="name" id="Resident" />
             <span asp-validation-for="ReviewInfo.Resident"></span>
         </div>
 
         <div class="form-group">
             <label for="Street">Street:</label>
-            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Street" id="Resident" />
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Street" autocomplete="address-line1" id="Street" />
             <span asp-validation-for="ReviewInfo.Street"></span>
         </div>
 
         <div class="row">
             <div class="col-4">
                 <label for="PostalCode">Postal Code:</label>
-                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.PostalCode" id="PostalCode" />
+                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.PostalCode" autocomplete="postal-code" id="PostalCode" />
                 <span asp-validation-for="ReviewInfo.PostalCode"></span>
             </div>
 
             <div class="col-8">
                 <label for="City">City:</label>
-                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.City" id="City" />
+                <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.City" autocomplete="address-line3" id="City" />
                 <span asp-validation-for="ReviewInfo.City"></span>
             </div>
         </div>
 
         <div class="form-group">
             <label for="Country">Country:</label>
-            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Country" id="Country" />
+            <input class="form-control @(User.Identity!.IsAuthenticated ? "readonly" : "")" type="text" asp-for="ReviewInfo.Country" autocomplete="country" id="Country" />
             <span asp-validation-for="ReviewInfo.Country"></span>
         </div>
 
@@ -72,3 +72,7 @@
 
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

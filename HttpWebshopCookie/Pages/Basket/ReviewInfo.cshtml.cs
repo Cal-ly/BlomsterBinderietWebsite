@@ -1,6 +1,6 @@
 namespace HttpWebshopCookie.Pages.Basket;
 
-public class ReviewInfoModel(BasketService basketService, ApplicationDbContext context) : PageModel
+public class ReviewInfoModel(BasketService basketService, ApplicationDbContext context, IEmailService emailService, IOptions<SmtpSettings> smtpSettings) : PageModel
 {
     [BindProperty]
     public ReviewInfoViewModel ReviewInfo { get; set; } = new ReviewInfoViewModel();
@@ -116,7 +116,17 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
         if (UserWrapper != null)
         {
             var order = basketService.PlaceOrder(UserWrapper);
-            return RedirectToPage("OrderSuccess", new { orderId = order.Id });
+            string orderEmail = ReviewInfo.Email;
+            if (order == null || string.IsNullOrEmpty(orderEmail))
+            {
+                return RedirectToPage("/Error");
+            }
+            else
+            {
+                MimeMessage message = BuildOrderConfirmationEmail(order, ReviewInfo);
+                emailService.SendMimeMessageAsync(message);
+                return RedirectToPage("OrderSuccess", new { orderId = order.Id });
+            }
         }
         else
         {
@@ -126,5 +136,95 @@ public class ReviewInfoModel(BasketService basketService, ApplicationDbContext c
     public IActionResult OnPostCancel()
     {
         return RedirectToPage("/CustomerProducts/Index");
+    }
+    public MimeMessage BuildOrderConfirmationEmail(Order order, ReviewInfoViewModel reviewInfo)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(smtpSettings.Value.SenderName, smtpSettings.Value.SenderEmail));
+        message.To.Add(new MailboxAddress("", reviewInfo.Email));
+        message.Subject = "Order Confirmation";
+
+        var bodyBuilder = new BodyBuilder();
+
+        var sb = new StringBuilder();
+        sb.AppendLine("<html lang=\"da\">");
+        sb.AppendLine("<head>");
+        sb.AppendLine("<meta charset=\"UTF-8\">");
+        sb.AppendLine("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+        sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+        sb.AppendLine("<title>Order Confirmation</title>");
+        sb.AppendLine("</head>");
+        sb.AppendLine("<body>");
+        sb.AppendLine("<h2>Order Confirmation</h2>");
+        sb.AppendLine("<p>Tak for din ordre! Vi har registreret følgende:</p>");
+        sb.AppendLine("<h3>Order Details</h3>");
+        sb.AppendLine("<table>");
+        sb.AppendLine("<tr><td><strong>Order ID:</strong></td><td>" + order.Id + "</td></tr>");
+        sb.AppendLine("<tr><td><strong>Order Date:</strong></td><td>" + order.OrderDate.ToString("f") + "</td></tr>");
+
+        if (!string.IsNullOrEmpty(reviewInfo.FirstName) || !string.IsNullOrEmpty(reviewInfo.LastName))
+        {
+            sb.AppendLine("<tr><td><strong>Name:</strong></td><td>" + reviewInfo.FirstName + " " + reviewInfo.LastName + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.Email))
+        {
+            sb.AppendLine("<tr><td><strong>Email:</strong></td><td>" + reviewInfo.Email + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.PhoneNumber))
+        {
+            sb.AppendLine("<tr><td><strong>Phone:</strong></td><td>" + reviewInfo.PhoneNumber + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.Resident))
+        {
+            sb.AppendLine("<tr><td><strong>Resident:</strong></td><td>" + reviewInfo.Resident + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.Street))
+        {
+            sb.AppendLine("<tr><td><strong>Street:</strong></td><td>" + reviewInfo.Street + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.PostalCode))
+        {
+            sb.AppendLine("<tr><td><strong>Postal Code:</strong></td><td>" + reviewInfo.PostalCode + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.City))
+        {
+            sb.AppendLine("<tr><td><strong>City:</strong></td><td>" + reviewInfo.City + "</td></tr>");
+        }
+        if (!string.IsNullOrEmpty(reviewInfo.Country))
+        {
+            sb.AppendLine("<tr><td><strong>Country:</strong></td><td>" + reviewInfo.Country + "</td></tr>");
+        }
+
+        sb.AppendLine("</table></br>");
+        sb.AppendLine("<h3>Order Items</h3>");
+        sb.AppendLine("<table>");
+        sb.AppendLine("<thead><tr><th>Product</th><th>Quantity</th><th>Price</th></tr></thead>");
+        sb.AppendLine("<tbody>");
+        foreach (var item in order.OrderItems)
+        {
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td>" + item.ProductItem?.Name + "</td>");
+            sb.AppendLine("<td>" + item.Quantity + "</td>");
+            sb.AppendLine("<td>" + item.UnitPrice.ToString("C") + "</td>");
+            sb.AppendLine("</tr>");
+        }
+        sb.AppendLine("</tbody>");
+        sb.AppendLine("</table></br>");
+        sb.AppendLine("<img src=\"cid:logo\" alt=\"Logo\" width=\"100\" height=\"100\" />");
+        sb.AppendLine("<p>Tak for at lade BlomsterBinderiet levere din blomsteroplevelse til dig!</p>");
+        sb.AppendLine("<p>Med venlig hilsen</p>");
+        sb.AppendLine("<p>BlomsterBinderiet</p>");
+        sb.AppendLine("</body>");
+        sb.AppendLine("</html>");
+
+        bodyBuilder.HtmlBody = sb.ToString();
+
+        var logoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo-no-background.png");
+        var logo = bodyBuilder.LinkedResources.Add(logoPath.Replace("/", "\\"));
+        logo.ContentId = "logo";
+
+        message.Body = bodyBuilder.ToMessageBody();
+
+        return message;
     }
 }

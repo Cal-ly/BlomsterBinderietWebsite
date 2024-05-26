@@ -24,6 +24,16 @@ public class EmailService : IEmailService
             await client.DisconnectAsync(true);
         }
     }
+
+    public async Task SendMimeMessageAsync(MimeMessage message)
+    {
+        using (var client = new SmtpClient())
+        {
+            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.None);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+        }
+    }
 }
 
 public class SmtpSettings
