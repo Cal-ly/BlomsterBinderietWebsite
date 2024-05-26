@@ -1,5 +1,6 @@
 namespace HttpWebshopCookie.Pages.TestEmail
 {
+    [Authorize(Policy = "managerAccess")]
     public class TestEmailModel : PageModel
     {
         private readonly IEmailService _emailService;

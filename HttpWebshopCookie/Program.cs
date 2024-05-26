@@ -36,7 +36,6 @@ global using System.Text;
 global using System.Text.Encodings.Web;
 global using System.Text.Json;
 global using System.Threading.Tasks;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -168,19 +167,19 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureDeleted();
+    //context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
-    SeedRole.SeedRoles(services);
-    SeedAllData seedData = new(services);
-    await seedData.SeedEmployeeAsync();
-    await seedData.SeedCompaniesAsync();
-    await seedData.SeedCustomersAsync();
-    await seedData.SeedTestCustomerAsync();
-    await seedData.SeedGuestsAsync();
-    await seedData.SeedProductsAsync();
-    await seedData.SeedOrdersAsync();
-    await seedData.SeedCompanyOrdersAsync();
-    await seedData.SeedBasketActivityAsync();
+    //SeedRole.SeedRoles(services);
+    //SeedAllData seedData = new(services);
+    //await seedData.SeedEmployeeAsync();
+    //await seedData.SeedCompaniesAsync();
+    //await seedData.SeedCustomersAsync();
+    //await seedData.SeedTestCustomerAsync();
+    //await seedData.SeedGuestsAsync();
+    //await seedData.SeedProductsAsync();
+    //await seedData.SeedOrdersAsync();
+    //await seedData.SeedCompanyOrdersAsync();
+    //await seedData.SeedBasketActivityAsync();
 }
 
 app.Run();
