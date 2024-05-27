@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace HttpWebshopCookie.Services;
+﻿namespace HttpWebshopCookie.Services;
 
 public class TagService(ApplicationDbContext context)
 {
