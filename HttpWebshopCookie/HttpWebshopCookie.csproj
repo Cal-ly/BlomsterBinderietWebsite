@@ -44,4 +44,6 @@
     <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>
