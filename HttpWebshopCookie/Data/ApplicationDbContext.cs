@@ -1,6 +1,4 @@
-﻿using HttpWebshopCookie.Config;
-
-namespace HttpWebshopCookie.Data;
+﻿namespace HttpWebshopCookie.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
