@@ -15,34 +15,44 @@ public class BasketService
 
     public Basket GetOrCreateBasket()
     {
-        string? basketId = _httpContextAccessor.HttpContext?.Request.Cookies["BasketId"];
+        return GetOrCreateBasket(_httpContextAccessor, _context);
+    }
+
+    public Basket GetOrCreateBasket(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
+    {
+        return GetOrCreateBasketInternal(httpContextAccessor, dbContext);
+    }
+
+    private Basket GetOrCreateBasketInternal(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
+    {
+        string? basketId = httpContextAccessor.HttpContext?.Request.Cookies["BasketId"];
         Basket? basket;
 
         if (string.IsNullOrEmpty(basketId))
         {
             basket = new Basket();
-            _context.Baskets.Add(basket);
-            _context.SaveChanges();
-            StoreBasketIdInCookie(basket.Id);
+            dbContext.Baskets.Add(basket);
+            dbContext.SaveChanges();
+            StoreBasketIdInCookie(basket.Id, httpContextAccessor);
         }
         else
         {
-            basket = _context.Baskets.Include(b => b.Items)
-                                     .ThenInclude(i => i.ProductInBasket)
-                                     .FirstOrDefault(b => b.Id == basketId);
+            basket = dbContext.Baskets.Include(b => b.Items)
+                                      .ThenInclude(i => i.ProductInBasket)
+                                      .FirstOrDefault(b => b.Id == basketId);
             if (basket == null)
             {
                 basket = new Basket();
-                _context.Baskets.Add(basket);
-                _context.SaveChanges();
-                StoreBasketIdInCookie(basket.Id);
+                dbContext.Baskets.Add(basket);
+                dbContext.SaveChanges();
+                StoreBasketIdInCookie(basket.Id, httpContextAccessor);
             }
         }
 
         return basket;
     }
 
-    private void StoreBasketIdInCookie(string basketId)
+    private void StoreBasketIdInCookie(string basketId, IHttpContextAccessor httpContextAccessor)
     {
         var options = new CookieOptions
         {
@@ -51,7 +61,7 @@ public class BasketService
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddDays(1)
         };
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append("BasketId", basketId, options);
+        httpContextAccessor.HttpContext?.Response.Cookies.Append("BasketId", basketId, options);
     }
 
     public async Task AddToBasket(string productId)
