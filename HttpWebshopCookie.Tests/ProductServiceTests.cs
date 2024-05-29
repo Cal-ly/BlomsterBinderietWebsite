@@ -69,7 +69,7 @@ namespace HttpWebshopCookie.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.Exception), "Product not found")]
+        [ExpectedException(typeof(System.InvalidOperationException), "Product not found")]
         public void GetProductById_ShouldThrowException_WhenProductDoesNotExist()
         {
             // Act
