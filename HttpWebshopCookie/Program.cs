@@ -39,8 +39,19 @@ global using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load configurations
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+// Get configurations
+var configuration = builder.Configuration;
+var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var smtpSettings = configuration.GetSection("SmtpSettings").Get<SmtpSettings>() ?? throw new InvalidOperationException("Smtp settings not found.");
+
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -68,8 +79,8 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 
+builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 
 builder.Services.AddAuthorization(options =>
 {
