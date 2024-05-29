@@ -35,23 +35,23 @@ namespace HttpWebshopCookie.Tests
             _mockOrderService = new Mock<OrderService>(_context);
         }
 
-        //[TestMethod]
-        //public void GetOrCreateBasket_ShouldCreateNewBasketIfNotExists()
-        //{
-        //    // Arrange
-        //    var basketService = new BasketService(_httpContextAccessorMock!, _context!, _mockOrderService!.Object);
-        //    _httpContextAccessorMock!.HttpContext.Response.Cookies.Append("BasketId", string.Empty);
+        [TestMethod]
+        public void GetOrCreateBasket_ShouldCreateNewBasketIfNotExists()
+        {
+            // Arrange
+            var basketService = new BasketService(_httpContextAccessorMock!, _context!, _mockOrderService!.Object);
+            _httpContextAccessorMock!.HttpContext.Response.Cookies.Append("BasketId", string.Empty);
 
-        //    // Act
-        //    var basket = basketService?.GetOrCreateBasket(_httpContextAccessorMock, _context!);
+            // Act
+            var basket = basketService?.GetOrCreateBasket(_httpContextAccessorMock, _context!);
 
-        //    // Assert
-        //    Assert.IsNotNull(basket);
-        //    Assert.AreEqual(1, _context!.Baskets.Count());
-        //    bool cookieExists = _httpContextAccessorMock.HttpContext.Request.Cookies.TryGetValue("BasketId", out string? cookieValue);
-        //    Assert.IsFalse(cookieExists);
-        //    Assert.IsTrue(string.IsNullOrEmpty(cookieValue));
-        //}
+            // Assert
+            Assert.IsNotNull(basket);
+            Assert.AreEqual(1, _context!.Baskets.Count());
+            bool cookieExists = _httpContextAccessorMock.HttpContext.Request.Cookies.TryGetValue("BasketId", out string? cookieValue);
+            Assert.IsFalse(cookieExists);
+            Assert.IsTrue(string.IsNullOrEmpty(cookieValue));
+        }
 
         [TestCleanup]
         public void Cleanup()
