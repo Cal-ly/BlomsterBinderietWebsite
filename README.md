@@ -27,6 +27,7 @@ HttpWebshopCookie is a web application built using ASP.NET Core, designed to man
 - Microsoft SQL Server
 - MailKit for email services
 - Razor Pages
+- Smtp4Dev (during development)
 
 ## Getting Started
 
