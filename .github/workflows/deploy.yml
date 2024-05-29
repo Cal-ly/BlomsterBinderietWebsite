@@ -34,27 +34,31 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        echo DB_SERVER=${{ secrets.DB_SERVER }} >> $GITHUB_ENV
-        echo DB_NAME=${{ secrets.DB_NAME }} >> $GITHUB_ENV
-        echo DB_USER=${{ secrets.DB_USER }} >> $GITHUB_ENV
-        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> $GITHUB_ENV
-        echo SMTP_SERVER=${{ secrets.SMTP_SERVER }} >> $GITHUB_ENV
-        echo SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }} >> $GITHUB_ENV
-        echo SMTP_SENDER_EMAIL=${{ secrets.SMTP_SENDER_EMAIL }} >> $GITHUB_ENV
-        echo SMTP_USERNAME=${{ secrets.SMTP_USERNAME }} >> $GITHUB_ENV
-        echo SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} >> $GITHUB_ENV
+        echo "DB_SERVER=${{ secrets.DB_SERVER }}" >> $env:GITHUB_ENV
+        echo "DB_NAME=${{ secrets.DB_NAME }}" >> $env:GITHUB_ENV
+        echo "DB_USER=${{ secrets.DB_USER }}" >> $env:GITHUB_ENV
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $env:GITHUB_ENV
+        echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> $env:GITHUB_ENV
+        echo "SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }}" >> $env:GITHUB_ENV
+        echo "SMTP_SENDER_EMAIL=${{ secrets.SMTP_SENDER_EMAIL }}" >> $env:GITHUB_ENV
+        echo "SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}" >> $env:GITHUB_ENV
+        echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> $env:GITHUB_ENV
+
+    - name: Install gettext
+      run: choco install gettext
 
     - name: Replace environment variables in appsettings.Production.json
       run: |
-        sudo apt-get install -y gettext-base
         envsubst < HttpWebshopCookie/appsettings.Production.json > HttpWebshopCookie/appsettings.Production.json.tmp
         mv HttpWebshopCookie/appsettings.Production.json.tmp HttpWebshopCookie/appsettings.Production.json
+      shell: bash
 
     - name: Publish application
       run: dotnet publish --configuration Release --output ./publish
 
     - name: Deploy application
-      run: ./deploy_script.sh
+      run: ./scripts/deploy-script.ps1
+      shell: pwsh
       env:
         DB_SERVER: ${{ secrets.DB_SERVER }}
         DB_NAME: ${{ secrets.DB_NAME }}
