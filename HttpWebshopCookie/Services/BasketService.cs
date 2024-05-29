@@ -1,11 +1,20 @@
 ﻿namespace HttpWebshopCookie.Services;
 
+/// <summary>
+/// Service class for managing the shopping basket.
+/// </summary>
 public class BasketService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ApplicationDbContext _context;
     private readonly OrderService orderCreator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasketService"/> class.
+    /// </summary>
+    /// <param name="httpContextAccessor">The HTTP context accessor.</param>
+    /// <param name="context">The application database context.</param>
+    /// <param name="orderCreator">The order service for creating orders.</param>
     public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, OrderService orderCreator)
     {
         this.orderCreator = orderCreator;
@@ -13,36 +22,67 @@ public class BasketService
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
+    /// <summary>
+    /// Gets or creates the shopping basket for the current HTTP context.
+    /// </summary>
+    /// <returns>The shopping basket.</returns>
     public Basket GetOrCreateBasket()
     {
-        string? basketId = _httpContextAccessor.HttpContext?.Request.Cookies["BasketId"];
+        return GetOrCreateBasket(_httpContextAccessor, _context);
+    }
+
+    /// <summary>
+    /// Gets or creates the shopping basket for the specified HTTP context and database context.
+    /// </summary>
+    /// <param name="httpContextAccessor">The HTTP context accessor.</param>
+    /// <param name="dbContext">The application database context.</param>
+    /// <returns>The shopping basket.</returns>
+    public Basket GetOrCreateBasket(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
+    {
+        return GetOrCreateBasketInternal(httpContextAccessor, dbContext);
+    }
+
+    /// <summary>
+    /// Internal method to get or create the shopping basket.
+    /// </summary>
+    /// <param name="httpContextAccessor">The HTTP context accessor.</param>
+    /// <param name="dbContext">The application database context.</param>
+    /// <returns>The shopping basket.</returns>
+    private Basket GetOrCreateBasketInternal(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
+    {
+        string? basketId = httpContextAccessor.HttpContext?.Request.Cookies["BasketId"];
         Basket? basket;
 
         if (string.IsNullOrEmpty(basketId))
         {
             basket = new Basket();
-            _context.Baskets.Add(basket);
-            _context.SaveChanges();
-            StoreBasketIdInCookie(basket.Id);
+            dbContext.Baskets.Add(basket);
+            dbContext.SaveChanges();
+            StoreBasketIdInCookie(basket.Id, httpContextAccessor);
         }
         else
         {
-            basket = _context.Baskets.Include(b => b.Items)
-                                     .ThenInclude(i => i.ProductInBasket)
-                                     .FirstOrDefault(b => b.Id == basketId);
+            basket = dbContext.Baskets.Include(b => b.Items)
+                                      .ThenInclude(i => i.ProductInBasket)
+                                      .FirstOrDefault(b => b.Id == basketId);
             if (basket == null)
             {
                 basket = new Basket();
-                _context.Baskets.Add(basket);
-                _context.SaveChanges();
-                StoreBasketIdInCookie(basket.Id);
+                dbContext.Baskets.Add(basket);
+                dbContext.SaveChanges();
+                StoreBasketIdInCookie(basket.Id, httpContextAccessor);
             }
         }
 
         return basket;
     }
 
-    private void StoreBasketIdInCookie(string basketId)
+    /// <summary>
+    /// Stores the basket ID in a cookie for the current HTTP context.
+    /// </summary>
+    /// <param name="basketId">The ID of the basket.</param>
+    /// <param name="httpContextAccessor">The HTTP context accessor.</param>
+    private void StoreBasketIdInCookie(string basketId, IHttpContextAccessor httpContextAccessor)
     {
         var options = new CookieOptions
         {
@@ -51,9 +91,15 @@ public class BasketService
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddDays(1)
         };
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append("BasketId", basketId, options);
+        httpContextAccessor.HttpContext?.Response.Cookies.Append("BasketId", basketId, options);
     }
 
+    /// <summary>
+    /// Adds a product to the shopping basket.
+    /// </summary>
+    /// <param name="productId">The ID of the product to add.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the specified product is not found.</exception>
     public async Task AddToBasket(string productId)
     {
         var basket = GetOrCreateBasket();
@@ -78,27 +124,40 @@ public class BasketService
         await _context.SaveChangesAsync();
         await LogBasketActivity(basket.Id, productId, "Add", item?.Quantity);
     }
+
+    /// <summary>
+    /// Checks if a product is in the shopping basket.
+    /// </summary>
+    /// <param name="productId">The ID of the product to check.</param>
+    /// <returns>A task representing the asynchronous operation. The task result contains a boolean indicating if the product is in the basket.</returns>
     public async Task<bool> IsInBasket(string productId)
     {
         var basket = GetOrCreateBasket();
         return await Task.FromResult(basket.Items.Any(i => i.ProductId == productId));
     }
 
+    /// <summary>
+    /// Gets the quantity of a product in the shopping basket.
+    /// </summary>
+    /// <param name="productId">The ID of the product to get the quantity for.</param>
+    /// <returns>A task representing the asynchronous operation. The task result contains the quantity of the product in the basket.</returns>
     public async Task<int?> GetQuantityInBasket(string productId)
     {
         var basket = GetOrCreateBasket();
         var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
 
-        // Handle case where product isn't in the basket
         if (item == null)
         {
-            return 0; // Return a default quantity of 0 if not found
+            return 0;
         }
 
         return await Task.FromResult(item.Quantity);
     }
 
-
+    /// <summary>
+    /// Gets the quantities of all products in the shopping basket.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation. The task result contains a dictionary with the product IDs as keys and the quantities as values.</returns>
     public async Task<Dictionary<string, int>> GetAllQuantitiesInBasket()
     {
         var basket = GetOrCreateBasket();
@@ -115,6 +174,13 @@ public class BasketService
             .ToDictionaryAsync(item => item.ProductId!, item => item.Quantity ?? 0);
     }
 
+    /// <summary>
+    /// Updates the quantity of a product in the shopping basket.
+    /// </summary>
+    /// <param name="productId">The ID of the product to update.</param>
+    /// <param name="newQuantity">The new quantity of the product.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the specified product is not found in the basket.</exception>
     public async Task UpdateBasketItemQuantity(string productId, int newQuantity)
     {
         var basket = GetOrCreateBasket();
@@ -137,6 +203,11 @@ public class BasketService
         await LogBasketActivity(basket.Id, productId, "Update", newQuantity);
     }
 
+    /// <summary>
+    /// Removes a product from the shopping basket.
+    /// </summary>
+    /// <param name="productId">The ID of the product to remove.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task RemoveFromBasket(string productId)
     {
         var basket = GetOrCreateBasket();
@@ -160,7 +231,10 @@ public class BasketService
         await LogBasketActivity(basket.Id, productId, "Remove", item?.Quantity);
     }
 
-
+    /// <summary>
+    /// Clears the shopping basket.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task ClearBasket()
     {
         var basket = GetOrCreateBasket();
@@ -169,6 +243,14 @@ public class BasketService
         await LogBasketActivity(basket.Id, null, "ClearAll", 0);
     }
 
+    /// <summary>
+    /// Logs an activity in the basket.
+    /// </summary>
+    /// <param name="basketId">The ID of the basket.</param>
+    /// <param name="productId">The ID of the product involved in the activity.</param>
+    /// <param name="activityType">The type of activity (Add, Update, Remove, etc.).</param>
+    /// <param name="quantityChanged">The quantity changed in the activity.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     private async Task LogBasketActivity(string basketId, string? productId, string activityType, int? quantityChanged)
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -189,6 +271,11 @@ public class BasketService
         await _context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Places an order using the shopping basket.
+    /// </summary>
+    /// <param name="userWrapper">The user wrapper for the order.</param>
+    /// <returns>The order placed.</returns>
     public Order PlaceOrder(UserWrapper userWrapper)
     {
         var basket = GetOrCreateBasket();
