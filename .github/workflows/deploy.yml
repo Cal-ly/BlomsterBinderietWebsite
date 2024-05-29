@@ -57,7 +57,7 @@ jobs:
       run: dotnet publish --configuration Release --output ./publish
 
     - name: Deploy application
-      run: ./scripts/deploy_script.ps1
+      run: ./scripts/deploy-script.ps1
       shell: pwsh
       env:
         DB_SERVER: ${{ secrets.DB_SERVER }}
