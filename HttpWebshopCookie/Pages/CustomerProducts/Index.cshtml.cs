@@ -6,7 +6,7 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
     public List<ProductViewModel> ProductList { get; set; } = default!;
     public Dictionary<string, int> ProductQuantities { get; set; } = [];
     public string? Occasion { get; set; }
-    public string? SearchTerm { get; set; }
+    public string? SearchTerm { get; set; } = string.Empty;
     public string? SortBy { get; set; }
     public string? SortOrder { get; set; }
     public int PageIndex { get; set; }
