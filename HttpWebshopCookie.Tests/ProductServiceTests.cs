@@ -26,7 +26,6 @@ namespace HttpWebshopCookie.Tests
 
             _context = new ApplicationDbContext(options);
 
-            // Initialize ProductService with in-memory context
             _productService = new ProductService(_context);
         }
 
