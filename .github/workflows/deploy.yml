@@ -47,11 +47,11 @@ jobs:
         echo SMTP_USERNAME=${{ secrets.SMTP_USERNAME }} >> $GITHUB_ENV
         echo SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} >> $GITHUB_ENV
 
-    - name: Replace environment variables in appsettings.json
+    - name: Replace environment variables in appsettings.Production.json
       run: |
         sudo apt-get install -y gettext-base
-        envsubst < HttpWebshopCookie/appsettings.json > HttpWebshopCookie/appsettings.json.tmp
-        mv HttpWebshopCookie/appsettings.json.tmp HttpWebshopCookie/appsettings.json
+        envsubst < HttpWebshopCookie/appsettings.Production.json > HttpWebshopCookie/appsettings.Production.json.tmp
+        mv HttpWebshopCookie/appsettings.Production.json.tmp HttpWebshopCookie/appsettings.Production.json
 
     - name: Publish application
       run: dotnet publish --configuration Release --output ./publish
