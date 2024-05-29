@@ -2,6 +2,7 @@
 using HttpWebshopCookie.Models;
 using HttpWebshopCookie.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
