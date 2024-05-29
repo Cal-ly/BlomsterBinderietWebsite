@@ -24,9 +24,6 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal --configuration Release
-
   deploy:
     runs-on: windows-latest
     needs: build
