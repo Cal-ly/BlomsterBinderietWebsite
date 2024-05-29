@@ -45,7 +45,7 @@ jobs:
         echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> $env:GITHUB_ENV
 
     - name: Install gettext
-      run: choco install gettext
+      run: winget install -e --id GnuWin32.gettext
 
     - name: Replace environment variables in appsettings.Production.json
       run: |
