@@ -1,0 +1,70 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal --configuration Release
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up environment variables
+      run: |
+        echo DB_SERVER=${{ secrets.DB_SERVER }} >> $GITHUB_ENV
+        echo DB_NAME=${{ secrets.DB_NAME }} >> $GITHUB_ENV
+        echo DB_USER=${{ secrets.DB_USER }} >> $GITHUB_ENV
+        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> $GITHUB_ENV
+        echo SMTP_SERVER=${{ secrets.SMTP_SERVER }} >> $GITHUB_ENV
+        echo SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }} >> $GITHUB_ENV
+        echo SMTP_SENDER_EMAIL=${{ secrets.SMTP_SENDER_EMAIL }} >> $GITHUB_ENV
+        echo SMTP_USERNAME=${{ secrets.SMTP_USERNAME }} >> $GITHUB_ENV
+        echo SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }} >> $GITHUB_ENV
+
+    - name: Replace environment variables in appsettings.json
+      run: |
+        sudo apt-get install -y gettext-base
+        envsubst < HttpWebshopCookie/appsettings.json > HttpWebshopCookie/appsettings.json.tmp
+        mv HttpWebshopCookie/appsettings.json.tmp HttpWebshopCookie/appsettings.json
+
+    - name: Publish application
+      run: dotnet publish --configuration Release --output ./publish
+
+    - name: Deploy application
+      run: ./deploy_script.sh
+      env:
+        DB_SERVER: ${{ secrets.DB_SERVER }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+        SMTP_SENDER_NAME: ${{ secrets.SMTP_SENDER_NAME }}
+        SMTP_SENDER_EMAIL: ${{ secrets.SMTP_SENDER_EMAIL }}
+        SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
