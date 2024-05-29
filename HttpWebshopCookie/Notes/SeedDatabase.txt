@@ -1,4 +1,30 @@
-﻿namespace HttpWebshopCookie.Data.MockData;
+﻿Us the following
+
+```csharp
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+    SeedRole.SeedRoles(services);
+    SeedAllData seedData = new(services);
+    await seedData.SeedEmployeeAsync();
+    await seedData.SeedCompaniesAsync();
+    await seedData.SeedCustomersAsync();
+    await seedData.SeedTestCustomerAsync();
+    await seedData.SeedGuestsAsync();
+    await seedData.SeedProductsAsync();
+    await seedData.SeedOrdersAsync();
+    await seedData.SeedCompanyOrdersAsync();
+    await seedData.SeedBasketActivityAsync();
+}
+```
+
+to seed database with mock data. Create a new class `SeedAllData` and add the following code
+
+```csharp
+namespace HttpWebshopCookie.Data.MockData;
 
 public class SeedAllData(IServiceProvider serviceProvider)
 {
@@ -773,3 +799,4 @@ public class SeedAllData(IServiceProvider serviceProvider)
         return [orderDate, completionDate];
     }
 }
+```

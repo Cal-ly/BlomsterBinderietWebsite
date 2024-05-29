@@ -15,20 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Basket\Checkout.cshtml.cs" />
-    <Compile Remove="Pages\Basket\CheckoutInfo.cshtml.cs" />
-    <Compile Remove="Pages\Basket\ConfirmOrder.cshtml.cs" />
-    <Compile Remove="Pages\TestMail\TestMail.cshtml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Pages\Basket\Checkout.cshtml" />
-    <Content Remove="Pages\Basket\CheckoutInfo.cshtml" />
-    <Content Remove="Pages\Basket\ConfirmOrder.cshtml" />
-	<Compile Remove="Pages\TestMail\TestMail.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.3.3" />
     <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.5" />
@@ -43,6 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="MimeKit" Version="4.6.0" />

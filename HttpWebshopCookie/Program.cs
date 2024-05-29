@@ -1,13 +1,11 @@
 global using HttpWebshopCookie.Config;
 global using HttpWebshopCookie.Data;
-global using HttpWebshopCookie.Data.MockData;
 global using HttpWebshopCookie.Interfaces;
 global using HttpWebshopCookie.Models;
 global using HttpWebshopCookie.Models.Users;
 global using HttpWebshopCookie.Services;
 global using HttpWebshopCookie.Utilities;
 global using HttpWebshopCookie.ViewModels;
-global using MimeKit;
 global using MailKit.Net.Smtp;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authorization;
@@ -26,6 +24,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
+global using MimeKit;
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
@@ -173,24 +172,5 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var context = services.GetRequiredService<ApplicationDbContext>();
-//    context.Database.EnsureDeleted();
-//    context.Database.EnsureCreated();
-//    SeedRole.SeedRoles(services);
-//    SeedAllData seedData = new(services);
-//    await seedData.SeedEmployeeAsync();
-//    await seedData.SeedCompaniesAsync();
-//    await seedData.SeedCustomersAsync();
-//    await seedData.SeedTestCustomerAsync();
-//    await seedData.SeedGuestsAsync();
-//    await seedData.SeedProductsAsync();
-//    await seedData.SeedOrdersAsync();
-//    await seedData.SeedCompanyOrdersAsync();
-//    await seedData.SeedBasketActivityAsync();
-//}
 
 app.Run();
