@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-HttpWebshopCookie-cb07438c-53dd-49a0-a25c-092e5d3b4e84</UserSecretsId>
+    <PublishTrimmed>False</PublishTrimmed>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
