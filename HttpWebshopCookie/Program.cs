@@ -41,8 +41,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Load configurations
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
-    .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 // Get configurations
@@ -155,7 +155,7 @@ builder.Services.AddTransient<IEmailSender, IdentityEmailSender>();
 
 var app = builder.Build();
 
-Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+//Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
