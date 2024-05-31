@@ -41,8 +41,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Load configurations
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 // Get configurations
