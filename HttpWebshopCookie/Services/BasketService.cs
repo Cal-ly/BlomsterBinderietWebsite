@@ -87,8 +87,8 @@ public class BasketService
         var options = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(1)
         };
         httpContextAccessor.HttpContext?.Response.Cookies.Append("BasketId", basketId, options);
