@@ -165,6 +165,9 @@ else
     app.UseExceptionHandler("/Error");
 }
 
+// Enable default files middleware
+app.UseDefaultFiles();
+
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
