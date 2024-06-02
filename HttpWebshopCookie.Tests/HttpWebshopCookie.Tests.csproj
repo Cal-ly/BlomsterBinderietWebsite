@@ -18,13 +18,13 @@
     </PackageReference>
     <PackageReference Include="HttpContextMoq" Version="1.6.0" />
     <PackageReference Include="MailKit" Version="4.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.4.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.4.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.4.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
     <PackageReference Include="Uno.UI" Version="5.2.139" />
     <PackageReference Include="xunit.extensibility.core" Version="2.8.1" />
   </ItemGroup>

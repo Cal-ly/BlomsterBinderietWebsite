@@ -115,10 +115,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Cookie settings
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
@@ -146,8 +144,6 @@ builder.Services.AddTransient<IEmailSender, IdentityEmailSender>();
 
 var app = builder.Build();
 
-//Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -158,10 +154,8 @@ else
     app.UseExceptionHandler("/Error");
 }
 
-// Enable default files middleware
 app.UseDefaultFiles();
-
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();

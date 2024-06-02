@@ -47,7 +47,7 @@ public class EmailService(IOptions<SmtpSettings> smtpSettings) : IEmailService
         using var client = new SmtpClient();
         try
         {
-            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.Auto);
             await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
             await client.SendAsync(emailMessage);
             await client.DisconnectAsync(true);
@@ -82,7 +82,7 @@ public class EmailService(IOptions<SmtpSettings> smtpSettings) : IEmailService
         using var client = new SmtpClient();
         try
         {
-            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.Auto);
             await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
