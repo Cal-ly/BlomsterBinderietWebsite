@@ -53,7 +53,8 @@ public class EmailService : IEmailService
         {
             try
             {
-                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.None);
+                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+                await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
@@ -89,7 +90,8 @@ public class EmailService : IEmailService
         {
             try
             {
-                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.None);
+                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+                await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }
