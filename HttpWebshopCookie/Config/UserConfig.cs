@@ -29,7 +29,7 @@ public class CustomerConfiguration : UserConfiguration<Customer>
         builder.HasMany(c => c.Orders)
             .WithOne(o => o.Customer)
             .HasForeignKey(o => o.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(u => u.Address)
             .WithOne()
@@ -39,7 +39,7 @@ public class CustomerConfiguration : UserConfiguration<Customer>
         builder.HasOne(c => c.Company)
             .WithMany(c => c.Representatives)
             .HasForeignKey(c => c.CompanyId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 public class EmployeeConfiguration : UserConfiguration<Employee>
@@ -54,7 +54,7 @@ public class EmployeeConfiguration : UserConfiguration<Employee>
         builder.HasMany(e => e.Orders)
             .WithOne(e => e.Employee)
             .HasForeignKey(o => o.EmployeeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(u => u.Address)
             .WithOne()
@@ -79,7 +79,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
         builder.HasMany(g => g.Orders)
             .WithOne(o => o.Guest)
             .HasForeignKey(o => o.GuestId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(g => g.Address)
             .WithOne()
@@ -87,19 +87,3 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
-
-//public class UserWrapperConfiguration : IEntityTypeConfiguration<UserWrapper>
-//{
-//    public void Configure(EntityTypeBuilder<UserWrapper> builder)
-//    {
-//        builder.ToTable("UserWrappers");
-
-//        builder.Property(uw => uw.Id).ValueGeneratedOnAdd();
-
-//        builder.HasOne(uw => uw.Address)
-//            .WithOne()
-//            .HasForeignKey<UserWrapper>(uw => uw.AddressId);
-
-//        builder.HasIndex(uw => uw.Email).IsUnique();
-//    }
-//}

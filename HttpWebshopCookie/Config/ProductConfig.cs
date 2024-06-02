@@ -6,7 +6,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.ToTable("Products");
 
-
         builder.Property(p => p.Name).IsRequired();
         builder.Property(p => p.Description).IsRequired();
         builder.Property(p => p.Price).HasColumnType("decimal(18,2)").IsRequired();

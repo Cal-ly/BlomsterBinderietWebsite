@@ -1,37 +1,39 @@
 namespace HttpWebshopCookie.Pages.Admin.Customers;
 
 [Authorize(Policy = "managerAccess")]
-public class DeleteModel : PageModel
+public class DeleteModel(UserManager<Customer> userManager) : PageModel
 {
-    private readonly UserManager<Customer> _userManager;
-
-    public DeleteModel(UserManager<Customer> userManager)
-    {
-        _userManager = userManager;
-    }
-
     [BindProperty]
-    public Customer CustomerToDelete { get; set; } = new Customer();
+    public Customer CustomerToDelete { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
-        Customer? customer = await _userManager.FindByIdAsync(id);
+        Customer? customer = await userManager.FindByIdAsync(id);
         if (customer == null)
         {
             return NotFound();
         }
+        TempData["customerId"] = customer.Id;
         CustomerToDelete = customer;
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (CustomerToDelete == null)
+        if (!TempData.TryGetValue("customerId", out var tempDataValue))
         {
             return NotFound();
         }
 
-        var result = await _userManager.DeleteAsync(CustomerToDelete);
+        string? customerToDeleteId = tempDataValue!.ToString();
+        Customer? customer = await userManager.FindByIdAsync(customerToDeleteId!);
+        if (customer == null)
+        {
+            return NotFound();
+        }
+        CustomerToDelete = customer;
+
+        var result = await userManager.DeleteAsync(CustomerToDelete);
         if (result.Succeeded)
         {
             return RedirectToPage("Index");
@@ -39,7 +41,7 @@ public class DeleteModel : PageModel
 
         foreach (var error in result.Errors)
         {
-            ModelState.AddModelError(string.Empty, error.Description);
+            ModelState.AddModelError("Could not delete customer", error.Description);
         }
 
         return Page();

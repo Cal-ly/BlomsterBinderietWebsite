@@ -61,8 +61,7 @@ public class IndexModel(ApplicationDbContext context, BasketService basketServic
                 EF.Functions.Like(pt.Tag!.SubCategory, $"%{SearchTerm}%")));
         }
 
-        query = SortProducts(query);
-        return query;
+        return SortProducts(query);
     }
 
     private IQueryable<Product> SortProducts(IQueryable<Product> query)

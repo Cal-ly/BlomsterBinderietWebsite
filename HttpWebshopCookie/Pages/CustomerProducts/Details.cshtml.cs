@@ -1,14 +1,7 @@
 ﻿namespace HttpWebshopCookie.Pages.CustomerProducts;
 
-public class DetailsModel : PageModel
+public class DetailsModel(ApplicationDbContext context) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-
-    public DetailsModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public Product Product { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(string id)
@@ -18,7 +11,7 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
+        var product = await context.Products.FirstOrDefaultAsync(m => m.Id == id);
         if (product == null)
         {
             return NotFound();
