@@ -121,12 +121,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<OrderService>();
-builder.Services.AddScoped<BasketService>();
-builder.Services.AddScoped<TagService>();
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.Configure<SmtpSettings>(options =>
@@ -139,12 +133,16 @@ builder.Services.Configure<SmtpSettings>(options =>
     options.Password = options.Password ?? throw new InvalidOperationException("SmtpSettings:Password not found.");
 });
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<BasketService>();
+builder.Services.AddScoped<TagService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IEmailSender, IdentityEmailSender>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -162,5 +160,24 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+    SeedRole.SeedRoles(services);
+    SeedAllData seedData = new(services);
+    await seedData.SeedEmployeeAsync();
+    await seedData.SeedCompaniesAsync();
+    await seedData.SeedCustomersAsync();
+    await seedData.SeedTestCustomerAsync();
+    await seedData.SeedGuestsAsync();
+    await seedData.SeedProductsAsync();
+    await seedData.SeedOrdersAsync();
+    await seedData.SeedCompanyOrdersAsync();
+    await seedData.SeedBasketActivityAsync();
+}
 
 app.Run();

@@ -21,15 +21,15 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(o => o.Customer)
             .WithMany(c => c.Orders)
             .HasForeignKey(o => o.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
         builder.HasOne(o => o.Guest)
             .WithMany(g => g.Orders)
             .HasForeignKey(o => o.GuestId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
         builder.HasOne(o => o.Employee)
             .WithMany(e => e.Orders)
             .HasForeignKey(o => o.EmployeeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
         builder.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
@@ -37,7 +37,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(o => o.SpecialOrderInstruction)
             .WithOne(si => si.Order)
             .HasForeignKey<SpecialOrderInstruction>(si => si.OrderId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(o => o.OrderDate).HasDatabaseName("IDX_OrderDate").IsDescending();
         builder.HasIndex(o => o.CustomerId).HasDatabaseName("IDX_CustomerId");
