@@ -1,10 +1,10 @@
 namespace HttpWebshopCookie.Pages.Admin.Employees;
 
 [Authorize(Policy = "managerAccess")]
-public class DeleteModel(UserManager<Employee> userManager) : PageModel
+public class DeleteModel(UserManager<Employee> userManager, ApplicationDbContext context) : PageModel
 {
     [BindProperty]
-    public Employee UserToDelete { get; set; } = null!;
+    public Employee EmployeeToDelete { get; set; } = null!;
 
     public async Task<IActionResult> OnGetAsync(string id)
     {
@@ -14,7 +14,7 @@ public class DeleteModel(UserManager<Employee> userManager) : PageModel
             return NotFound();
         }
         TempData["employeeId"] = userToDelete.Id;
-        UserToDelete = userToDelete;
+        EmployeeToDelete = userToDelete;
 
         return Page();
     }
@@ -31,9 +31,17 @@ public class DeleteModel(UserManager<Employee> userManager) : PageModel
         {
             return NotFound();
         }
-        UserToDelete = employeeToDelete;
+        EmployeeToDelete = employeeToDelete;
+        
+        var orders = context.Orders.Where(o => o.EmployeeId == EmployeeToDelete.Id);
+        foreach (var order in orders)
+        {
+            order.CustomerId = null;
+            order.Customer = null;
+        }
+        await context.SaveChangesAsync();
 
-        var result = await userManager.DeleteAsync(UserToDelete);
+        var result = await userManager.DeleteAsync(EmployeeToDelete);
         if (result.Succeeded)
         {
             return RedirectToPage("Index");
