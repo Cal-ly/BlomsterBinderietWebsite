@@ -3,18 +3,13 @@
 /// <summary>
 /// Service class for sending emails.
 /// </summary>
-public class EmailService : IEmailService
+/// <remarks>
+/// Initializes a new instance of the <see cref="EmailService"/> class.
+/// </remarks>
+/// <param name="smtpSettings">The SMTP settings.</param>
+public class EmailService(IOptions<SmtpSettings> smtpSettings) : IEmailService
 {
-    private readonly SmtpSettings _smtpSettings;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EmailService"/> class.
-    /// </summary>
-    /// <param name="smtpSettings">The SMTP settings.</param>
-    public EmailService(IOptions<SmtpSettings> smtpSettings)
-    {
-        _smtpSettings = smtpSettings.Value;
-    }
+    private readonly SmtpSettings _smtpSettings = smtpSettings.Value;
 
     /// <summary>
     /// Sends an email asynchronously.
@@ -49,25 +44,23 @@ public class EmailService : IEmailService
         emailMessage.Subject = subject;
         emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message };
 
-        using (var client = new SmtpClient())
+        using var client = new SmtpClient();
+        try
         {
-            try
-            {
-                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
-                await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
-                await client.SendAsync(emailMessage);
-                await client.DisconnectAsync(true);
-            }
-            catch (SmtpCommandException ex)
-            {
-                // Handle command errors (e.g., invalid recipient address)
-                throw new InvalidOperationException($"SMTP command error: {ex.Message}", ex);
-            }
-            catch (SmtpProtocolException ex)
-            {
-                // Handle protocol errors (e.g., unexpected server response)
-                throw new InvalidOperationException($"SMTP protocol error: {ex.Message}", ex);
-            }
+            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+            await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
+            await client.SendAsync(emailMessage);
+            await client.DisconnectAsync(true);
+        }
+        catch (SmtpCommandException ex)
+        {
+            // Handle command errors (e.g., invalid recipient address)
+            throw new InvalidOperationException($"SMTP command error: {ex.Message}", ex);
+        }
+        catch (SmtpProtocolException ex)
+        {
+            // Handle protocol errors (e.g., unexpected server response)
+            throw new InvalidOperationException($"SMTP protocol error: {ex.Message}", ex);
         }
     }
 
@@ -86,25 +79,23 @@ public class EmailService : IEmailService
             throw new ArgumentNullException(nameof(message), "MIME message cannot be null.");
         }
 
-        using (var client = new SmtpClient())
+        using var client = new SmtpClient();
+        try
         {
-            try
-            {
-                await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
-                await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-            }
-            catch (SmtpCommandException ex)
-            {
-                // Handle command errors (e.g., invalid recipient address)
-                throw new InvalidOperationException($"SMTP command error: {ex.Message}", ex);
-            }
-            catch (SmtpProtocolException ex)
-            {
-                // Handle protocol errors (e.g., unexpected server response)
-                throw new InvalidOperationException($"SMTP protocol error: {ex.Message}", ex);
-            }
+            await client.ConnectAsync(_smtpSettings.Server, _smtpSettings.Port, MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable);
+            await client.AuthenticateAsync(_smtpSettings.Username, _smtpSettings.Password);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+        }
+        catch (SmtpCommandException ex)
+        {
+            // Handle command errors (e.g., invalid recipient address)
+            throw new InvalidOperationException($"SMTP command error: {ex.Message}", ex);
+        }
+        catch (SmtpProtocolException ex)
+        {
+            // Handle protocol errors (e.g., unexpected server response)
+            throw new InvalidOperationException($"SMTP protocol error: {ex.Message}", ex);
         }
     }
 }

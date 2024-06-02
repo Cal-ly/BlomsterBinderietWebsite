@@ -87,30 +87,16 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRazorPages().AddSessionStateTempDataProvider();
 
-builder.Services.AddAuthorization(options =>
-{
-    // Admin can do what managers, staff, assistants, company reps, and customers can
-    options.AddPolicy("adminAccess", policy => policy.RequireRole("admin"));
-
-    // Manager can do what staff, assistants, company reps, and customers can
-    options.AddPolicy("managerAccess", policy => policy.RequireRole("admin", "manager"));
-
-    // Staff can do what assistants, company reps, and customers can
-    options.AddPolicy("staffAccess", policy => policy.RequireRole("admin", "manager", "staff"));
-
-    // Assistant can do what company reps and customers can
-    options.AddPolicy("assistantAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant"));
-
-    // Company rep can do what customers can
-    options.AddPolicy("companyrepAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant", "companyrep"));
-
-    // Customer has only customer privileges
-    options.AddPolicy("customerAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant", "companyrep", "customer"));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("adminAccess", policy => policy.RequireRole("admin"))
+    .AddPolicy("managerAccess", policy => policy.RequireRole("admin", "manager"))
+    .AddPolicy("staffAccess", policy => policy.RequireRole("admin", "manager", "staff"))
+    .AddPolicy("assistantAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant"))
+    .AddPolicy("companyrepAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant", "companyrep"))
+    .AddPolicy("customerAccess", policy => policy.RequireRole("admin", "manager", "staff", "assistant", "companyrep", "customer"));
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Password settings.
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
@@ -123,7 +109,6 @@ builder.Services.Configure<IdentityOptions>(options =>
     //options.Lockout.MaxFailedAccessAttempts = 5;
     //options.Lockout.AllowedForNewUsers = true;
 
-    // User settings.
     options.User.AllowedUserNameCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = true;
