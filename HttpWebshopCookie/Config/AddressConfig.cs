@@ -10,7 +10,6 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
 
         builder.Property(a => a.Street).IsRequired();
         builder.Property(a => a.City).IsRequired();
-        builder.Property(a => a.Street).IsRequired();
         builder.Property(a => a.PostalCode).IsRequired();
         builder.Property(a => a.Country).IsRequired().HasDefaultValue("Denmark");
 

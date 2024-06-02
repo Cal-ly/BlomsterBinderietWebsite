@@ -10,7 +10,9 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 
         builder.HasOne(c => c.Address)
             .WithOne()
-            .HasForeignKey<Company>(c => c.AddressId);
+            .HasForeignKey<Company>(c => c.AddressId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.HasMany(c => c.Representatives)
             .WithOne(cu => cu.Company)
             .HasForeignKey(cu => cu.CompanyId)

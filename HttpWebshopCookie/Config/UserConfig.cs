@@ -12,7 +12,7 @@ public class UserConfiguration<T> : IEntityTypeConfiguration<T> where T : Applic
         builder.HasOne(u => u.Address)
             .WithOne()
             .HasForeignKey<T>(u => u.AddressId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasIndex(u => u.Email).IsUnique();
     }
@@ -29,17 +29,17 @@ public class CustomerConfiguration : UserConfiguration<Customer>
         builder.HasMany(c => c.Orders)
             .WithOne(o => o.Customer)
             .HasForeignKey(o => o.CustomerId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(u => u.Address)
             .WithOne()
             .HasForeignKey<Customer>(u => u.AddressId)
-            .OnDelete(DeleteBehavior.ClientCascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(c => c.Company)
             .WithMany(c => c.Representatives)
             .HasForeignKey(c => c.CompanyId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
 public class EmployeeConfiguration : UserConfiguration<Employee>
@@ -54,7 +54,7 @@ public class EmployeeConfiguration : UserConfiguration<Employee>
         builder.HasMany(e => e.Orders)
             .WithOne(e => e.Employee)
             .HasForeignKey(o => o.EmployeeId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(u => u.Address)
             .WithOne()
@@ -79,7 +79,7 @@ public class GuestConfiguration : IEntityTypeConfiguration<Guest>
         builder.HasMany(g => g.Orders)
             .WithOne(o => o.Guest)
             .HasForeignKey(o => o.GuestId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(g => g.Address)
             .WithOne()
