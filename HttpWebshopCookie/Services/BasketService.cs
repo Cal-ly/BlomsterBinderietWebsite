@@ -3,24 +3,16 @@
 /// <summary>
 /// Service class for managing the shopping basket.
 /// </summary>
-public class BasketService
+/// <remarks>
+/// Initializes a new instance of the <see cref="BasketService"/> class.
+/// </remarks>
+/// <param name="httpContextAccessor">The HTTP context accessor.</param>
+/// <param name="context">The application database context.</param>
+/// <param name="orderCreator">The order service for creating orders.</param>
+public class BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, OrderService orderCreator)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ApplicationDbContext _context;
-    private readonly OrderService orderCreator;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BasketService"/> class.
-    /// </summary>
-    /// <param name="httpContextAccessor">The HTTP context accessor.</param>
-    /// <param name="context">The application database context.</param>
-    /// <param name="orderCreator">The order service for creating orders.</param>
-    public BasketService(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context, OrderService orderCreator)
-    {
-        this.orderCreator = orderCreator;
-        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     /// <summary>
     /// Gets or creates the shopping basket for the current HTTP context.
@@ -48,7 +40,7 @@ public class BasketService
     /// <param name="httpContextAccessor">The HTTP context accessor.</param>
     /// <param name="dbContext">The application database context.</param>
     /// <returns>The shopping basket.</returns>
-    private Basket GetOrCreateBasketInternal(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
+    private static Basket GetOrCreateBasketInternal(IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext)
     {
         string? basketId = httpContextAccessor.HttpContext?.Request.Cookies["BasketId"];
         Basket? basket;
@@ -82,7 +74,7 @@ public class BasketService
     /// </summary>
     /// <param name="basketId">The ID of the basket.</param>
     /// <param name="httpContextAccessor">The HTTP context accessor.</param>
-    private void StoreBasketIdInCookie(string basketId, IHttpContextAccessor httpContextAccessor)
+    private static void StoreBasketIdInCookie(string basketId, IHttpContextAccessor httpContextAccessor)
     {
         var options = new CookieOptions
         {
@@ -164,7 +156,7 @@ public class BasketService
 
         if (basket.Id == null)
         {
-            return new Dictionary<string, int>();
+            return [];
         }
 
         return await _context.BasketItems
@@ -184,12 +176,7 @@ public class BasketService
     public async Task UpdateBasketItemQuantity(string productId, int newQuantity)
     {
         var basket = GetOrCreateBasket();
-        var item = basket.Items.FirstOrDefault(i => i.ProductId == productId);
-        if (item == null)
-        {
-            throw new InvalidOperationException("Product not in basket.");
-        }
-
+        var item = basket.Items.FirstOrDefault(i => i.ProductId == productId) ?? throw new InvalidOperationException("Product not in basket.");
         if (newQuantity <= 0)
         {
             basket.Items.Remove(item);

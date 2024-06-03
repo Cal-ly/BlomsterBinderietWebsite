@@ -150,7 +150,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseCors("AllowAllOrigins");
-    app.UseHsts();
+    //app.UseHsts();
     app.UseExceptionHandler("/Error");
 }
 
