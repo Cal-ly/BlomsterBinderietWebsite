@@ -125,7 +125,7 @@ SMTP_PASSWORD= ..
    dotnet run
    ```
 
-3. Navigate to `https://localhost:5001` in your browser to access the application.
+3. Navigate to `https://localhost:5000` in your browser to access the application.
 
 ### License
 
