@@ -1,16 +1,10 @@
 namespace HttpWebshopCookie.Pages.Admin.Analytics;
 
 [Authorize(Policy = "managerAccess")]
-public class CustomerInteractionModel : PageModel
+public class CustomerInteractionModel(ApplicationDbContext context, ILogger<CustomerInteractionModel> logger) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<CustomerInteractionModel> _logger;
-
-    public CustomerInteractionModel(ApplicationDbContext context, ILogger<CustomerInteractionModel> logger)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    private readonly ILogger<CustomerInteractionModel> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [BindProperty]
     public CustomerInteractionData Data { get; set; } = new CustomerInteractionData();
@@ -48,7 +42,6 @@ public class CustomerInteractionModel : PageModel
 
     private IQueryable<Customer> FilterCustomersByDateRange(DateTime dateFrom, DateTime dateTo)
     {
-
         return _context.Customers.Where(c => c.EnrollmentDate >= dateFrom && c.EnrollmentDate <= dateTo);
     }
 
@@ -146,14 +139,14 @@ public class CustomerInteractionModel : PageModel
 
     public class CustomerInteractionData
     {
-        public List<CustomerGrowth> CustomerGrowth { get; set; } = new List<CustomerGrowth>();
-        public List<BasketActivitySummary> BasketActivitySummary { get; set; } = new List<BasketActivitySummary>();
+        public List<CustomerGrowth> CustomerGrowth { get; set; } = [];
+        public List<BasketActivitySummary> BasketActivitySummary { get; set; } = [];
         public double AvgTimeSpentOnSite { get; set; }
         public double AvgMaxItemsInBasket { get; set; }
         public double AvgActivitiesPerSession { get; set; }
-        public List<ProductActivity> MostAddedProducts { get; set; } = new List<ProductActivity>();
-        public List<ProductActivity> MostRemovedProducts { get; set; } = new List<ProductActivity>();
-        public Dictionary<string, int> ActivityTypeCount { get; set; } = new Dictionary<string, int>();
+        public List<ProductActivity> MostAddedProducts { get; set; } = [];
+        public List<ProductActivity> MostRemovedProducts { get; set; } = [];
+        public Dictionary<string, int> ActivityTypeCount { get; set; } = [];
     }
 
     public class CustomerGrowth

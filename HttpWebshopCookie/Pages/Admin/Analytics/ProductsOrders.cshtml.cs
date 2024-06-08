@@ -1,16 +1,10 @@
 namespace HttpWebshopCookie.Pages.Admin.Analytics;
 
 [Authorize(Policy = "managerAccess")]
-public class ProductsOrdersModel : PageModel
+public class ProductsOrdersModel(ApplicationDbContext context, ILogger<ProductsOrdersModel> logger) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<ProductsOrdersModel> _logger;
-
-    public ProductsOrdersModel(ApplicationDbContext context, ILogger<ProductsOrdersModel> logger)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    private readonly ILogger<ProductsOrdersModel> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [BindProperty]
     public ProductsOrdersData Data { get; set; } = new ProductsOrdersData();
@@ -100,8 +94,8 @@ public class ProductsOrdersModel : PageModel
 
     public class ProductsOrdersData
     {
-        public List<TopProduct> TopProducts { get; set; } = new List<TopProduct>();
-        public List<OrderStatusBreakdown> OrderStatusBreakdown { get; set; } = new List<OrderStatusBreakdown>();
+        public List<TopProduct> TopProducts { get; set; } = [];
+        public List<OrderStatusBreakdown> OrderStatusBreakdown { get; set; } = [];
         public double AvgTimeToFulfillOrders { get; set; }
         public double AvgItemsPerOrder { get; set; }
         public double AvgUniqueItemsPerOrder { get; set; }
