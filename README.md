@@ -105,15 +105,15 @@ For local development, you can use a `.env` file to manage your environment vari
 
 Example `.env`:
 ```plaintext
-DB_SERVER=mssql1.unoeuro.com,1433
-DB_NAME=cally_dk_db_blomster
-DB_USER=cally_dk
-DB_PASSWORD=zgmR9f6kwhencpEbAGH2
-SMTP_SERVER=websmtp.simply.com
-SMTP_SENDER_NAME=BlomsterBinderiet
-SMTP_SENDER_EMAIL=blomsterbinderiet@cally.dk
-SMTP_USERNAME=blomsterbinderiet@cally.dk
-SMTP_PASSWORD=CAL11-simply.com
+DB_SERVER= ..
+DB_NAME= ..
+DB_USER= ..
+DB_PASSWORD= ..
+SMTP_SERVER= ..
+SMTP_SENDER_NAME= ..
+SMTP_SENDER_EMAIL= ..
+SMTP_USERNAME= ..
+SMTP_PASSWORD= .. 
 ```
 
 ### Running the Application
